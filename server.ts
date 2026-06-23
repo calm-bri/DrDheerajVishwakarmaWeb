@@ -8,8 +8,13 @@ import { createClient } from '@supabase/supabase-js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environmental variables from .env.local
-dotenv.config({ path: path.join(__dirname, '.env.local') });
+// Load environmental variables
+const envLocalPath = path.join(__dirname, '.env.local');
+if (fs.existsSync(envLocalPath)) {
+  dotenv.config({ path: envLocalPath });
+} else {
+  dotenv.config();
+}
 
 const app = express();
 const PORT = process.env.PORT || 3001;
