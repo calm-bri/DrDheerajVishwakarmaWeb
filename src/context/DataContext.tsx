@@ -60,6 +60,10 @@ interface DataContextType {
   updateCondition: (id: string, updated: Partial<SpineCondition>) => void;
   deleteCondition: (id: string) => void;
   resetConditions: () => void;
+
+  // Administrative Auth
+  adminPin: string;
+  setAdminPin: (pin: string) => void;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -122,6 +126,20 @@ const PRELOADED_APPOINTMENTS: Appointment[] = [
 ];
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // Administrative Auth State
+  const [adminPin, setAdminPin] = useState<string>(() => {
+    const sessionToken = localStorage.getItem("dr_dheeraj_admin_session");
+    if (sessionToken) {
+      try {
+        const parsed = JSON.parse(sessionToken);
+        if (Date.now() - parsed.timestamp < 1000 * 60 * 60 * 4) { // 4 hour session
+          return localStorage.getItem("dr_dheeraj_admin_pin") || "admin123";
+        }
+      } catch (e) {}
+    }
+    return "";
+  });
+
   // Appointments state initialized with defaults
   const [appointments, setAppointments] = useState<Appointment[]>(PRELOADED_APPOINTMENTS);
 
@@ -137,29 +155,48 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Conditions state initialized with defaults
   const [conditions, setConditions] = useState<SpineCondition[]>(conditionsData);
 
-  // Fetch initial data from backend API
+  // Fetch initial public data from backend API
   useEffect(() => {
-    const loadAllData = async () => {
+    const loadPublicData = async () => {
       try {
-        const [aptsRes, scsRes, faqsRes, testsRes, condsRes] = await Promise.all([
-          fetch('/api/appointments'),
+        const [scsRes, faqsRes, testsRes, condsRes] = await Promise.all([
           fetch('/api/showcases'),
           fetch('/api/faqs'),
           fetch('/api/testimonials'),
           fetch('/api/conditions')
         ]);
 
-        if (aptsRes.ok) setAppointments(await aptsRes.json());
         if (scsRes.ok) setShowcases(await scsRes.json());
         if (faqsRes.ok) setFaqs(await faqsRes.json());
         if (testsRes.ok) setTestimonials(await testsRes.json());
         if (condsRes.ok) setConditions(await condsRes.json());
       } catch (error) {
-        console.warn("Failed to fetch initial data from backend server. Using local clinical presets.", error);
+        console.warn("Failed to fetch initial public data from backend server. Using local presets.", error);
       }
     };
-    loadAllData();
+    loadPublicData();
   }, []);
+
+  // Fetch appointments only when adminPin is set / verified
+  useEffect(() => {
+    if (!adminPin) return;
+
+    const loadAppointments = async () => {
+      try {
+        const res = await fetch('/api/appointments', {
+          headers: { 'x-admin-pin': adminPin }
+        });
+        if (res.ok) {
+          setAppointments(await res.json());
+        } else {
+          console.warn("Failed to fetch appointments: Unauthorized (Invalid PIN)");
+        }
+      } catch (error) {
+        console.error("Error fetching appointments:", error);
+      }
+    };
+    loadAppointments();
+  }, [adminPin]);
 
   // Appointment operations
   const addAppointment = (apptData: Omit<Appointment, "id" | "bookingDate" | "bookingTime" | "status">) => {
@@ -199,7 +236,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     fetch(`/api/appointments/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-admin-pin': adminPin
+      },
       body: JSON.stringify(updated)
     }).catch(err => console.error(`Error updating appointment ${id} on server:`, err));
   };
@@ -208,7 +248,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setAppointments(prev => prev.filter(apt => apt.id !== id));
 
     fetch(`/api/appointments/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: {
+        'x-admin-pin': adminPin
+      }
     }).catch(err => console.error(`Error deleting appointment ${id} on server:`, err));
   };
 
@@ -218,7 +261,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     fetch('/api/showcases', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-admin-pin': adminPin
+      },
       body: JSON.stringify(showcase)
     }).catch(err => console.error("Error creating showcase on server:", err));
   };
@@ -230,7 +276,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     fetch(`/api/showcases/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-admin-pin': adminPin
+      },
       body: JSON.stringify(updated)
     }).catch(err => console.error(`Error updating showcase ${id} on server:`, err));
   };
@@ -239,12 +288,20 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setShowcases(prev => prev.filter(sc => sc.id !== id));
 
     fetch(`/api/showcases/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: {
+        'x-admin-pin': adminPin
+      }
     }).catch(err => console.error(`Error deleting showcase ${id} on server:`, err));
   };
 
   const resetShowcases = () => {
-    fetch('/api/showcases/reset', { method: 'POST' })
+    fetch('/api/showcases/reset', { 
+      method: 'POST',
+      headers: {
+        'x-admin-pin': adminPin
+      }
+    })
       .then(res => res.json())
       .then(data => setShowcases(data))
       .catch(err => console.error("Error resetting showcases on server:", err));
@@ -256,7 +313,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     fetch('/api/faqs', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-admin-pin': adminPin
+      },
       body: JSON.stringify(faq)
     }).catch(err => console.error("Error creating FAQ on server:", err));
   };
@@ -268,7 +328,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     fetch(`/api/faqs/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-admin-pin': adminPin
+      },
       body: JSON.stringify(updated)
     }).catch(err => console.error(`Error updating FAQ ${id} on server:`, err));
   };
@@ -277,12 +340,20 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setFaqs(prev => prev.filter(f => f.id !== id));
 
     fetch(`/api/faqs/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: {
+        'x-admin-pin': adminPin
+      }
     }).catch(err => console.error(`Error deleting FAQ ${id} on server:`, err));
   };
 
   const resetFAQs = () => {
-    fetch('/api/faqs/reset', { method: 'POST' })
+    fetch('/api/faqs/reset', { 
+      method: 'POST',
+      headers: {
+        'x-admin-pin': adminPin
+      }
+    })
       .then(res => res.json())
       .then(data => setFaqs(data))
       .catch(err => console.error("Error resetting FAQs on server:", err));
@@ -294,7 +365,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     fetch('/api/testimonials', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-admin-pin': adminPin
+      },
       body: JSON.stringify(testimonial)
     }).catch(err => console.error("Error creating testimonial on server:", err));
   };
@@ -306,7 +380,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     fetch(`/api/testimonials/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-admin-pin': adminPin
+      },
       body: JSON.stringify(updated)
     }).catch(err => console.error(`Error updating testimonial ${id} on server:`, err));
   };
@@ -315,12 +392,20 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setTestimonials(prev => prev.filter(t => t.id !== id));
 
     fetch(`/api/testimonials/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: {
+        'x-admin-pin': adminPin
+      }
     }).catch(err => console.error(`Error deleting testimonial ${id} on server:`, err));
   };
 
   const resetTestimonials = () => {
-    fetch('/api/testimonials/reset', { method: 'POST' })
+    fetch('/api/testimonials/reset', { 
+      method: 'POST',
+      headers: {
+        'x-admin-pin': adminPin
+      }
+    })
       .then(res => res.json())
       .then(data => setTestimonials(data))
       .catch(err => console.error("Error resetting testimonials on server:", err));
@@ -332,7 +417,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     fetch('/api/conditions', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-admin-pin': adminPin
+      },
       body: JSON.stringify(condition)
     }).catch(err => console.error("Error creating condition on server:", err));
   };
@@ -344,7 +432,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     fetch(`/api/conditions/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-admin-pin': adminPin
+      },
       body: JSON.stringify(updated)
     }).catch(err => console.error(`Error updating condition ${id} on server:`, err));
   };
@@ -353,12 +444,20 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setConditions(prev => prev.filter(cond => cond.id !== id));
 
     fetch(`/api/conditions/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: {
+        'x-admin-pin': adminPin
+      }
     }).catch(err => console.error(`Error deleting condition ${id} on server:`, err));
   };
 
   const resetConditions = () => {
-    fetch('/api/conditions/reset', { method: 'POST' })
+    fetch('/api/conditions/reset', { 
+      method: 'POST',
+      headers: {
+        'x-admin-pin': adminPin
+      }
+    })
       .then(res => res.json())
       .then(data => setConditions(data))
       .catch(err => console.error("Error resetting conditions on server:", err));
@@ -393,7 +492,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       addCondition,
       updateCondition,
       deleteCondition,
-      resetConditions
+      resetConditions,
+
+      adminPin,
+      setAdminPin
     }}>
       {children}
     </DataContext.Provider>

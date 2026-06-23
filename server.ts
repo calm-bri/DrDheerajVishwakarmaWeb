@@ -34,12 +34,24 @@ if (supabase) {
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-file-name');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-file-name, x-admin-pin');
   if (req.method === 'OPTIONS') {
     return res.sendStatus(200);
   }
   next();
 });
+
+// Admin Authentication Setup
+const ADMIN_PIN = process.env.ADMIN_PIN || 'admin123';
+
+const verifyAdmin = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  const pin = req.headers['x-admin-pin'] || req.query.adminPin;
+  if (pin === ADMIN_PIN) {
+    next();
+  } else {
+    res.status(401).json({ error: 'Unauthorized: Invalid Admin PIN' });
+  }
+};
 
 app.use(express.json({ limit: '50mb' }));
 
@@ -426,7 +438,12 @@ const writeDataFile = (filename: string, data: any) => {
 
 // Generic CRUD endpoints generator with Supabase DB queries and Local JSON fallback
 const registerCrudRoutes = (resourceName: string, filename: string, defaults: any[]) => {
-  app.get(`/api/${resourceName}`, async (req, res) => {
+  app.get(`/api/${resourceName}`, (req, res, next) => {
+    if (resourceName === 'appointments') {
+      return verifyAdmin(req, res, next);
+    }
+    next();
+  }, async (req, res) => {
     if (supabase) {
       try {
         const { data, error } = await supabase.from(resourceName).select('*');
@@ -450,7 +467,12 @@ const registerCrudRoutes = (resourceName: string, filename: string, defaults: an
     res.json(localData);
   });
 
-  app.post(`/api/${resourceName}`, async (req, res) => {
+  app.post(`/api/${resourceName}`, (req, res, next) => {
+    if (resourceName !== 'appointments') {
+      return verifyAdmin(req, res, next);
+    }
+    next();
+  }, async (req, res) => {
     const newItem = { ...req.body };
     if (!newItem.id) {
       newItem.id = `${resourceName.substring(0, 4)}-${Date.now()}`;
@@ -479,7 +501,7 @@ const registerCrudRoutes = (resourceName: string, filename: string, defaults: an
     res.status(201).json(newItem);
   });
 
-  app.put(`/api/${resourceName}/:id`, async (req, res) => {
+  app.put(`/api/${resourceName}/:id`, verifyAdmin, async (req, res) => {
     const updatedFields = req.body;
     if (supabase) {
       try {
@@ -503,7 +525,7 @@ const registerCrudRoutes = (resourceName: string, filename: string, defaults: an
     res.json({ id: req.params.id, ...updatedFields });
   });
 
-  app.delete(`/api/${resourceName}/:id`, async (req, res) => {
+  app.delete(`/api/${resourceName}/:id`, verifyAdmin, async (req, res) => {
     if (supabase) {
       try {
         const { error } = await supabase.from(resourceName).delete().eq('id', req.params.id);
@@ -523,7 +545,7 @@ const registerCrudRoutes = (resourceName: string, filename: string, defaults: an
     res.json({ success: true, id: req.params.id });
   });
 
-  app.post(`/api/${resourceName}/reset`, async (req, res) => {
+  app.post(`/api/${resourceName}/reset`, verifyAdmin, async (req, res) => {
     if (supabase) {
       try {
         // Safe delete: delete records that have valid ids (which is all)
@@ -544,6 +566,16 @@ const registerCrudRoutes = (resourceName: string, filename: string, defaults: an
     res.json(defaults);
   });
 };
+
+// Admin Verification Endpoint
+app.post('/api/admin/verify', (req, res) => {
+  const { pin } = req.body;
+  if (pin === ADMIN_PIN) {
+    res.json({ success: true });
+  } else {
+    res.status(401).json({ error: 'Invalid PIN' });
+  }
+});
 
 // Register routes
 registerCrudRoutes('appointments', 'appointments.json', INITIAL_APPOINTMENTS);

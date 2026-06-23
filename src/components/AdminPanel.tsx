@@ -66,27 +66,29 @@ export default function AdminPanel() {
     addCondition,
     updateCondition,
     deleteCondition,
-    resetConditions
+    resetConditions,
+
+    adminPin,
+    setAdminPin
   } = useData();
 
   // Authentication states
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passwordInput, setPasswordInput] = useState("");
   const [authError, setAuthError] = useState("");
-  const [adminPin, setAdminPin] = useState(() => {
-    return localStorage.getItem("dr_dheeraj_admin_pin") || "admin123";
-  });
 
   // Check existing session
   useEffect(() => {
     const sessionToken = localStorage.getItem("dr_dheeraj_admin_session");
     if (sessionToken) {
-      const parsed = JSON.parse(sessionToken);
-      if (Date.now() - parsed.timestamp < 1000 * 60 * 60 * 4) { // 4 hour session
-        setIsAuthenticated(true);
-      } else {
-        localStorage.removeItem("dr_dheeraj_admin_session");
-      }
+      try {
+        const parsed = JSON.parse(sessionToken);
+        if (Date.now() - parsed.timestamp < 1000 * 60 * 60 * 4) { // 4 hour session
+          setIsAuthenticated(true);
+        } else {
+          localStorage.removeItem("dr_dheeraj_admin_session");
+        }
+      } catch (e) {}
     }
   }, []);
 
@@ -110,23 +112,36 @@ export default function AdminPanel() {
   const [activeAptDetails, setActiveAptDetails] = useState<Appointment | null>(null);
 
   // Security Login Handler
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (passwordInput === adminPin) {
-      setIsAuthenticated(true);
-      setAuthError("");
-      setPasswordInput("");
-      localStorage.setItem("dr_dheeraj_admin_session", JSON.stringify({
-        authenticated: true,
-        timestamp: Date.now()
-      }));
-    } else {
-      setAuthError("Invalid Security PIN Code. Please try again.");
+    try {
+      const res = await fetch('/api/admin/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: passwordInput })
+      });
+
+      if (res.ok) {
+        setIsAuthenticated(true);
+        setAuthError("");
+        setAdminPin(passwordInput);
+        localStorage.setItem("dr_dheeraj_admin_pin", passwordInput);
+        localStorage.setItem("dr_dheeraj_admin_session", JSON.stringify({
+          authenticated: true,
+          timestamp: Date.now()
+        }));
+        setPasswordInput("");
+      } else {
+        setAuthError("Invalid Security PIN Code. Please try again.");
+      }
+    } catch (err) {
+      setAuthError("Server verification failed. Please try again later.");
     }
   };
 
   const handleLogout = () => {
     setIsAuthenticated(false);
+    setAdminPin("");
     localStorage.removeItem("dr_dheeraj_admin_session");
   };
 
@@ -1063,12 +1078,12 @@ export default function AdminPanel() {
                 <Lock className="w-5 h-5 text-gold-400" /> Administrative Access Codes Configuration
               </h3>
               <p className="text-xs text-stone-400 leading-relaxed">
-                Configure your custom PIN passcode. Future login attempts on this device will require the newly assigned code.
+                The administrative PIN is verified securely on the server. To change it permanently for your website, update the <code className="text-gold-400 font-mono">ADMIN_PIN</code> environment variable in your Render dashboard. You can also set a temporary browser session override PIN below.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-[10px] font-mono text-stone-500 uppercase font-semibold">Active authorization passcode</label>
+                  <label className="text-[10px] font-mono text-stone-500 uppercase font-semibold">Active session passcode</label>
                   <input
                     type="text"
                     disabled
@@ -1078,10 +1093,10 @@ export default function AdminPanel() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-mono text-gold-400 uppercase font-semibold">New secure passcode</label>
+                  <label className="text-[10px] font-mono text-gold-400 uppercase font-semibold">Session override passcode</label>
                   <input
                     type="text"
-                    placeholder="Enter new PIN"
+                    placeholder="Enter override PIN"
                     id="new-admin-pin"
                     className="w-full bg-black/50 border border-gold-400/20 rounded-lg p-2.5 text-xs text-white font-mono text-center tracking-widest focus:outline-none focus:border-gold-400"
                   />
@@ -1097,14 +1112,14 @@ export default function AdminPanel() {
                       setAdminPin(el.value.trim());
                       localStorage.setItem("dr_dheeraj_admin_pin", el.value.trim());
                       el.value = "";
-                      alert("Admin access codes changed successfully!");
+                      alert("Session override PIN updated! If the server doesn't match this override, queries may return unauthorized.");
                     } else {
                       alert("Please specify a pin code that has at least 4 characters!");
                     }
                   }}
                   className="bg-gold-400/10 border border-gold-400/25 text-gold-300 hover:bg-gold-400 hover:text-black px-4.5 py-2 rounded-full text-xs font-bold transition-all cursor-pointer"
                 >
-                  Apply Passcode Updates
+                  Apply Session Override
                 </button>
               </div>
             </div>
