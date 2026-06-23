@@ -1,0 +1,324 @@
+import { motion } from "motion/react";
+import Logo from "./Logo";
+import { 
+  GraduationCap, 
+  Briefcase, 
+  Award, 
+  CheckCircle2, 
+  Users, 
+  HeartPulse, 
+  BookOpen, 
+  Compass, 
+  ShieldCheck,
+  Cpu
+} from "lucide-react";
+
+export default function AboutMe() {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+        delayChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" }
+    }
+  };
+
+  const educationalMilestones = [
+    {
+      degree: "Magister Chirurgiae (M.Ch) in Neurosurgery",
+      institution: "Govind Ballabh Pant Institute of Post Graduate Medical Education and Research (GIPMER), New Delhi",
+      period: "2020 - 2023",
+      location: "New Delhi",
+      details: "Specialized residency and rigorous surgical drilling at one of India's premier, highest-volume neurosurgical referral centers."
+    },
+    {
+      degree: "Master of Surgery (MS)",
+      institution: "Sawai Man Singh (SMS) Medical College, Jaipur",
+      period: "2017 - 2020",
+      location: "Jaipur, Rajasthan",
+      details: "In-depth clinical training in complex general and trauma surgery guidelines."
+    },
+    {
+      degree: "Bachelor of Medicine, Bachelor of Surgery (MBBS)",
+      institution: "BJ Government Medical College, Pune",
+      period: "2009 - 2014",
+      location: "Pune, Maharashtra",
+      details: "Solid medicine foundation at a highly reputed state institution."
+    }
+  ];
+
+  const executiveStrengths = [
+    {
+      title: "Full Endoscopic Spine Surgery (FESS)",
+      desc: "Mastery in monoportal endoscopic discectomy and neural decompressions. Able to operate through ultra-precision channels under 7mm."
+    },
+    {
+      title: "Advanced Microsurgery corridor",
+      desc: "Skilled in microscopic neurotrauma bypass, VP shunt installations, complex brain tumor excisions, and cerebral vascular malformation resets."
+    },
+    {
+      title: "Neuro-Endovascular Interventions",
+      desc: "Independently verified and competent in diagnostic (DSA) and advanced therapeutic procedures including micro-coiling, embolisation, and stenting."
+    }
+  ];
+
+  const majorAchievementsList = [
+    {
+      type: "Academic Book Chapter",
+      title: "Lumbar Canal Stenosis",
+      event: "Contributed a key instructional chapter to 'A Practical Manual on Full Endoscopic Spine Surgery', sharing clinical principles with peers."
+    },
+    {
+      type: "TYSA Orator Champion",
+      title: "Best Orator - Torrent Young Scholar Award",
+      event: "Conferred at the prestigious national TYSA 2023, Ahmedabad, testifying to excellent pediatric and neurological analytical delivery."
+    },
+    {
+      type: "DNACON First Prize",
+      title: "Best Award Paper & 1st Position in Neuro Quiz",
+      event: "Won dual highest-honours at DNACON-2023, New Delhi, validating experimental paper accuracy and deep neurosurgical diagnostic speed."
+    },
+    {
+      type: "Neurovascon Best Poster",
+      title: "Best Poster Award, Neurovascon-2023",
+      event: "Presented breakthrough findings on key cerebral and spinal endovascular stenting approaches in New Delhi."
+    }
+  ];
+
+  const memberships = [
+    "Neurosurgical Society of India (NSI)",
+    "Neurological Surgeons Society of India (NSSI)",
+    "Cerebrovascular Society of India (CVSI)",
+    "Skull Base Surgery Society of India (SBSSI)",
+    "Dandy International Neurosurgical Society (WFNS Affiliate)"
+  ];
+
+  return (
+    <section
+      id="about-section"
+      className="relative py-28 px-4 sm:px-6 md:px-8 border-t border-white/5 bg-gradient-to-b from-cosmic-bg via-[#050811] to-cosmic-bg overflow-hidden"
+    >
+      {/* Background spotlights & visual ambient grid lines */}
+      <div className="absolute top-1/4 right-[10%] w-[500px] h-[350px] bg-gold-glow opacity-10 blur-3xl rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/4 left-[5%] w-[450px] h-[350px] bg-sky-500/10 opacity-10 blur-3xl rounded-full pointer-events-none" />
+      
+      <div className="w-full max-w-6xl mx-auto relative z-10 space-y-16">
+        
+        {/* Editorial Title Blocks */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-end">
+          <div className="md:col-span-8 space-y-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-sky-400/20 bg-sky-400/5 text-sky-300">
+              <Compass className="w-3.5 h-3.5 text-sky-400" />
+              <span className="text-[10px] font-mono uppercase tracking-[0.2em] font-semibold">About the Surgeon-in-Chief</span>
+            </div>
+            <h2 className="font-display font-bold text-4xl sm:text-5xl text-white tracking-tight leading-none">
+              Decade of Academic Excellence & <span className="text-gold-400">700+ Successes.</span>
+            </h2>
+          </div>
+          <div className="md:col-span-4 text-left md:text-right pb-1">
+            <span className="font-mono text-xs text-gray-500 uppercase tracking-widest block">
+              TRAINED AT GIPMER, NEW DELHI
+            </span>
+          </div>
+        </div>
+
+        {/* Major Medical Bento Rows */}
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          className="grid grid-cols-1 lg:grid-cols-12 gap-8"
+        >
+          
+          {/* Column 1: Main Surgeon Credential and Resume Bio */}
+          <motion.div 
+            variants={itemVariants}
+            className="lg:col-span-4 flex flex-col justify-between p-6 sm:p-8 rounded-3xl glassmorphism border border-white/5 bg-gradient-to-br from-white/[0.02] to-transparent space-y-8 relative overflow-hidden"
+          >
+            {/* Visual shine overlay */}
+            <div className="absolute -top-32 -left-32 w-64 h-64 bg-gold-400/5 blur-3xl rounded-full pointer-events-none" />
+            
+            <div className="space-y-6">
+              {/* Official Brand Logo */}
+              <div className="flex justify-center border-b border-white/5 pb-6">
+                <Logo mode="full" className="scale-90" />
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-2xl bg-gold-400/10 border border-gold-400/25 flex items-center justify-center text-gold-400">
+                  <HeartPulse className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-display font-semibold text-xl text-white">Dr. Dheeraj Vishwakarma</h3>
+                  <p className="font-mono text-[9px] text-gray-400 uppercase tracking-widest mt-0.5">M.Ch Neurosurgery, MS, MBBS</p>
+                </div>
+              </div>
+
+              <p className="text-gray-300 text-xs sm:text-sm leading-relaxed font-sans">
+                Dr. Dheeraj Vishwakarma is a highly specialized neurosurgeon and endoscopic spine surgeon who completed his prestigious Magister Chirurgiae (M.Ch) training at GIPMER, New Delhi. 
+              </p>
+              
+              <p className="text-gray-400 text-xs leading-relaxed font-sans">
+                Bringing clinical pedigree and advanced procedural innovation, Dr. Dheeraj specializes in ultra-minimally invasive techniques. Through a keyhole incision under 7mm, he decompresses nerve routes cleanly—minimizing diagnostic hospital stay and returning mobility in hours.
+              </p>
+
+              <div className="pt-4 border-t border-white/5 space-y-4">
+                <div className="flex items-center gap-3">
+                  <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0" />
+                  <div>
+                    <p className="text-xs text-white font-medium">Top-tier Training</p>
+                    <p className="text-[10px] text-gray-500">M.Ch residency completed from elite GIPMER, Delhi</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Cpu className="w-5 h-5 text-sky-400 shrink-0" />
+                  <div>
+                    <p className="text-xs text-white font-medium">700+ Endoscopic Successes</p>
+                    <p className="text-[10px] text-gray-500">Documented back, neck and sciatica releases</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white/2 rounded-2xl p-4 border border-white/5 space-y-2">
+              <p className="font-mono text-[9px] text-gray-500 uppercase tracking-widest">high-volume residency output</p>
+              <p className="text-xs text-gray-300 font-sans leading-relaxed">
+                Managed a critical volume of <strong className="text-white">20+ neurosurgeries</strong> and outpatient operations of <strong className="text-white">400+ patients per week</strong> at a high volume referral center in New Delhi (2020-2023).
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Column 2: Rigorous Education & Experience Timelines */}
+          <motion.div 
+            variants={itemVariants}
+            className="lg:col-span-8 flex flex-col p-6 sm:p-8 rounded-3xl glassmorphism border border-white/5 bg-gradient-to-br from-sky-500/[0.01] to-transparent space-y-8"
+          >
+            <div className="flex items-center gap-2 text-gold-400">
+              <GraduationCap className="w-5 h-5" />
+              <h3 className="font-display font-medium text-lg text-white">Surgical Training & Degrees</h3>
+            </div>
+
+            <div className="relative border-l border-white/10 pl-6 sm:pl-8 ml-3 space-y-8">
+              {educationalMilestones.map((milestone, idx) => (
+                <div key={idx} className="relative group">
+                  {/* Timeline point node */}
+                  <div className="absolute -left-[31px] sm:-left-[39px] top-1 w-[9px] h-[9px] bg-sky-500 rounded-full border-4 border-cosmic-bg group-hover:bg-gold-400 transition-colors duration-200" />
+                  
+                  <div className="space-y-1.5 text-left">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <h4 className="font-display font-semibold text-sm sm:text-base text-white group-hover:text-gold-300 transition-colors">
+                        {milestone.degree}
+                      </h4>
+                      <span className="font-mono text-[10px] text-sky-400 bg-sky-500/10 px-2.5 py-0.5 rounded-full uppercase tracking-wider font-semibold shrink-0">
+                        {milestone.period}
+                      </span>
+                    </div>
+
+                    <p className="text-xs text-gray-400 font-medium">
+                      {milestone.institution} — <span className="text-gray-500">{milestone.location}</span>
+                    </p>
+                    
+                    <p className="text-[11px] text-gray-500 leading-relaxed font-sans max-w-2xl">
+                      {milestone.details}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="pt-6 border-t border-white/5 space-y-4">
+              <div className="flex items-center gap-2 text-sky-400">
+                <Briefcase className="w-5 h-5 text-sky-400" />
+                <h4 className="font-display font-semibold text-sm text-white">Clinical Strengths & Surgical Capabilities</h4>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {executiveStrengths.map((str, idx) => (
+                  <div key={idx} className="p-4 rounded-2xl bg-white/2 border border-white/5 space-y-1.5 hover:border-gold-400/20 transition-all duration-300">
+                    <p className="font-display text-xs text-gold-300 font-semibold">{str.title}</p>
+                    <p className="text-[10px] text-gray-400 leading-relaxed font-sans">{str.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+          </motion.div>
+
+        </motion.div>
+
+        {/* Achievements Timeline & Paper Contributions */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-6">
+          
+          {/* Awards & Chapters Bento Box */}
+          <div className="lg:col-span-8 flex flex-col p-6 sm:p-8 rounded-3xl glassmorphism border border-white/5 bg-gradient-to-br from-white/[0.01] to-transparent space-y-6">
+            <div className="flex items-center gap-2 text-gold-400">
+              <Award className="w-5 h-5" />
+              <h3 className="font-display font-medium text-lg text-white">Prestigious Awards & Academic Contributions</h3>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-left">
+              {majorAchievementsList.map((ach, idx) => (
+                <div key={idx} className="p-4 rounded-2xl border border-white/5 bg-white/[0.01] flex flex-col justify-between space-y-3 relative group hover:border-gold-400/20 transition-all duration-300">
+                  <div className="space-y-1">
+                    <span className="font-mono text-[8px] text-sky-400 uppercase tracking-widest font-bold">
+                      {ach.type}
+                    </span>
+                    <h4 className="font-display font-semibold text-xs text-white group-hover:text-gold-300 transition-colors mt-0.5">
+                      {ach.title}
+                    </h4>
+                  </div>
+                  <p className="text-[10px] text-gray-400 font-sans leading-relaxed">
+                    {ach.event}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Memberships Panel & Workshops */}
+          <div className="lg:col-span-4 flex flex-col p-6 sm:p-8 rounded-3xl glassmorphism border border-white/5 bg-gradient-to-br from-gold-400/[0.01] to-transparent justify-between space-y-6">
+            <div className="space-y-5">
+              <div className="flex items-center gap-2 text-gold-400">
+                <Users className="w-5 h-5" />
+                <h3 className="font-display font-medium text-lg text-white">Board Memberships</h3>
+              </div>
+              
+              <ul className="space-y-3 font-sans text-xs text-left">
+                {memberships.map((memb, idx) => (
+                  <li key={idx} className="flex items-center gap-2.5 text-gray-300">
+                    <CheckCircle2 className="w-4 h-4 text-gold-400 shrink-0" />
+                    <span className="leading-tight">{memb}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-white/2 border border-sky-400/10 text-left space-y-2">
+              <div className="flex items-center gap-2 text-sky-400">
+                <BookOpen className="w-4 h-4" />
+                <span className="font-mono text-[8px] uppercase tracking-widest font-bold">Active Continuous Study</span>
+              </div>
+              <p className="text-[10px] text-gray-400 leading-relaxed font-sans">
+                Dr. Dheeraj routinely participates in cadaveric workshops, live spine training symposia, and global neuroendovascular assemblies to continually perfect keyhole medical science.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+  );
+}

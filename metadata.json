@@ -1,0 +1,6 @@
+{
+  "name": "Dr. Dheeraj Vishwakarma - Cinematic Spine Care",
+  "description": "Premium cinematic web experience for Dr. Dheeraj Vishwakarma, recognized authority in Endoscopic Monoportal and Full Endoscopic Spine Surgery (FESS) in India.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
