@@ -108,7 +108,7 @@ export default function Navbar({ onOpenBooking, currentPage, onNavigate }: Navba
               className="bg-gradient-to-r from-gold-400 to-gold-500 text-black hover:from-gold-500 hover:to-gold-600 px-3 py-2 sm:px-5 sm:py-2.5 rounded-full text-[10px] sm:text-xs font-bold tracking-wider uppercase transition-all duration-300 shadow-[0_0_20px_rgba(193,161,113,0.15)] hover:scale-105 cursor-pointer flex items-center gap-1 sm:gap-1.5"
             >
               <CalendarCheck2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 text-black" />
-              <span className="hidden md:inline">Schedule Telehealth/In-person Consultation</span>
+              <span className="hidden md:inline">Schedule Consultation</span>
               <span className="hidden xs:inline md:hidden">Request Appointment</span>
               <span className="xs:hidden">Inquire</span>
             </button>

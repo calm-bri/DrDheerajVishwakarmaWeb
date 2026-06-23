@@ -89,10 +89,38 @@ export default function App() {
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
-  // SEO Page Title updates
+  // Dynamic SEO Page Title & Meta Description updates
   useEffect(() => {
-    document.title = "Dr. Dheeraj Vishwakarma - Best Endoscopic Spine Surgeon India";
-  }, []);
+    let title = "Dr. Dheeraj Vishwakarma - Best Endoscopic Spine Surgeon in India";
+    let desc = "Dr. Dheeraj Vishwakarma is a leading board-certified neurosurgeon specializing in Full Endoscopic Spine Surgery (FESS) & Minimally Invasive Spine Surgery (MISS) in India. Awake spine surgery, same-day walking recovery.";
+
+    switch (currentPage) {
+      case "about":
+        title = "About Dr. Dheeraj Vishwakarma | Credentials & Spine Care Experience";
+        desc = "Learn about Dr. Dheeraj Vishwakarma, India's premier board-certified neurosurgeon with 5,000+ operations and specialized training in endoscopic spinal surgery.";
+        break;
+      case "treatments":
+        title = "Advanced Endoscopic Spine Treatments & Procedures | Dr. Dheeraj Vishwakarma";
+        desc = "Discover FESS (Full Endoscopic Spine Surgery), minimally invasive spine procedures, and treatments for slipped disc, sciatica, and stenosis.";
+        break;
+      case "international":
+        title = "International Patients Spine Care Desk | Dr. Dheeraj Vishwakarma";
+        desc = "Comprehensive clinical support for global spine surgery patients. Keyhole spinal surgery in India with same-day walk milestones and translation desk.";
+        break;
+      case "gallery":
+        title = "Endoscopic Spine Surgical Case Gallery | Dr. Dheeraj Vishwakarma";
+        desc = "Browse surgical case logs, 4K endoscopy recordings, and patient mobility testimonials showing rapid recovery milestones post spine release.";
+        break;
+    }
+
+    document.title = title;
+    
+    // Update head meta description tag for search indexing
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute("content", desc);
+    }
+  }, [currentPage]);
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-cosmic-bg text-white font-sans selection:bg-gold-400 selection:text-black">

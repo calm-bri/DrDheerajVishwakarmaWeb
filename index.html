@@ -29,7 +29,36 @@
     <link rel="icon" type="image/png" href="/logo.png" />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Semantic SEO Fallback (Parsed by Search Crawlers, Replaced by React on mount) -->
+      <div style="display: none;" aria-hidden="true">
+        <header>
+          <h1>Dr. Dheeraj Vishwakarma - Best Endoscopic Spine Surgeon in India</h1>
+          <p>Dr. Dheeraj Vishwakarma is a leading board-certified neurosurgeon specializing in Full Endoscopic Spine Surgery (FESS) & Minimally Invasive Spine Surgery (MISS) in India. Get stitchless, awake spine surgery with same-day walking recovery.</p>
+        </header>
+        <main>
+          <section>
+            <h2>Clinical Specialty & Techniques</h2>
+            <ul>
+              <li>Full Endoscopic Spine Surgery (FESS)</li>
+              <li>Endoscopic Monoportal Spine Surgery</li>
+              <li>Minimally Invasive Spine Surgery (MISS)</li>
+              <li>Sciatica Decompression & Trapped Root Release</li>
+              <li>Slip Disc Treatment & Micro-discectomy Care</li>
+              <li>Awake Same-Day Spinal Decompression</li>
+            </ul>
+          </section>
+          <section>
+            <h2>About Dr. Dheeraj Vishwakarma</h2>
+            <p>Board-certified spinal neurosurgeon with extensive academic credentials (M.Ch Neurosurgery) and over 5,000 completed spine release operations. Dedicated to restoring patient motility within 2 hours of post-op milestones.</p>
+            <p>Serving patients across primary outpatient centers and quaternary care hospitals in India, including international patient desk support.</p>
+          </section>
+          <footer>
+            <p>Contact prioritization desk: +91 99993 45892 | consult@drdheerajspine.com</p>
+          </footer>
+        </main>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

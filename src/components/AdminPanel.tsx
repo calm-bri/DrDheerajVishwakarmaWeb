@@ -29,7 +29,10 @@ import {
   Sliders,
   ChevronRight,
   LogOut,
-  UploadCloud
+  UploadCloud,
+  Globe,
+  Eye,
+  Download
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { ShowcaseItem } from "./Gallery";
@@ -100,6 +103,11 @@ export default function AdminPanel() {
   const [isOpenForm, setIsOpenForm] = useState(false);
   const [formType, setFormType] = useState<"appointment" | "showcase" | "faq" | "testimonial" | "condition">("appointment");
   const [isUploading, setIsUploading] = useState(false);
+
+  // Calendar view states
+  const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
+  const [calendarDate, setCalendarDate] = useState(() => new Date(2026, 5, 23)); // Set to June 2026 to match preloaded appointments
+  const [activeAptDetails, setActiveAptDetails] = useState<Appointment | null>(null);
 
   // Security Login Handler
   const handleLogin = (e: React.FormEvent) => {
@@ -178,16 +186,18 @@ export default function AdminPanel() {
     setIsOpenForm(true);
   };
 
-  const openCreateModal = (type: "appointment" | "showcase" | "faq" | "testimonial" | "condition") => {
+  const openCreateModal = (type: "appointment" | "showcase" | "faq" | "testimonial" | "condition", prefillData?: any) => {
     const emptyModels = {
-      appointment: { fullName: "", email: "", phone: "", selectedTreatment: "fess", symptoms: "", sessionType: "video", isInternational: false, status: "pending" },
+      appointment: { fullName: "", email: "", phone: "", selectedTreatment: "fess", symptoms: "", sessionType: "video", isInternational: false, status: "pending", bookingDate: "", bookingTime: "11:30 AM" },
       showcase: { id: `sc-${Date.now()}`, title: "", subtitle: "", description: "", category: "surgical", location: "Jaipur Clinic", date: "May 2026", imageUrl: "", sizeClass: "md:col-span-1 md:row-span-1", badge: "New Case" },
       faq: { id: `faq-${Date.now()}`, question: "", answer: "", category: "technology" },
       testimonial: { id: `test-${Date.now()}`, name: "", location: "Google Review", condition: "", quote: "", recoverySummary: "", rating: 5 },
       condition: { id: `cond-${Date.now()}`, name: "", shortDescription: "", fullDescription: "", symptoms: [], treatmentMetric: "99% Precision", recoveryTime: "Walk Same Day", detailedKey: "", iconName: "Zap" }
     };
 
-    setEditingItem({ type, id: "", data: emptyModels[type] });
+    const mergedData = prefillData ? { ...emptyModels[type], ...prefillData } : emptyModels[type];
+
+    setEditingItem({ type, id: "", data: mergedData });
     setFormType(type);
     setIsOpenForm(true);
   };
@@ -434,7 +444,33 @@ export default function AdminPanel() {
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-black/20 p-4 rounded-2xl border border-white/5">
               {/* Filters */}
-              <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+              <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+                {/* View Switcher */}
+                <div className="flex bg-white/5 border border-white/10 rounded-xl p-1 shrink-0 mr-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setViewMode("list")}
+                    className={`px-3 py-1 rounded-lg text-xs font-semibold font-mono tracking-wider transition-all cursor-pointer flex items-center gap-1 ${
+                      viewMode === "list"
+                        ? "bg-white text-black"
+                        : "text-stone-400 hover:text-white"
+                    }`}
+                  >
+                    <Sliders className="w-3 h-3" /> List
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode("calendar")}
+                    className={`px-3 py-1 rounded-lg text-xs font-semibold font-mono tracking-wider transition-all cursor-pointer flex items-center gap-1 ${
+                      viewMode === "calendar"
+                        ? "bg-white text-black"
+                        : "text-stone-400 hover:text-white"
+                    }`}
+                  >
+                    <Calendar className="w-3 h-3" /> Calendar
+                  </button>
+                </div>
+
                 {["all", "pending", "confirmed", "rescheduled", "cancelled"].map((status) => (
                   <button
                     key={status}
@@ -470,108 +506,323 @@ export default function AdminPanel() {
                 </button>
               </div>
             </div>
-
-            {/* List */}
-            {filteredAppointments.length === 0 ? (
-              <div className="text-center py-12 text-stone-500">
-                <Calendar className="w-10 h-10 mx-auto mb-3 text-stone-600" />
-                <p className="text-sm font-medium">No appointments fit active filters</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {filteredAppointments.map((apt) => (
-                  <div
-                    key={apt.id}
-                    className="border border-white/5 rounded-2xl bg-gradient-to-r from-cosmic-card/40 to-cosmic-card/25 p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-6 hover:border-gold-400/25 duration-200"
-                  >
-                    <div className="space-y-3.5 flex-1 text-left">
-                      {/* Meta header */}
-                      <div className="flex flex-wrap items-center gap-2.5">
-                        <span className={`px-2.5 py-0.5 rounded text-[10px] font-mono tracking-wider uppercase font-semibold ${getStatusBadgeClass(apt.status)}`}>
-                          {apt.status}
-                        </span>
-                        <span className="text-[10px] font-mono text-stone-400 flex items-center gap-1">
-                          <Clock className="w-3 h-3 text-sky-400" /> Planned: {apt.bookingDate} @ {apt.bookingTime}
-                        </span>
-                        {apt.isInternational && (
-                          <span className="bg-sky-400/10 border border-sky-450/20 text-sky-305 px-2 py-0.5 rounded text-[9px] font-mono font-extrabold uppercase">
-                            Global Care
+            {/* Conditional Views */}
+            {viewMode === "list" ? (
+              /* List View */
+              filteredAppointments.length === 0 ? (
+                <div className="text-center py-12 text-stone-500">
+                  <Calendar className="w-10 h-10 mx-auto mb-3 text-stone-600" />
+                  <p className="text-sm font-medium">No appointments fit active filters</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {filteredAppointments.map((apt) => (
+                    <div
+                      key={apt.id}
+                      className="border border-white/5 rounded-2xl bg-gradient-to-r from-cosmic-card/40 to-cosmic-card/25 p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-6 hover:border-gold-400/25 duration-200"
+                    >
+                      <div className="space-y-3.5 flex-1 text-left">
+                        {/* Meta header */}
+                        <div className="flex flex-wrap items-center gap-2.5">
+                          <span className={`px-2.5 py-0.5 rounded text-[10px] font-mono tracking-wider uppercase font-semibold ${getStatusBadgeClass(apt.status)}`}>
+                            {apt.status}
                           </span>
+                          <span className="text-[10px] font-mono text-stone-400 flex items-center gap-1">
+                            <Clock className="w-3 h-3 text-sky-400" /> Planned: {apt.bookingDate} @ {apt.bookingTime}
+                          </span>
+                          {apt.isInternational && (
+                            <span className="bg-sky-400/10 border border-sky-450/20 text-sky-305 px-2 py-0.5 rounded text-[9px] font-mono font-extrabold uppercase">
+                              Global Care
+                            </span>
+                          )}
+                          <span className="text-stone-650 font-mono text-[10px]">ID: {apt.id}</span>
+                        </div>
+
+                        {/* Name Card */}
+                        <div>
+                          <h3 className="font-display text-base font-semibold text-white">
+                            {apt.fullName}
+                          </h3>
+                          {/* Contacts */}
+                          <div className="flex flex-wrap gap-4 mt-1 text-xs text-stone-400">
+                            <span className="flex items-center gap-1"><Phone className="w-3 h-3 text-gold-400/80" /> {apt.phone}</span>
+                            <span className="flex items-center gap-1"><Mail className="w-3 h-3 text-sky-450/80" /> {apt.email}</span>
+                            <span className="flex items-center gap-1"><Briefcase className="w-3 h-3 text-stone-500" /> Triage: <strong className="text-stone-300 font-medium uppercase font-mono text-[10px] ml-0.5">{apt.selectedTreatment}</strong></span>
+                          </div>
+                        </div>
+
+                        {/* Symptoms */}
+                        <p className="text-xs text-stone-300 bg-black/15 p-2.5 rounded-xl border border-white/2 outline-none">
+                          <strong className="text-stone-550 block text-[9.5px] uppercase font-mono tracking-wider mb-1">Symptoms profile & scan notes:</strong>
+                          {apt.symptoms || "No secondary detailed clinical notes filed."}
+                        </p>
+
+                        {/* Attachment */}
+                        {apt.fileName && (
+                          <div className="flex flex-wrap items-center gap-2 bg-emerald-500/5 px-3 py-1.5 rounded-xl border border-emerald-500/15 w-fit text-emerald-450 text-[10px] font-mono select-none">
+                            <Paperclip className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                            <span className="max-w-[200px] truncate text-stone-300">MRI: {apt.fileName}</span>
+                            <div className="flex items-center gap-1.5 border-l border-emerald-500/20 pl-2.5 ml-1">
+                              <a
+                                href={`/uploads/${apt.fileName}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-1 text-sky-400 hover:text-sky-300 transition-colors cursor-pointer px-1 py-0.5"
+                                title="Preview file in a new tab"
+                              >
+                                <Eye className="w-3.5 h-3.5" />
+                                <span>Preview</span>
+                              </a>
+                              <span className="text-emerald-500/30">|</span>
+                              <a
+                                href={`/uploads/${apt.fileName}`}
+                                download
+                                className="flex items-center gap-1 text-emerald-400 hover:text-emerald-300 transition-colors cursor-pointer px-1 py-0.5"
+                                title="Download file directly"
+                              >
+                                <Download className="w-3.5 h-3.5" />
+                                <span>Download</span>
+                              </a>
+                            </div>
+                          </div>
                         )}
-                        <span className="text-stone-650 font-mono text-[10px]">ID: {apt.id}</span>
                       </div>
 
-                      {/* Name Card */}
-                      <div>
-                        <h3 className="font-display text-base font-semibold text-white">
-                          {apt.fullName}
-                        </h3>
-                        {/* Contacts */}
-                        <div className="flex flex-wrap gap-4 mt-1 text-xs text-stone-400">
-                          <span className="flex items-center gap-1"><Phone className="w-3 h-3 text-gold-400/80" /> {apt.phone}</span>
-                          <span className="flex items-center gap-1"><Mail className="w-3 h-3 text-sky-450/80" /> {apt.email}</span>
-                          <span className="flex items-center gap-1"><Briefcase className="w-3 h-3 text-stone-500" /> Triage: <strong className="text-stone-300 font-medium uppercase font-mono text-[10px] ml-0.5">{apt.selectedTreatment}</strong></span>
+                      {/* Quick CRUD controls */}
+                      <div className="flex flex-wrap lg:flex-col gap-2 shrink-0 justify-end pt-4 lg:pt-0 border-t lg:border-t-0 border-white/5">
+                        <div className="flex gap-1.5 w-full justify-end">
+                          <button
+                            onClick={() => handleConfirmAppointment(apt.id)}
+                            className="px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold bg-emerald-500 hover:bg-emerald-600 text-black uppercase cursor-pointer"
+                            title="Confirm slot"
+                          >
+                            Confirm
+                          </button>
+                          <button
+                            onClick={() => handleRescheduleAppointment(apt.id)}
+                            className="px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold bg-blue-500 hover:bg-blue-600 text-black uppercase cursor-pointer"
+                            title="Reschedule slot"
+                          >
+                            Reschedule
+                          </button>
+                          <button
+                            onClick={() => handleCancelAppointment(apt.id)}
+                            className="px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold bg-amber-500 hover:bg-amber-600 text-black uppercase cursor-pointer"
+                            title="Flag as Canceled"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+
+                        <div className="flex gap-1.5 w-full justify-end">
+                          <button
+                            onClick={() => setActiveAptDetails(apt)}
+                            className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold bg-sky-500/10 hover:bg-sky-500 text-sky-400 hover:text-white border border-sky-500/20 cursor-pointer"
+                            title="View clinical details"
+                          >
+                            <FileText className="w-3 h-3" /> View Details
+                          </button>
+                          <button
+                            onClick={() => openEditModal("appointment", apt.id, apt)}
+                            className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold bg-white/5 hover:bg-white/10 text-stone-300 border border-white/10 cursor-pointer"
+                          >
+                            <Edit2 className="w-3 h-3" /> Edit Profile
+                          </button>
+                          <button
+                            onClick={() => deleteItem("appointment", apt.id)}
+                            className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold bg-rose-500/10 hover:bg-rose-500 text-rose-450 hover:text-white border border-rose-500/20 cursor-pointer"
+                          >
+                            <Trash2 className="w-3 h-3" /> Delete
+                          </button>
                         </div>
                       </div>
-
-                      {/* Symptoms */}
-                      <p className="text-xs text-stone-300 bg-black/15 p-2.5 rounded-xl border border-white/2 outline-none">
-                        <strong className="text-stone-550 block text-[9.5px] uppercase font-mono tracking-wider mb-1">Symptoms profile & scan notes:</strong>
-                        {apt.symptoms || "No secondary detailed clinical notes filed."}
-                      </p>
-
-                      {/* Attachment */}
-                      {apt.fileName && (
-                        <div className="flex items-center gap-2 bg-emerald-500/5 px-2.5 py-1.5 rounded-lg border border-emerald-500/15 w-fit text-emerald-400 text-[10px] font-mono">
-                          <Paperclip className="w-3.5 h-3.5" />
-                          <span>ATTACHED SECURE MRI: {apt.fileName}</span>
-                        </div>
-                      )}
                     </div>
-
-                    {/* Quick CRUD controls */}
-                    <div className="flex flex-wrap lg:flex-col gap-2 shrink-0 justify-end pt-4 lg:pt-0 border-t lg:border-t-0 border-white/5">
-                      <div className="flex gap-1.5 w-full justify-end">
-                        <button
-                          onClick={() => handleConfirmAppointment(apt.id)}
-                          className="px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold bg-emerald-500 hover:bg-emerald-600 text-black uppercase cursor-pointer"
-                          title="Confirm slot"
-                        >
-                          Confirm
-                        </button>
-                        <button
-                          onClick={() => handleRescheduleAppointment(apt.id)}
-                          className="px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold bg-blue-500 hover:bg-blue-600 text-black uppercase cursor-pointer"
-                          title="Reschedule slot"
-                        >
-                          Reschedule
-                        </button>
-                        <button
-                          onClick={() => handleCancelAppointment(apt.id)}
-                          className="px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold bg-amber-500 hover:bg-amber-600 text-black uppercase cursor-pointer"
-                          title="Flag as Canceled"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-
-                      <div className="flex gap-1.5 w-full justify-end">
-                        <button
-                          onClick={() => openEditModal("appointment", apt.id, apt)}
-                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold bg-white/5 hover:bg-white/10 text-stone-300 border border-white/10 cursor-pointer"
-                        >
-                          <Edit2 className="w-3 h-3" /> Edit Profile
-                        </button>
-                        <button
-                          onClick={() => deleteItem("appointment", apt.id)}
-                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white border border-rose-500/20 cursor-pointer"
-                        >
-                          <Trash2 className="w-3 h-3" /> Delete
-                        </button>
-                      </div>
-                    </div>
+                  ))}
+                </div>
+              )
+            ) : (
+              /* Calendar View */
+              <div className="space-y-4 text-left">
+                {/* Month navigation controls */}
+                <div className="flex justify-between items-center bg-black/30 p-4 rounded-2xl border border-white/5">
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const prevDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth() - 1, 1);
+                        setCalendarDate(prevDate);
+                      }}
+                      className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-stone-300 hover:text-white cursor-pointer transition-colors"
+                      title="Previous month"
+                    >
+                      <ChevronRight className="w-4 h-4 rotate-180" />
+                    </button>
+                    <h3 className="font-display font-bold text-sm sm:text-base text-white tracking-wide min-w-[130px] text-center">
+                      {calendarDate.toLocaleString("default", { month: "long", year: "numeric" })}
+                    </h3>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const nextDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth() + 1, 1);
+                        setCalendarDate(nextDate);
+                      }}
+                      className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-stone-300 hover:text-white cursor-pointer transition-colors"
+                      title="Next month"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
                   </div>
-                ))}
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        // Reset to June 23, 2026 (matching mockup data dates)
+                        setCalendarDate(new Date(2026, 5, 23));
+                      }}
+                      className="px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-mono font-medium text-stone-300 hover:text-white transition-colors cursor-pointer border border-white/5"
+                    >
+                      Today
+                    </button>
+                  </div>
+                </div>
+
+                {/* Days of the week headings */}
+                <div className="grid grid-cols-7 gap-1 text-center font-mono text-[10px] tracking-widest text-stone-400 font-bold uppercase py-2 bg-black/10 rounded-xl border border-white/5">
+                  {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((dayName) => (
+                    <div key={dayName} className="py-1">
+                      {dayName}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Calendar grid cells */}
+                <div className="grid grid-cols-7 gap-1 border border-white/5 bg-white/5 rounded-2xl overflow-hidden shadow-2xl">
+                  {(() => {
+                    const year = calendarDate.getFullYear();
+                    const month = calendarDate.getMonth();
+                    const numDays = new Date(year, month + 1, 0).getDate();
+                    const startDayOfWeek = new Date(year, month, 1).getDay();
+
+                    const prevMonthNumDays = new Date(year, month, 0).getDate();
+                    const prevDays = [];
+                    for (let i = startDayOfWeek - 1; i >= 0; i--) {
+                      prevDays.push({
+                        day: prevMonthNumDays - i,
+                        month: month === 0 ? 11 : month - 1,
+                        year: month === 0 ? year - 1 : year,
+                        isCurrentMonth: false,
+                      });
+                    }
+
+                    const currentDays = [];
+                    for (let i = 1; i <= numDays; i++) {
+                      currentDays.push({
+                        day: i,
+                        month,
+                        year,
+                        isCurrentMonth: true,
+                      });
+                    }
+
+                    const nextDaysCount = 42 - (prevDays.length + currentDays.length);
+                    const nextDays = [];
+                    for (let i = 1; i <= nextDaysCount; i++) {
+                      nextDays.push({
+                        day: i,
+                        month: month === 11 ? 0 : month + 1,
+                        year: month === 11 ? year + 1 : year,
+                        isCurrentMonth: false,
+                      });
+                    }
+
+                    const allCalendarDays = [...prevDays, ...currentDays, ...nextDays];
+
+                    return allCalendarDays.map((cell, idx) => {
+                      const dateStr = `${cell.year}-${String(cell.month + 1).padStart(2, "0")}-${String(cell.day).padStart(2, "0")}`;
+                      const cellApts = filteredAppointments.filter(
+                        (apt) => apt.bookingDate === dateStr
+                      );
+                      const isToday =
+                        cell.day === new Date().getDate() &&
+                        cell.month === new Date().getMonth() &&
+                        cell.year === new Date().getFullYear();
+
+                      return (
+                        <div
+                          key={idx}
+                          onClick={() => {
+                            if (cell.isCurrentMonth) {
+                              openCreateModal("appointment", { bookingDate: dateStr });
+                            }
+                          }}
+                          className={`min-h-[105px] xs:min-h-[125px] md:min-h-[145px] p-2 bg-cosmic-card/30 flex flex-col justify-between transition-all duration-200 border border-white/5 relative group cursor-pointer hover:bg-white/5 ${
+                            !cell.isCurrentMonth ? "opacity-35 pointer-events-none bg-black/10" : ""
+                          }`}
+                        >
+                          {/* Day Number and Add Appointment button */}
+                          <div className="flex justify-between items-start">
+                            <span
+                              className={`text-xs font-mono font-bold flex items-center justify-center ${
+                                isToday
+                                  ? "bg-gold-400 text-black rounded-full w-5 h-5"
+                                  : "text-stone-300"
+                              }`}
+                            >
+                              {cell.day}
+                            </span>
+                            {cell.isCurrentMonth && (
+                              <button
+                                type="button"
+                                className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 rounded bg-white/5 hover:bg-white/10 text-stone-400 hover:text-white"
+                                title="Add appointment direct on this day"
+                              >
+                                <Plus className="w-3 h-3" />
+                              </button>
+                            )}
+                          </div>
+
+                          {/* Appointments stack container */}
+                          <div className="mt-2 space-y-1 overflow-y-auto max-h-[85px] scrollbar-thin select-none">
+                            {cellApts.map((apt) => {
+                              let statusDot = "bg-stone-500";
+                              let statusBg = "bg-stone-500/10 border-stone-500/20 text-stone-400";
+                              if (apt.status === "confirmed") {
+                                statusDot = "bg-emerald-450";
+                                statusBg = "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20";
+                              } else if (apt.status === "pending") {
+                                statusDot = "bg-amber-450";
+                                statusBg = "bg-amber-500/10 border-amber-500/20 text-amber-450 hover:bg-amber-500/20";
+                              } else if (apt.status === "rescheduled") {
+                                statusDot = "bg-blue-450";
+                                statusBg = "bg-blue-500/10 border-blue-500/20 text-blue-450 hover:bg-blue-500/20";
+                              } else if (apt.status === "cancelled") {
+                                statusDot = "bg-rose-450";
+                                statusBg = "bg-rose-500/10 border-rose-500/20 text-rose-450 hover:bg-rose-500/20";
+                              }
+
+                              return (
+                                <button
+                                  key={apt.id}
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setActiveAptDetails(apt);
+                                  }}
+                                  className={`w-full text-left px-1.5 py-1 rounded text-[9px] font-medium leading-tight truncate border flex items-center gap-1.5 transition-all cursor-pointer ${statusBg}`}
+                                >
+                                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${statusDot}`} />
+                                  <span className="font-bold font-mono opacity-85">{apt.bookingTime}</span>
+                                  <span className="truncate">{apt.fullName}</span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    });
+                  })()}
+                </div>
               </div>
             )}
           </div>
@@ -1549,6 +1800,176 @@ export default function AdminPanel() {
                 </div>
 
               </form>
+            </motion.div>
+          </div>
+        )}
+        {/* CALENDAR APPOINTMENT DETAILS PANEL/OVERLAY */}
+        {activeAptDetails && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative w-full max-w-lg bg-cosmic-card border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.85)] p-6 sm:p-8 text-left overflow-y-auto max-h-[92vh]"
+            >
+              <button
+                type="button"
+                onClick={() => setActiveAptDetails(null)}
+                className="absolute top-5 right-5 text-stone-400 hover:text-white p-2 hover:bg-white/5 rounded-full cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <div className="space-y-6">
+                <div>
+                  <div className="flex flex-wrap items-center gap-2 mb-2">
+                    <span className={`px-2.5 py-0.5 rounded text-[10px] font-mono tracking-wider uppercase font-semibold ${getStatusBadgeClass(activeAptDetails.status)}`}>
+                      {activeAptDetails.status}
+                    </span>
+                    <span className="text-[10px] font-mono text-stone-450 flex items-center gap-1">
+                      <Clock className="w-3 h-3 text-sky-400" /> Planned: {activeAptDetails.bookingDate} @ {activeAptDetails.bookingTime}
+                    </span>
+                    {activeAptDetails.isInternational && (
+                      <span className="bg-sky-400/10 border border-sky-450/20 text-sky-305 px-2 py-0.5 rounded text-[9px] font-mono font-extrabold uppercase">
+                        Global Care
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="font-display text-2xl font-bold text-white tracking-tight leading-tight">
+                    {activeAptDetails.fullName}
+                  </h3>
+                  <p className="text-stone-500 font-mono text-[9px] mt-0.5">Appointment ID: {activeAptDetails.id}</p>
+                </div>
+
+                {/* Key Information Fields */}
+                <div className="grid grid-cols-2 gap-4 text-xs bg-black/25 p-4 rounded-xl border border-white/5">
+                  <div className="space-y-1">
+                    <span className="text-stone-500 block uppercase font-mono text-[9px] tracking-wider">Contact Phone</span>
+                    <span className="text-stone-200 font-medium select-all flex items-center gap-1.5">
+                      <Phone className="w-3.5 h-3.5 text-gold-400" /> {activeAptDetails.phone}
+                    </span>
+                  </div>
+                  <div className="space-y-1">
+                    <span className="text-stone-500 block uppercase font-mono text-[9px] tracking-wider">Email Address</span>
+                    <span className="text-stone-200 font-medium select-all flex items-center gap-1.5 truncate">
+                      <Mail className="w-3.5 h-3.5 text-sky-450" /> {activeAptDetails.email}
+                    </span>
+                  </div>
+                  <div className="space-y-1">
+                    <span className="text-stone-500 block uppercase font-mono text-[9px] tracking-wider">Triage Specialty</span>
+                    <span className="text-gold-300 font-semibold uppercase font-mono text-[10px] flex items-center gap-1.5">
+                      <Briefcase className="w-3.5 h-3.5 text-stone-500" /> {activeAptDetails.selectedTreatment}
+                    </span>
+                  </div>
+                  <div className="space-y-1">
+                    <span className="text-stone-500 block uppercase font-mono text-[9px] tracking-wider">Consultation Mode</span>
+                    <span className="text-stone-200 font-medium capitalize flex items-center gap-1.5">
+                      <Globe className="w-3.5 h-3.5 text-sky-400" /> {activeAptDetails.sessionType} consult
+                    </span>
+                  </div>
+                </div>
+
+                {/* Symptoms notes */}
+                <div className="space-y-2">
+                  <h4 className="text-stone-400 font-bold font-mono text-[10px] uppercase tracking-widest">Symptoms & Clinical Notes</h4>
+                  <p className="text-xs text-stone-300 bg-black/15 p-3.5 rounded-xl border border-white/2 leading-relaxed">
+                    {activeAptDetails.symptoms || "No secondary detailed clinical notes filed."}
+                  </p>
+                  {/* Attachment file */}
+                  {activeAptDetails.fileName && (
+                    <div className="flex flex-wrap items-center gap-2 bg-emerald-500/5 px-3 py-2 rounded-xl border border-emerald-500/15 w-fit text-emerald-450 text-[10.5px] font-mono select-none">
+                      <Paperclip className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <span className="max-w-[220px] truncate text-stone-300">MRI: {activeAptDetails.fileName}</span>
+                      <div className="flex items-center gap-1.5 border-l border-emerald-500/20 pl-2.5 ml-1">
+                        <a
+                          href={`/uploads/${activeAptDetails.fileName}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 text-sky-400 hover:text-sky-300 transition-colors cursor-pointer px-1 py-0.5"
+                          title="Preview file in a new tab"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          <span>Preview</span>
+                        </a>
+                        <span className="text-emerald-500/30">|</span>
+                        <a
+                          href={`/uploads/${activeAptDetails.fileName}`}
+                          download
+                          className="flex items-center gap-1 text-emerald-400 hover:text-emerald-300 transition-colors cursor-pointer px-1 py-0.5"
+                          title="Download file directly"
+                        >
+                          <Download className="w-3.5 h-3.5" />
+                          <span>Download</span>
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Actions Grid */}
+                <div className="pt-4 border-t border-white/5 flex flex-col gap-3">
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleConfirmAppointment(activeAptDetails.id);
+                        setActiveAptDetails({ ...activeAptDetails, status: "confirmed" });
+                      }}
+                      disabled={activeAptDetails.status === "confirmed"}
+                      className="flex-1 py-2.5 rounded-xl text-xs font-mono font-bold bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 disabled:hover:bg-emerald-500 text-black uppercase cursor-pointer transition-colors"
+                    >
+                      Confirm
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleRescheduleAppointment(activeAptDetails.id);
+                        setActiveAptDetails(null);
+                      }}
+                      className="flex-1 py-2.5 rounded-xl text-xs font-mono font-bold bg-blue-500 hover:bg-blue-600 text-black uppercase cursor-pointer transition-colors"
+                    >
+                      Reschedule
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleCancelAppointment(activeAptDetails.id);
+                        setActiveAptDetails({ ...activeAptDetails, status: "cancelled" });
+                      }}
+                      disabled={activeAptDetails.status === "cancelled"}
+                      className="flex-1 py-2.5 rounded-xl text-xs font-mono font-bold bg-amber-500 hover:bg-amber-600 disabled:opacity-50 disabled:hover:bg-amber-500 text-black uppercase cursor-pointer transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const id = activeAptDetails.id;
+                        const data = activeAptDetails;
+                        setActiveAptDetails(null);
+                        openEditModal("appointment", id, data);
+                      }}
+                      className="flex-1 py-2.5 rounded-xl text-xs font-mono font-bold bg-white/5 hover:bg-white/10 text-stone-300 border border-white/10 cursor-pointer flex items-center justify-center gap-1.5"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" /> Edit Profile
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const id = activeAptDetails.id;
+                        setActiveAptDetails(null);
+                        deleteItem("appointment", id);
+                      }}
+                      className="flex-1 py-2.5 rounded-xl text-xs font-mono font-bold bg-rose-500/10 hover:bg-rose-500 text-rose-450 hover:text-white border border-rose-500/20 cursor-pointer flex items-center justify-center gap-1.5"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" /> Delete Record
+                    </button>
+                  </div>
+                </div>
+              </div>
             </motion.div>
           </div>
         )}

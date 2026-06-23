@@ -31,15 +31,40 @@ export default function BookingModal({ isOpen, onClose, preferredTreatmentId = "
     { value: "cervical-lumbar", label: "Cervical & Lumbar Complex Care" }
   ];
 
+  const [uploadedFileName, setUploadedFileName] = useState("");
+
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setIsUploading(true);
-      // Simulate file check and upload
-      setTimeout(() => {
-        setSelectedFile(file);
+
+      fetch('/api/upload', {
+        method: 'POST',
+        headers: {
+          'x-file-name': file.name
+        },
+        body: file
+      })
+      .then(res => {
+        if (!res.ok) throw new Error("Upload failed");
+        return res.json();
+      })
+      .then(data => {
+        if (data.url) {
+          const savedName = data.url.replace('/uploads/', '');
+          setUploadedFileName(savedName);
+          setSelectedFile(file);
+        } else {
+          alert("Failed to upload scan. Please try again.");
+        }
+      })
+      .catch(err => {
+        console.error("File upload error:", err);
+        alert("Upload error. Please try again.");
+      })
+      .finally(() => {
         setIsUploading(false);
-      }, 700);
+      });
     }
   };
 
@@ -55,7 +80,7 @@ export default function BookingModal({ isOpen, onClose, preferredTreatmentId = "
       symptoms: symptoms || "No custom symptoms description provided.",
       sessionType,
       isInternational,
-      fileName: selectedFile ? selectedFile.name : undefined
+      fileName: uploadedFileName || undefined
     });
 
     setFormSubmitted(true);
