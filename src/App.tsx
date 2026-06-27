@@ -92,12 +92,12 @@ export default function App() {
   // Dynamic SEO Page Title & Meta Description updates
   useEffect(() => {
     let title = "Dr. Dheeraj Vishwakarma - Best Endoscopic Spine Surgeon in India";
-    let desc = "Dr. Dheeraj Vishwakarma is a leading board-certified neurosurgeon specializing in Full Endoscopic Spine Surgery (FESS) & Minimally Invasive Spine Surgery (MISS) in India. Awake spine surgery, same-day walking recovery.";
+    let desc = "Dr. Dheeraj Vishwakarma is India's leading Endoscopic Spine Specialist & Board-Certified Neurosurgeon specializing in FESS (Full Endoscopic Spine Surgery) and stitchless <8mm spine care. Same-day walking recovery.";
 
     switch (currentPage) {
       case "about":
         title = "About Dr. Dheeraj Vishwakarma | Credentials & Spine Care Experience";
-        desc = "Learn about Dr. Dheeraj Vishwakarma, India's premier board-certified neurosurgeon with 5,000+ operations and specialized training in endoscopic spinal surgery.";
+        desc = "Learn about Dr. Dheeraj Vishwakarma, India's premier Endoscopic Spine Surgeon & Board-Certified Neurosurgeon with extensive specialized training in advanced Germany spine endoscopy.";
         break;
       case "treatments":
         title = "Advanced Endoscopic Spine Treatments & Procedures | Dr. Dheeraj Vishwakarma";

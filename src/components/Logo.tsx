@@ -206,10 +206,10 @@ export default function Logo({ className = "", mode = "full", lightBg = false }:
         <Logo mode="icon" className="w-8 h-8 sm:w-11 sm:h-11 shrink-0 animate-pulse-slow" lightBg={lightBg} />
         <div className="flex flex-col text-left">
           <span className="font-display font-black text-[9px] sm:text-[13px] tracking-[0.1em] sm:tracking-[0.14em] uppercase text-white leading-tight">
-            BRAIN <span className="text-[7px] sm:text-xs text-gray-400 font-normal">AND</span> SPINE
+            ENDOSCOPIC SPINE
           </span>
           <span className="font-sans text-[6.5px] sm:text-[9px] font-bold text-gold-400 tracking-[0.1em] sm:tracking-[0.18em] uppercase leading-none mt-0.5 whitespace-nowrap">
-            ENDOSCOPIC SURGEON
+            NEUROSURGEON & SURGEON
           </span>
           <span className="font-display text-[7.5px] sm:text-[11px] font-semibold text-gray-200 tracking-wider mt-0.5 whitespace-nowrap hidden min-[360px]:block">
             DR. DHEERAJ VISHWAKARMA
@@ -229,13 +229,13 @@ export default function Logo({ className = "", mode = "full", lightBg = false }:
       {/* Banner mimicking the exact layout of the uploaded logo */}
       <div className="mt-4 px-5 py-4 rounded-2xl bg-gradient-to-b from-sky-950/45 to-cosmic-card/90 border border-gold-400/20 shadow-[0_4px_30px_rgba(0,0,0,0.4)] max-w-sm sm:max-w-md">
         <h4 className="font-serif font-black text-lg sm:text-2xl tracking-[0.1em] text-white">
-          BRAIN <span className="text-sm font-light text-gray-400">AND</span> SPINE
+          ENDOSCOPIC SPINE
         </h4>
         
         <div className="flex items-center justify-center gap-3 my-1.5">
           <div className="h-[1px] w-8 bg-gold-400/30" />
           <span className="font-sans text-[10px] sm:text-xs font-bold text-[#DE8C44] tracking-[0.2em] uppercase shrink-0 leading-none">
-            ENDOSCOPIC SURGEON
+            NEUROSURGEON & SURGEON
           </span>
           <div className="h-[1px] w-8 bg-gold-400/30" />
         </div>

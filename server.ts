@@ -53,6 +53,43 @@ app.use(express.json({ limit: '50mb' }));
 // Default clinical data for initialization
 const INITIAL_SHOWCASES = [
   {
+    id: "sc-db-news",
+    title: "Dainik Bhaskar: Spine Endoscopy Landmark",
+    subtitle: "Pioneering cervical-dorsal monoportal endoscopic spine surgery milestone.",
+    description: "Front-page feature highlighting Dr. Dheeraj's landmark surgical execution, performing pioneering cervical-dorsal monoportal endoscopic decompression, allowing immediate post-op movement.",
+    category: "news",
+    location: "India Desk",
+    date: "June 2025",
+    imageUrl: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80",
+    sizeClass: "md:col-span-2 md:row-span-1 aspect-[16/10] sm:aspect-auto",
+    badge: "Pioneering Case"
+  },
+  {
+    id: "sc-rp-news",
+    title: "Rajasthan Patrika: Stitch-less Spine Care",
+    subtitle: "Pioneering <8mm single-stitch ambulatory endoscopic spine surgeries.",
+    description: "Special press release documenting the benefits of under-8mm stitch-less endoscopic surgery, explaining how avoiding muscle tears leads to same-day recovery milestones.",
+    category: "news",
+    location: "India Desk",
+    date: "August 2025",
+    imageUrl: "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&w=1200&q=80",
+    sizeClass: "md:col-span-1 md:row-span-1 aspect-square sm:aspect-auto",
+    badge: "Single Stitch (<8mm)"
+  },
+  {
+    id: "sc-news18-clip",
+    title: "News 18 Studio: 50+ Monoportal Cases Milestone",
+    subtitle: "Television broadcast feature covering the landmark 50+ multi-level endoscopic cases.",
+    description: "Broadcast coverage detailing the clinical success rates and volume milestone of 50+ monoportal endoscopic spine procedures across cervical, dorsal, and lumbar sections.",
+    category: "news",
+    location: "News 18 Studio",
+    date: "October 2025",
+    imageUrl: "https://images.unsplash.com/photo-1526470608268-f674ce90ebd4?auto=format&fit=crop&w=1200&q=80",
+    videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4",
+    sizeClass: "md:col-span-1 md:row-span-1 aspect-square sm:aspect-auto",
+    badge: "Television Broadcast"
+  },
+  {
     id: "sc-1",
     title: "Dual-Portal Endoscopic Operating Suite Setup",
     subtitle: "High-definition camera consoles & saline Continuous Pressure irrigation system.",
@@ -269,8 +306,8 @@ const INITIAL_CONDITIONS = [
   {
     id: "fess",
     name: "Full Endoscopic Spine Surgery (FESS)",
-    shortDescription: "Ultra-minimally invasive intervention using a high-definition 7mm endoscope, allowing safe, direct visual access to the herniated area.",
-    fullDescription: "Full Endoscopic Spine Surgery (FESS) represents the absolute pinnacle of contemporary spinal care. By utilizing a single micro-portal of under 7mm, Dr. Dheeraj Vishwakarma can insert a microscopic lens directly next to the compressed nerve roots. Specialized optical lighting showcases real-time neural pulsations under 4K magnification, guaranteeing unparalleled safety. No major muscles are severed or detached, which eliminates the heavy post-operative discomfort of old-fashioned surgery.",
+    shortDescription: "Ultra-minimally invasive intervention using an under-8mm endoscope, requiring only a single stitch and allowing direct visual access.",
+    fullDescription: "Full Endoscopic Spine Surgery (FESS) represents the absolute pinnacle of contemporary spinal care. By utilizing a single micro-portal under 8mm and requiring only a single stitch, Dr. Dheeraj Vishwakarma inserts a microscopic lens directly next to the compressed nerve roots. Specialized optical lighting showcases real-time neural pulsations under 4K magnification, guaranteeing unparalleled safety. No major muscles are severed or detached, which eliminates the heavy post-operative discomfort of old-fashioned surgery.",
     symptoms: [
       "Radiating sciatic leg pain",
       "Lumbar or cervical herniation",
@@ -565,14 +602,41 @@ app.post('/api/upload/sign', async (req, res) => {
     const base = path.basename(fileName, ext).replace(/[^a-zA-Z0-9]/g, '_');
     const uniqueFileName = `${base}-${Date.now()}${ext}`;
 
-    const { data, error } = await supabase.storage
+    let uploadResult = await supabase.storage
       .from(bucket)
       .createSignedUploadUrl(uniqueFileName);
 
-    if (error || !data) {
-      console.error(`Supabase error creating signed upload URL:`, error);
-      return res.status(500).json({ error: error?.message || 'Failed to generate signed upload URL' });
+    if (uploadResult.error && (uploadResult.error.message.includes('does not exist') || uploadResult.error.message.includes('not found'))) {
+      console.log(`Bucket '${bucket}' does not exist on Supabase URL [${supabaseUrl}]. Attempting to create it automatically...`);
+      try {
+        const isDocOrScan = bucket === 'documents' || bucket === 'scans';
+        const { error: createBucketError } = await supabase.storage.createBucket(bucket, {
+          public: true,
+          allowedMimeTypes: isDocOrScan
+            ? ['image/*', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
+            : ['image/*'],
+          fileSizeLimit: 10485760 // 10MB
+        });
+        
+        if (createBucketError) {
+          console.error(`Failed to create bucket '${bucket}':`, createBucketError);
+        } else {
+          console.log(`Successfully created bucket '${bucket}'. Retrying signed upload URL generation...`);
+          uploadResult = await supabase.storage
+            .from(bucket)
+            .createSignedUploadUrl(uniqueFileName);
+        }
+      } catch (createErr) {
+        console.error(`Failed to automatically create bucket '${bucket}':`, createErr);
+      }
     }
+
+    if (uploadResult.error || !uploadResult.data) {
+      console.error(`Supabase error creating signed upload URL on URL [${supabaseUrl}]:`, uploadResult.error);
+      return res.status(500).json({ error: uploadResult.error?.message || 'Failed to generate signed upload URL' });
+    }
+
+    const { data } = uploadResult;
 
     // Get public URL
     const { data: publicUrlData } = supabase.storage

@@ -35,7 +35,7 @@ export default function Conditions({ onOpenBooking }: ConditionsProps) {
             <div className="flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-gold-400" />
               <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-gold-300 font-semibold">
-                NEUROLOGICAL PATHWAY DECOMPRESSION
+                SPINAL NERVE PATHWAY DECOMPRESSION
               </span>
             </div>
             <h3 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl text-white tracking-tight">

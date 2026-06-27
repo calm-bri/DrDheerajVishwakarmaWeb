@@ -4,8 +4,8 @@ export const conditionsData: SpineCondition[] = [
   {
     id: "fess",
     name: "Full Endoscopic Spine Surgery (FESS)",
-    shortDescription: "Ultra-minimally invasive intervention using a high-definition 7mm endoscope, allowing safe, direct visual access to the herniated area.",
-    fullDescription: "Full Endoscopic Spine Surgery (FESS) represents the absolute pinnacle of contemporary spinal care. By utilizing a single micro-portal of under 7mm, Dr. Dheeraj Vishwakarma can insert a microscopic lens directly next to the compressed nerve roots. Specialized optical lighting showcases real-time neural pulsations under 4K magnification, guaranteeing unparalleled safety. No major muscles are severed or detached, which eliminates the heavy post-operative discomfort of old-fashioned surgery.",
+    shortDescription: "Ultra-minimally invasive intervention using an under-8mm endoscope, requiring only a single stitch and allowing direct visual access.",
+    fullDescription: "Full Endoscopic Spine Surgery (FESS) represents the absolute pinnacle of contemporary spinal care. By utilizing a single micro-portal under 8mm and requiring only a single stitch, Dr. Dheeraj Vishwakarma inserts a microscopic lens directly next to the compressed nerve roots. Specialized optical lighting showcases real-time neural pulsations under 4K magnification, guaranteeing unparalleled safety. No major muscles are severed or detached, which eliminates the heavy post-operative discomfort of old-fashioned surgery.",
     symptoms: [
       "Radiating sciatic leg pain",
       "Lumbar or cervical herniation",

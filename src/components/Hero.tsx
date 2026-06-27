@@ -123,7 +123,7 @@ export default function Hero({ onOpenBooking, onExploreScience, onNavigateAbout 
             transition={{ delay: 0.6, duration: 0.5 }}
             className="text-gray-300 text-sm sm:text-base leading-relaxed max-w-xl font-sans text-left"
           >
-            Experience a new era of spinal neurosurgery. Utilizing state-of-the-art <strong>FESS (Full Endoscopic Spine Surgery)</strong>, Dr. Dheeraj Vishwakarma relieves severe sciatica, slip discs, and stenosis through a single keyhole under 7mm—sparing your muscles, minimizing blood loss, and restoring instant independent motility.
+            Experience a new era of endoscopic spine surgery. Utilizing state-of-the-art <strong>FESS (Full Endoscopic Spine Surgery)</strong>, Dr. Dheeraj Vishwakarma performs advanced, stitch-less <strong>&lt;8mm keyhole procedures</strong> to relieve severe sciatica, slip discs, and stenosis—sparing muscles, minimizing blood loss, and restoring instant independent motility.
           </motion.p>
 
           {/* Authority Highlights & Micro Stats */}
@@ -134,16 +134,16 @@ export default function Hero({ onOpenBooking, onExploreScience, onNavigateAbout 
             className="grid grid-cols-3 gap-6 border-t border-b border-white/5 py-4 w-full max-w-lg text-left"
           >
             <div>
-              <p className="font-mono text-[10px] text-gray-500 uppercase tracking-widest text-left">MIN incision</p>
-              <p className="font-display font-bold text-lg text-white mt-0.5 text-left">Under 7mm</p>
+              <p className="font-mono text-[10px] text-gray-500 uppercase tracking-widest text-left">Incision Size</p>
+              <p className="font-display font-bold text-lg text-white mt-0.5 text-left">&lt; 8mm Keyhole</p>
             </div>
             <div>
-              <p className="font-mono text-[10px] text-gray-500 uppercase tracking-widest text-left">SURGICAL SIGHT</p>
-              <p className="font-display font-bold text-lg text-gold-300 mt-0.5 text-left">4K Endoscope</p>
+              <p className="font-mono text-[10px] text-gray-500 uppercase tracking-widest text-left">Surgical Closure</p>
+              <p className="font-display font-bold text-lg text-gold-300 mt-0.5 text-left">Single Stitch</p>
             </div>
             <div>
               <p className="font-mono text-[10px] text-gray-500 uppercase tracking-widest text-left">RECOVERY SPEED</p>
-              <p className="font-display font-bold text-lg text-sky-400 mt-0.5 text-left">2h Move</p>
+              <p className="font-display font-bold text-lg text-sky-400 mt-0.5 text-left">2h Walk</p>
             </div>
           </motion.div>
 
@@ -183,7 +183,7 @@ export default function Hero({ onOpenBooking, onExploreScience, onNavigateAbout 
             className="flex items-center flex-wrap gap-2.5 text-[10px] text-gray-500 pt-1 font-mono text-left select-none"
           >
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            <span className="uppercase">BOARD-VERIFIED M.CH NEUROSURGEON</span>
+            <span className="uppercase">BOARD-VERIFIED SPINE ENDOSCOPY SPECIALIST & M.CH NEUROSURGEON</span>
             <span className="text-gray-700">|</span>
             <button 
               onClick={onNavigateAbout}

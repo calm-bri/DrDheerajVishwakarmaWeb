@@ -33,6 +33,45 @@ interface SpecialAward {
 
 const PREMIUM_AWARDS: SpecialAward[] = [
   {
+    id: "award-asia-records",
+    category: "Continental Record",
+    title: "Asia & India Book of Records Holder",
+    by: "Asia Book of Records Board",
+    year: "2025",
+    location: "India (Global Recognition)",
+    achievementLevel: "Continental Record",
+    summary: "Set a record for treating the youngest patient (an 11-year-old boy) for Cauda Equina Syndrome using a stitch-less 8mm monoportal endoscopic discectomy.",
+    clinicalImpact: "Pioneered pediatric monoportal endoscopic discectomy, proving the safety of under-8mm keyhole procedures on children.",
+    colorTheme: "gold",
+    metric: "Youngest CES Record"
+  },
+  {
+    id: "award-india-records",
+    category: "National Record",
+    title: "India Book of Records Holder",
+    by: "India Book of Records Board",
+    year: "2025",
+    location: "India (Global Standard)",
+    achievementLevel: "National Record",
+    summary: "Pioneered complex cervical and dorsal endoscopic spine surgeries at an international standard, completing a milestone of 50+ cases.",
+    clinicalImpact: "Established international safety and volume standards for complex multi-level (cervical, dorsal, lumbar) monoportal spine surgeries.",
+    colorTheme: "amber",
+    metric: "Global Pioneer"
+  },
+  {
+    id: "award-germany-fellowship",
+    category: "International & National Fellowships",
+    title: "Germany FESS Clinical Training & Asian Spine Fellowship",
+    by: "St. Anna Hospital (Germany) & Asian Spine Hospital (Hyd)",
+    year: "2024",
+    location: "Germany & Hyderabad, India",
+    achievementLevel: "Fellowship Certified",
+    summary: "Advanced training at St. Anna Hospital, Germany under Prof. Dr. Sebastian Rutten & Prof. Dr. Martin Komp, followed by a MISS/FESS Fellowship under Dr. Sukumar Sura.",
+    clinicalImpact: "Integrates European motion-preservation techniques and Indian clinical volume expertise to deliver gold-standard endoscopic spine surgery.",
+    colorTheme: "sky",
+    metric: "Global Fellowships"
+  },
+  {
     id: "award-tysa",
     category: "National Orator Championship",
     title: "Best Orator - Torrent Young Scholar Award (TYSA)",
@@ -42,7 +81,7 @@ const PREMIUM_AWARDS: SpecialAward[] = [
     achievementLevel: "National Champion",
     summary: "Recognized as the premier surgical orator for exceptional logical precision, clinical case resolution speed, and pediatric/adult neurosurgical decision-making delivery.",
     clinicalImpact: "Validates top-tier diagnostic execution and evidence-based neurosurgical consultation transparency.",
-    colorTheme: "gold",
+    colorTheme: "emerald",
     metric: "1st Place Winner"
   },
   {
@@ -55,7 +94,7 @@ const PREMIUM_AWARDS: SpecialAward[] = [
     achievementLevel: "State Laureate",
     summary: "Conferred with twin first-place honors at DNACON-2023, demonstrating unrivaled neurological quiz accuracy and advanced experimental clinical research paper delivery.",
     clinicalImpact: "Reflects lightning-fast intraoperative pathology detection and critical-care diagnostic accuracy.",
-    colorTheme: "emerald",
+    colorTheme: "purple",
     metric: "Twin Gold Honors"
   },
   {
@@ -100,7 +139,7 @@ const PREMIUM_AWARDS: SpecialAward[] = [
 ];
 
 export default function AwardsSection() {
-  const [selectedAwardId, setSelectedAwardId] = useState<string>("award-tysa");
+  const [selectedAwardId, setSelectedAwardId] = useState<string>("award-asia-records");
 
   const currentAward = PREMIUM_AWARDS.find(a => a.id === selectedAwardId) || PREMIUM_AWARDS[0];
 
@@ -172,27 +211,28 @@ export default function AwardsSection() {
   };
 
   return (
-    <section 
-      id="awards-achievements"
-      className="relative py-20 px-4 sm:px-6 md:px-8 border-t border-white/5 bg-gradient-to-b from-[#050811] via-cosmic-bg to-[#050811] overflow-hidden"
+    <section
+      id="credentials-section"
+      className="relative py-28 px-4 sm:px-6 md:px-8 border-t border-white/5 bg-gradient-to-b from-[#050811] via-cosmic-bg to-cosmic-bg overflow-hidden"
     >
-      {/* Decorative vector background lines and gold back-glows */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-gold-glow opacity-[0.06] blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute right-[5%] bottom-10 w-72 h-72 bg-sky-500/10 opacity-[0.05] blur-[80px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/3 left-[5%] w-[400px] h-[300px] bg-sky-500/5 opacity-20 blur-3xl rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-[5%] w-[450px] h-[300px] bg-gold-glow opacity-5 blur-3xl rounded-full pointer-events-none" />
 
-      <div className="w-full max-w-6xl mx-auto relative z-10 space-y-12">
+      <div className="w-full max-w-6xl mx-auto relative z-10 space-y-16">
         
-        {/* Header Title with Custom Accent Badge */}
-        <div className="text-center space-y-3 max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-gold-400/25 bg-gold-400/5 text-gold-300 text-[10px] font-mono uppercase tracking-[0.2em] font-semibold">
-            <Sparkles className="w-3.5 h-3.5 text-gold-400 fill-gold-400/15" />
-            <span>Academic Honors & Endorsements</span>
+        {/* Heading row */}
+        <div className="max-w-xl text-left space-y-3">
+          <div className="flex items-center gap-2">
+            <Trophy className="w-4 h-4 text-gold-400" />
+            <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-gold-300 font-semibold">
+              BOARD CERTIFIED SPECIALIST LEADERSHIP
+            </span>
           </div>
           <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl text-white tracking-tight leading-none">
             Laureate Credentials & <span className="text-gold-400">Award Milestones</span>
           </h2>
           <p className="text-gray-400 text-xs sm:text-sm font-sans leading-relaxed">
-            Discover peer-reviewed recognitions, textbook contributions, and championship medals validating Dr. Dheeraj Vishwakarma's elite neurosurgical diagnostics and spine expertise.
+            Discover record-breaking milestones, advanced international fellowships, and textbook contributions validating Dr. Dheeraj Vishwakarma's pioneering spine endoscopy expertise and surgical leadership.
           </p>
         </div>
 

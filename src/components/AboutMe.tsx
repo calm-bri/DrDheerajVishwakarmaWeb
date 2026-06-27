@@ -36,6 +36,20 @@ export default function AboutMe() {
 
   const educationalMilestones = [
     {
+      degree: "Advanced Clinical Training in Full Endoscopic Spine Surgery (FESS)",
+      institution: "St. Anna Hospital, Germany",
+      period: "2024",
+      location: "Herne, Germany",
+      details: "Advanced clinical training in Full Endoscopic Spine Surgery under the mentorship of Professor Dr. Sebastian Rutten and Professor Dr. Martin Komp, internationally renowned pioneers."
+    },
+    {
+      degree: "Fellowship in Minimally Invasive Spine Surgery (MISS) & Full Endoscopic Spine Surgery (FESS)",
+      institution: "Asian Spine Hospital, Hyderabad",
+      period: "2024",
+      location: "Hyderabad, India",
+      details: "Completed clinical fellowship under the guidance of Dr. Sukumar Sura, one of India's leading experts and pioneers in endoscopic spine surgery."
+    },
+    {
       degree: "Magister Chirurgiae (M.Ch) in Neurosurgery",
       institution: "Govind Ballabh Pant Institute of Post Graduate Medical Education and Research (GIPMER), New Delhi",
       period: "2020 - 2023",
@@ -61,19 +75,29 @@ export default function AboutMe() {
   const executiveStrengths = [
     {
       title: "Full Endoscopic Spine Surgery (FESS)",
-      desc: "Mastery in monoportal endoscopic discectomy and neural decompressions. Able to operate through ultra-precision channels under 7mm."
+      desc: "Mastery in monoportal endoscopic discectomy and neural decompressions. Able to operate through ultra-precision channels under 8mm with single-stitch closure."
     },
     {
-      title: "Advanced Microsurgery corridor",
-      desc: "Skilled in microscopic neurotrauma bypass, VP shunt installations, complex brain tumor excisions, and cerebral vascular malformation resets."
+      title: "Cervical, Dorsal & Lumbar Monoportal Decompression",
+      desc: "Pioneered advanced keyhole spinal decompressions. Among the first in the nation to perform complex cervical-dorsal monoportal endoscopic spine surgery to international standards."
     },
     {
-      title: "Neuro-Endovascular Interventions",
-      desc: "Independently verified and competent in diagnostic (DSA) and advanced therapeutic procedures including micro-coiling, embolisation, and stenting."
+      title: "General Neurosurgery & Microsurgical Reconstruction",
+      desc: "Skilled in complex brain tumor excisions, micro-neurotrauma reconstruction, shunt installations, and neurovascular interventions."
     }
   ];
 
   const majorAchievementsList = [
+    {
+      type: "Asia & India Book of Records",
+      title: "Youngest Pediatric Endoscopic Discectomy",
+      event: "Recorded for treating the youngest patient (11-year-old) for Cauda Equina Syndrome using a stitch-less 8mm monoportal discectomy."
+    },
+    {
+      type: "India Book of Records",
+      title: "Global Spine Endoscopy Pioneer",
+      event: "Pioneered complex cervical and dorsal endoscopic spine surgeries, completing a landmark milestone of 50+ multi-level cases."
+    },
     {
       type: "Academic Book Chapter",
       title: "Lumbar Canal Stenosis",
@@ -97,6 +121,9 @@ export default function AboutMe() {
   ];
 
   const memberships = [
+    "Association of Spine Surgeons of India (ASSI)",
+    "Minimally Invasive Spine Surgeons Association of India (MISSA)",
+    "World Endoscopic Spine Society (WESS)",
     "Neurosurgical Society of India (NSI)",
     "Neurological Surgeons Society of India (NSSI)",
     "Cerebrovascular Society of India (CVSI)",
@@ -167,11 +194,11 @@ export default function AboutMe() {
               </div>
 
               <p className="text-gray-300 text-xs sm:text-sm leading-relaxed font-sans">
-                Dr. Dheeraj Vishwakarma is a highly specialized neurosurgeon and endoscopic spine surgeon who completed his prestigious Magister Chirurgiae (M.Ch) training at GIPMER, New Delhi. 
+                Dr. Dheeraj Vishwakarma is a pioneering endoscopic spine surgeon and board-certified neurosurgeon who completed his prestigious Magister Chirurgiae (M.Ch) residency at GIPMER, New Delhi. 
               </p>
               
               <p className="text-gray-400 text-xs leading-relaxed font-sans">
-                Bringing clinical pedigree and advanced procedural innovation, Dr. Dheeraj specializes in ultra-minimally invasive techniques. Through a keyhole incision under 7mm, he decompresses nerve routes cleanly—minimizing diagnostic hospital stay and returning mobility in hours.
+                Bringing clinical pedigree and advanced procedural innovation, Dr. Dheeraj specializes in ultra-minimally invasive techniques. Through a single-stitch keyhole incision under 8mm, he decompresses nerve routes cleanly—minimizing diagnostic hospital stay and returning mobility in hours.
               </p>
 
               <div className="pt-4 border-t border-white/5 space-y-4">
@@ -195,7 +222,7 @@ export default function AboutMe() {
             <div className="bg-white/2 rounded-2xl p-4 border border-white/5 space-y-2">
               <p className="font-mono text-[9px] text-gray-500 uppercase tracking-widest">high-volume residency output</p>
               <p className="text-xs text-gray-300 font-sans leading-relaxed">
-                Managed a critical volume of <strong className="text-white">20+ neurosurgeries</strong> and outpatient operations of <strong className="text-white">400+ patients per week</strong> at a high volume referral center in New Delhi (2020-2023).
+                Managed a critical volume of <strong className="text-white">20+ complex spine and neurosurgeries</strong> and outpatient operations of <strong className="text-white">400+ patients per week</strong> at a high volume referral center in New Delhi (2020-2023).
               </p>
             </div>
           </motion.div>

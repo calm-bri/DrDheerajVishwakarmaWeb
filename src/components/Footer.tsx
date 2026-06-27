@@ -14,12 +14,12 @@ export default function Footer({ onNavigate }: FooterProps) {
     "@type": "Physician",
     "name": "Dr. Dheeraj Vishwakarma",
     "image": "https://drdheerajspine.com/logo.png",
-    "medicalSpecialty": "Neurosurgery, Spine Surgery, Endoscopic Spine Surgery",
+    "medicalSpecialty": "Endoscopic Spine Surgery, Spine Surgery, Neurosurgery",
     "availableService": [
       {
         "@type": "MedicalProcedure",
         "name": "Full Endoscopic Spine Surgery (FESS)",
-        "description": "Ultra minimally invasive orthopedic surgical decompression using a under 7mm keyhole endoscope."
+        "description": "Ultra minimally invasive surgical decompression using an under 8mm keyhole single-stitch endoscope."
       },
       {
         "@type": "MedicalProcedure",
@@ -84,7 +84,7 @@ export default function Footer({ onNavigate }: FooterProps) {
             </div>
 
             <p className="text-xs text-gray-400 leading-relaxed font-sans max-w-xs">
-              Board-certified spinal neurosurgeon specializing in high-definition keyhole Monoportal and Full Endoscopic Spine surgery techniques, offering rapid recoveries with same-day walking milestones.
+              Pioneering Endoscopic Spine Surgeon & Board-certified Spinal Neurosurgeon specializing in high-definition keyhole Monoportal and Full Endoscopic Spine surgery techniques, offering rapid recoveries with same-day walking milestones.
             </p>
 
             {/* Quick trust metrics */}
