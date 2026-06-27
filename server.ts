@@ -1,20 +1,15 @@
 import express from 'express';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
 import { createClient } from '@supabase/supabase-js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Load environmental variables
-const envLocalPath = path.join(__dirname, '.env.local');
-if (fs.existsSync(envLocalPath)) {
-  dotenv.config({ path: envLocalPath });
-} else {
-  dotenv.config();
-}
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -27,7 +22,7 @@ const supabase = (supabaseUrl && supabaseKey) ? createClient(supabaseUrl, supaba
 if (supabase) {
   console.log("Supabase client initialized successfully.");
 } else {
-  console.warn("Supabase configuration missing! Falling back to local file storage.");
+  console.warn("Supabase configuration missing!");
 }
 
 // Custom CORS middleware to avoid external dependencies
@@ -54,21 +49,6 @@ const verifyAdmin = (req: express.Request, res: express.Response, next: express.
 };
 
 app.use(express.json({ limit: '50mb' }));
-
-// Paths
-const DATA_DIR = path.join(__dirname, 'data');
-const UPLOADS_DIR = path.join(__dirname, 'public', 'uploads');
-
-// Ensure directories exist
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-}
-if (!fs.existsSync(UPLOADS_DIR)) {
-  fs.mkdirSync(UPLOADS_DIR, { recursive: true });
-}
-
-// Serve uploaded static files
-app.use('/uploads', express.static(UPLOADS_DIR));
 
 // Default clinical data for initialization
 const INITIAL_SHOWCASES = [
@@ -412,59 +392,39 @@ const INITIAL_FAQS = [
   }
 ];
 
-// Helper functions for reading/writing JSON files
-const getFilePath = (filename: string) => path.join(DATA_DIR, filename);
-
-const readDataFile = (filename: string, defaultValue: any) => {
-  const filePath = getFilePath(filename);
-  if (!fs.existsSync(filePath)) {
-    fs.writeFileSync(filePath, JSON.stringify(defaultValue, null, 2));
-    return defaultValue;
-  }
-  try {
-    const data = fs.readFileSync(filePath, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    console.error(`Error reading ${filename}, resetting to defaults:`, error);
-    fs.writeFileSync(filePath, JSON.stringify(defaultValue, null, 2));
-    return defaultValue;
-  }
-};
-
-const writeDataFile = (filename: string, data: any) => {
-  const filePath = getFilePath(filename);
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
-};
-
-// Generic CRUD endpoints generator with Supabase DB queries and Local JSON fallback
-const registerCrudRoutes = (resourceName: string, filename: string, defaults: any[]) => {
+// Generic CRUD endpoints generator with Supabase DB queries
+const registerCrudRoutes = (resourceName: string, defaults: any[]) => {
   app.get(`/api/${resourceName}`, (req, res, next) => {
     if (resourceName === 'appointments') {
       return verifyAdmin(req, res, next);
     }
     next();
   }, async (req, res) => {
-    if (supabase) {
-      try {
-        const { data, error } = await supabase.from(resourceName).select('*');
-        if (!error && data) {
-          // Sort items if necessary (newest first for showcases, appointments, testimonials)
-          if (resourceName === 'showcases' || resourceName === 'appointments' || resourceName === 'testimonials') {
-            data.sort((a: any, b: any) => {
-              const timeA = a.created_at ? new Date(a.created_at).getTime() : 0;
-              const timeB = b.created_at ? new Date(b.created_at).getTime() : 0;
-              return timeB - timeA;
-            });
-          }
-          return res.json(data);
-        }
-        console.warn(`Supabase query failed for ${resourceName}:`, error?.message);
-      } catch (err) {
-        console.error(`Exception during Supabase query for ${resourceName}:`, err);
-      }
+    if (!supabase) {
+      return res.status(500).json({ error: 'Supabase client is not initialized' });
     }
-    const localData = readDataFile(filename, defaults);
-    res.json(localData);
+    try {
+      const { data, error } = await supabase.from(resourceName).select('*');
+      if (error) {
+        console.error(`Supabase query failed for ${resourceName}:`, error.message);
+        return res.status(500).json({ error: error.message });
+      }
+      if (data) {
+        // Sort items if necessary (newest first for showcases, appointments, testimonials)
+        if (resourceName === 'showcases' || resourceName === 'appointments' || resourceName === 'testimonials') {
+          data.sort((a: any, b: any) => {
+            const timeA = a.created_at ? new Date(a.created_at).getTime() : 0;
+            const timeB = b.created_at ? new Date(b.created_at).getTime() : 0;
+            return timeB - timeA;
+          });
+        }
+        return res.json(data);
+      }
+      res.json([]);
+    } catch (err: any) {
+      console.error(`Exception during Supabase query for ${resourceName}:`, err);
+      res.status(500).json({ error: err.message || 'Database exception occurred' });
+    }
   });
 
   app.post(`/api/${resourceName}`, (req, res, next) => {
@@ -478,92 +438,82 @@ const registerCrudRoutes = (resourceName: string, filename: string, defaults: an
       newItem.id = `${resourceName.substring(0, 4)}-${Date.now()}`;
     }
 
-    if (supabase) {
-      try {
-        const { error } = await supabase.from(resourceName).insert(newItem);
-        if (error) {
-          console.error(`Supabase insert failed for ${resourceName}:`, error.message);
-        }
-      } catch (err) {
-        console.error(`Exception during Supabase insert for ${resourceName}:`, err);
+    if (!supabase) {
+      return res.status(500).json({ error: 'Supabase client is not initialized' });
+    }
+
+    try {
+      const { error } = await supabase.from(resourceName).insert(newItem);
+      if (error) {
+        console.error(`Supabase insert failed for ${resourceName}:`, error.message);
+        return res.status(500).json({ error: error.message });
       }
+      res.status(201).json(newItem);
+    } catch (err: any) {
+      console.error(`Exception during Supabase insert for ${resourceName}:`, err);
+      res.status(500).json({ error: err.message || 'Database exception occurred' });
     }
-
-    // Write to local file as backup cache
-    const data = readDataFile(filename, defaults);
-    if (resourceName === 'showcases' || resourceName === 'appointments' || resourceName === 'testimonials') {
-      data.unshift(newItem);
-    } else {
-      data.push(newItem);
-    }
-    writeDataFile(filename, data);
-
-    res.status(201).json(newItem);
   });
 
   app.put(`/api/${resourceName}/:id`, verifyAdmin, async (req, res) => {
     const updatedFields = req.body;
-    if (supabase) {
-      try {
-        const { error } = await supabase.from(resourceName).update(updatedFields).eq('id', req.params.id);
-        if (error) {
-          console.error(`Supabase update failed for ${resourceName}:`, error.message);
-        }
-      } catch (err) {
-        console.error(`Exception during Supabase update for ${resourceName}:`, err);
+    if (!supabase) {
+      return res.status(500).json({ error: 'Supabase client is not initialized' });
+    }
+
+    try {
+      const { error } = await supabase.from(resourceName).update(updatedFields).eq('id', req.params.id);
+      if (error) {
+        console.error(`Supabase update failed for ${resourceName}:`, error.message);
+        return res.status(500).json({ error: error.message });
       }
+      res.json({ id: req.params.id, ...updatedFields });
+    } catch (err: any) {
+      console.error(`Exception during Supabase update for ${resourceName}:`, err);
+      res.status(500).json({ error: err.message || 'Database exception occurred' });
     }
-
-    // Update local backup cache
-    const data = readDataFile(filename, defaults);
-    const index = data.findIndex((item: any) => item.id === req.params.id);
-    if (index !== -1) {
-      data[index] = { ...data[index], ...updatedFields };
-      writeDataFile(filename, data);
-    }
-
-    res.json({ id: req.params.id, ...updatedFields });
   });
 
   app.delete(`/api/${resourceName}/:id`, verifyAdmin, async (req, res) => {
-    if (supabase) {
-      try {
-        const { error } = await supabase.from(resourceName).delete().eq('id', req.params.id);
-        if (error) {
-          console.error(`Supabase delete failed for ${resourceName}:`, error.message);
-        }
-      } catch (err) {
-        console.error(`Exception during Supabase delete for ${resourceName}:`, err);
-      }
+    if (!supabase) {
+      return res.status(500).json({ error: 'Supabase client is not initialized' });
     }
 
-    // Update local backup cache
-    const data = readDataFile(filename, defaults);
-    const filtered = data.filter((item: any) => item.id !== req.params.id);
-    writeDataFile(filename, filtered);
-
-    res.json({ success: true, id: req.params.id });
+    try {
+      const { error } = await supabase.from(resourceName).delete().eq('id', req.params.id);
+      if (error) {
+        console.error(`Supabase delete failed for ${resourceName}:`, error.message);
+        return res.status(500).json({ error: error.message });
+      }
+      res.json({ success: true, id: req.params.id });
+    } catch (err: any) {
+      console.error(`Exception during Supabase delete for ${resourceName}:`, err);
+      res.status(500).json({ error: err.message || 'Database exception occurred' });
+    }
   });
 
   app.post(`/api/${resourceName}/reset`, verifyAdmin, async (req, res) => {
-    if (supabase) {
-      try {
-        // Safe delete: delete records that have valid ids (which is all)
-        const { error: deleteError } = await supabase.from(resourceName).delete().neq('id', 'placeholder_safety_bypass');
-        if (!deleteError) {
-          const { error: insertError } = await supabase.from(resourceName).insert(defaults);
-          if (insertError) {
-            console.error(`Supabase seed insertion failed for ${resourceName}:`, insertError.message);
-          }
-        } else {
-          console.error(`Supabase clear failed during reset for ${resourceName}:`, deleteError.message);
-        }
-      } catch (err) {
-        console.error(`Exception during Supabase reset for ${resourceName}:`, err);
-      }
+    if (!supabase) {
+      return res.status(500).json({ error: 'Supabase client is not initialized' });
     }
-    writeDataFile(filename, defaults);
-    res.json(defaults);
+
+    try {
+      // Safe delete: delete records that have valid ids (which is all)
+      const { error: deleteError } = await supabase.from(resourceName).delete().neq('id', 'placeholder_safety_bypass');
+      if (deleteError) {
+        console.error(`Supabase clear failed during reset for ${resourceName}:`, deleteError.message);
+        return res.status(500).json({ error: deleteError.message });
+      }
+      const { error: insertError } = await supabase.from(resourceName).insert(defaults);
+      if (insertError) {
+        console.error(`Supabase seed insertion failed for ${resourceName}:`, insertError.message);
+        return res.status(500).json({ error: insertError.message });
+      }
+      res.json(defaults);
+    } catch (err: any) {
+      console.error(`Exception during Supabase reset for ${resourceName}:`, err);
+      res.status(500).json({ error: err.message || 'Database exception occurred' });
+    }
   });
 };
 
@@ -578,37 +528,80 @@ app.post('/api/admin/verify', (req, res) => {
 });
 
 // Register routes
-registerCrudRoutes('appointments', 'appointments.json', INITIAL_APPOINTMENTS);
-registerCrudRoutes('showcases', 'showcases.json', INITIAL_SHOWCASES);
-registerCrudRoutes('testimonials', 'testimonials.json', INITIAL_TESTIMONIALS);
-registerCrudRoutes('conditions', 'conditions.json', INITIAL_CONDITIONS);
-registerCrudRoutes('faqs', 'faqs.json', INITIAL_FAQS);
+registerCrudRoutes('appointments', INITIAL_APPOINTMENTS);
+registerCrudRoutes('showcases', INITIAL_SHOWCASES);
+registerCrudRoutes('testimonials', INITIAL_TESTIMONIALS);
+registerCrudRoutes('conditions', INITIAL_CONDITIONS);
+registerCrudRoutes('faqs', INITIAL_FAQS);
 
-// Native Binary Stream File Upload Endpoint
-app.post('/api/upload', (req, res) => {
-  const originalName = req.headers['x-file-name'] as string || 'uploaded-file';
-  const ext = path.extname(originalName).toLowerCase();
-  
-  // Clean filename to be safe
-  const base = path.basename(originalName, ext).replace(/[^a-zA-Z0-9]/g, '_');
-  const fileName = `${base}-${Date.now()}${ext}`;
-  const filePath = path.join(UPLOADS_DIR, fileName);
+// Generate signed upload URL endpoint
+app.post('/api/upload/sign', async (req, res) => {
+  const { fileName, contentType, bucket } = req.body;
 
-  const writeStream = fs.createWriteStream(filePath);
-  req.pipe(writeStream);
+  if (!bucket || !fileName || !contentType) {
+    return res.status(400).json({ error: 'Missing required parameters: bucket, fileName, contentType' });
+  }
 
-  writeStream.on('finish', () => {
-    console.log(`Successfully uploaded: ${fileName}`);
-    res.json({ url: `/uploads/${fileName}` });
-  });
+  // Validate bucket is one of the allowed types
+  const allowedBuckets = ['doctor-images', 'gallery', 'blog', 'profile', 'documents', 'scans'];
+  if (!allowedBuckets.includes(bucket)) {
+    return res.status(400).json({ error: `Invalid bucket. Allowed buckets: ${allowedBuckets.join(', ')}` });
+  }
 
-  writeStream.on('error', (err) => {
-    console.error('File stream writing error:', err);
-    res.status(500).json({ error: err.message });
-  });
+  // Check admin PIN if the bucket is NOT public scans
+  if (bucket !== 'scans') {
+    const pin = req.headers['x-admin-pin'] || req.query.adminPin;
+    if (pin !== ADMIN_PIN) {
+      return res.status(401).json({ error: 'Unauthorized: Invalid Admin PIN' });
+    }
+  }
+
+  if (!supabase) {
+    return res.status(500).json({ error: 'Supabase client is not initialized. Check server configurations.' });
+  }
+
+  try {
+    const ext = path.extname(fileName).toLowerCase();
+    const base = path.basename(fileName, ext).replace(/[^a-zA-Z0-9]/g, '_');
+    const uniqueFileName = `${base}-${Date.now()}${ext}`;
+
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .createSignedUploadUrl(uniqueFileName);
+
+    if (error || !data) {
+      console.error(`Supabase error creating signed upload URL:`, error);
+      return res.status(500).json({ error: error?.message || 'Failed to generate signed upload URL' });
+    }
+
+    // Get public URL
+    const { data: publicUrlData } = supabase.storage
+      .from(bucket)
+      .getPublicUrl(uniqueFileName);
+
+    res.json({
+      signedUrl: data.signedUrl,
+      publicUrl: publicUrlData.publicUrl,
+      fileName: uniqueFileName
+    });
+  } catch (err: any) {
+    console.error('Exception generating signed URL:', err);
+    res.status(500).json({ error: err.message || 'Exception during signed URL generation' });
+  }
 });
 
-// Production client serving
+// Legacy uploads redirect router
+app.get('/uploads/:fileName', (req, res) => {
+  const { fileName } = req.params;
+  const isDoc = fileName.endsWith('.pdf') || fileName.endsWith('.doc') || fileName.endsWith('.docx');
+  const bucket = isDoc ? 'scans' : 'gallery';
+  if (supabaseUrl) {
+    return res.redirect(`${supabaseUrl}/storage/v1/object/public/${bucket}/${fileName}`);
+  }
+  res.status(404).send('File not found');
+});
+
+// Production client serving (fallback for local previews/tests)
 const DIST_DIR = path.join(__dirname, 'dist');
 if (fs.existsSync(DIST_DIR)) {
   app.use(express.static(DIST_DIR));
@@ -617,6 +610,11 @@ if (fs.existsSync(DIST_DIR)) {
   });
 }
 
-app.listen(PORT, () => {
-  console.log(`Backend server running at http://localhost:${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`Backend server running at http://localhost:${PORT}`);
+  });
+}
+
+export default app;
+

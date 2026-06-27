@@ -579,7 +579,7 @@ export default function AdminPanel() {
                             <span className="max-w-[200px] truncate text-stone-300">MRI: {apt.fileName}</span>
                             <div className="flex items-center gap-1.5 border-l border-emerald-500/20 pl-2.5 ml-1">
                               <a
-                                href={`/uploads/${apt.fileName}`}
+                                href={apt.fileName.startsWith('http') ? apt.fileName : `/uploads/${apt.fileName}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="flex items-center gap-1 text-sky-400 hover:text-sky-300 transition-colors cursor-pointer px-1 py-0.5"
@@ -590,7 +590,7 @@ export default function AdminPanel() {
                               </a>
                               <span className="text-emerald-500/30">|</span>
                               <a
-                                href={`/uploads/${apt.fileName}`}
+                                href={apt.fileName.startsWith('http') ? apt.fileName : `/uploads/${apt.fileName}`}
                                 download
                                 className="flex items-center gap-1 text-emerald-400 hover:text-emerald-300 transition-colors cursor-pointer px-1 py-0.5"
                                 title="Download file directly"
@@ -1403,25 +1403,37 @@ export default function AdminPanel() {
                               if (file) {
                                 setIsUploading(true);
                                 try {
-                                  const response = await fetch('/api/upload', {
+                                  const signRes = await fetch('/api/upload/sign', {
                                     method: 'POST',
                                     headers: {
-                                      'x-file-name': file.name
+                                      'Content-Type': 'application/json',
+                                      'x-admin-pin': adminPin
+                                    },
+                                    body: JSON.stringify({
+                                      fileName: file.name,
+                                      contentType: file.type,
+                                      bucket: 'gallery'
+                                    })
+                                  });
+                                  if (!signRes.ok) throw new Error("Failed to generate upload signature");
+                                  const signData = await signRes.json();
+
+                                  const uploadRes = await fetch(signData.signedUrl, {
+                                    method: 'PUT',
+                                    headers: {
+                                      'Content-Type': file.type
                                     },
                                     body: file
                                   });
-                                  if (response.ok) {
-                                    const result = await response.json();
-                                    setEditingItem({
-                                      ...editingItem,
-                                      data: { ...editingItem.data, imageUrl: result.url }
-                                    });
-                                  } else {
-                                    alert("Failed to upload image file to server.");
-                                  }
-                                } catch (error) {
+                                  if (!uploadRes.ok) throw new Error("Failed to upload file to storage");
+
+                                  setEditingItem({
+                                    ...editingItem,
+                                    data: { ...editingItem.data, imageUrl: signData.publicUrl }
+                                  });
+                                } catch (error: any) {
                                   console.error("Image upload error:", error);
-                                  alert("Error uploading image: " + error);
+                                  alert("Error uploading image: " + error.message);
                                 } finally {
                                   setIsUploading(false);
                                 }
@@ -1492,25 +1504,37 @@ export default function AdminPanel() {
                               if (file) {
                                 setIsUploading(true);
                                 try {
-                                  const response = await fetch('/api/upload', {
+                                  const signRes = await fetch('/api/upload/sign', {
                                     method: 'POST',
                                     headers: {
-                                      'x-file-name': file.name
+                                      'Content-Type': 'application/json',
+                                      'x-admin-pin': adminPin
+                                    },
+                                    body: JSON.stringify({
+                                      fileName: file.name,
+                                      contentType: file.type,
+                                      bucket: 'gallery'
+                                    })
+                                  });
+                                  if (!signRes.ok) throw new Error("Failed to generate upload signature");
+                                  const signData = await signRes.json();
+
+                                  const uploadRes = await fetch(signData.signedUrl, {
+                                    method: 'PUT',
+                                    headers: {
+                                      'Content-Type': file.type
                                     },
                                     body: file
                                   });
-                                  if (response.ok) {
-                                    const result = await response.json();
-                                    setEditingItem({
-                                      ...editingItem,
-                                      data: { ...editingItem.data, videoUrl: result.url }
-                                    });
-                                  } else {
-                                    alert("Failed to upload video file to server.");
-                                  }
-                                } catch (error) {
+                                  if (!uploadRes.ok) throw new Error("Failed to upload file to storage");
+
+                                  setEditingItem({
+                                    ...editingItem,
+                                    data: { ...editingItem.data, videoUrl: signData.publicUrl }
+                                  });
+                                } catch (error: any) {
                                   console.error("Video upload error:", error);
-                                  alert("Error uploading video: " + error);
+                                  alert("Error uploading video: " + error.message);
                                 } finally {
                                   setIsUploading(false);
                                 }
@@ -1897,7 +1921,7 @@ export default function AdminPanel() {
                       <span className="max-w-[220px] truncate text-stone-300">MRI: {activeAptDetails.fileName}</span>
                       <div className="flex items-center gap-1.5 border-l border-emerald-500/20 pl-2.5 ml-1">
                         <a
-                          href={`/uploads/${activeAptDetails.fileName}`}
+                          href={activeAptDetails.fileName.startsWith('http') ? activeAptDetails.fileName : `/uploads/${activeAptDetails.fileName}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center gap-1 text-sky-400 hover:text-sky-300 transition-colors cursor-pointer px-1 py-0.5"
@@ -1908,7 +1932,7 @@ export default function AdminPanel() {
                         </a>
                         <span className="text-emerald-500/30">|</span>
                         <a
-                          href={`/uploads/${activeAptDetails.fileName}`}
+                          href={activeAptDetails.fileName.startsWith('http') ? activeAptDetails.fileName : `/uploads/${activeAptDetails.fileName}`}
                           download
                           className="flex items-center gap-1 text-emerald-400 hover:text-emerald-300 transition-colors cursor-pointer px-1 py-0.5"
                           title="Download file directly"

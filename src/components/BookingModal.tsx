@@ -38,29 +38,47 @@ export default function BookingModal({ isOpen, onClose, preferredTreatmentId = "
       const file = e.target.files[0];
       setIsUploading(true);
 
-      fetch('/api/upload', {
+      // Step 1: Request signed upload URL from the server
+      fetch('/api/upload/sign', {
         method: 'POST',
         headers: {
-          'x-file-name': file.name
+          'Content-Type': 'application/json'
         },
-        body: file
+        body: JSON.stringify({
+          fileName: file.name,
+          contentType: file.type,
+          bucket: 'scans'
+        })
       })
       .then(res => {
-        if (!res.ok) throw new Error("Upload failed");
+        if (!res.ok) throw new Error("Failed to generate upload signature");
         return res.json();
       })
       .then(data => {
-        if (data.url) {
-          const savedName = data.url.replace('/uploads/', '');
-          setUploadedFileName(savedName);
-          setSelectedFile(file);
-        } else {
-          alert("Failed to upload scan. Please try again.");
+        const { signedUrl, publicUrl } = data;
+        if (!signedUrl || !publicUrl) {
+          throw new Error("Invalid signature response from server");
         }
+
+        // Step 2: Upload file directly to Supabase Storage via signed URL
+        return fetch(signedUrl, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': file.type
+          },
+          body: file
+        }).then(uploadRes => {
+          if (!uploadRes.ok) throw new Error("Failed to upload file to storage");
+          return publicUrl;
+        });
+      })
+      .then(publicUrl => {
+        setUploadedFileName(publicUrl);
+        setSelectedFile(file);
       })
       .catch(err => {
         console.error("File upload error:", err);
-        alert("Upload error. Please try again.");
+        alert("Upload error: " + err.message);
       })
       .finally(() => {
         setIsUploading(false);
