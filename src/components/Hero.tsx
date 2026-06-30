@@ -76,7 +76,7 @@ export default function Hero({ onOpenBooking, onExploreScience, onNavigateAbout 
           >
             <Star className="w-3.5 h-3.5 text-gold-400 fill-gold-400/20" />
             <span className="text-[10px] font-mono uppercase tracking-[0.15em] font-medium">
-              India's Premier Spine Endoscopist
+              India's Pioneers in Monoportal Endoscopic Spine Surgery
             </span>
           </motion.div>
 
@@ -123,7 +123,7 @@ export default function Hero({ onOpenBooking, onExploreScience, onNavigateAbout 
             transition={{ delay: 0.6, duration: 0.5 }}
             className="text-gray-300 text-sm sm:text-base leading-relaxed max-w-xl font-sans text-left"
           >
-            Experience a new era of endoscopic spine surgery. Utilizing state-of-the-art <strong>FESS (Full Endoscopic Spine Surgery)</strong>, Dr. Dheeraj Vishwakarma performs advanced, stitch-less <strong>&lt;8mm keyhole procedures</strong> to relieve severe sciatica, slip discs, and stenosis—sparing muscles, minimizing blood loss, and restoring instant independent motility.
+            Experience a new era of monoportal endoscopic spine surgery. Utilizing state-of-the-art <strong>FESS (Full Monoportal Endoscopic Spine Surgery)</strong>, Dr. Dheeraj Vishwakarma performs advanced, single-stitch <strong>&lt;8mm keyhole procedures</strong> to relieve severe sciatica, slip discs, and stenosis—sparing muscles, minimizing blood loss, and restoring instant independent motility.
           </motion.p>
 
           {/* Authority Highlights & Micro Stats */}
@@ -143,7 +143,7 @@ export default function Hero({ onOpenBooking, onExploreScience, onNavigateAbout 
             </div>
             <div>
               <p className="font-mono text-[10px] text-gray-500 uppercase tracking-widest text-left">RECOVERY SPEED</p>
-              <p className="font-display font-bold text-lg text-sky-400 mt-0.5 text-left">2h Walk</p>
+              <p className="font-display font-bold text-lg text-sky-400 mt-0.5 text-left">Same Day Discharge</p>
             </div>
           </motion.div>
 

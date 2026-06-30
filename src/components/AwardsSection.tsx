@@ -29,6 +29,7 @@ interface SpecialAward {
   clinicalImpact: string;
   colorTheme: "gold" | "emerald" | "sky" | "amber" | "purple";
   metric: string;
+  imageUrl?: string;
 }
 
 const PREMIUM_AWARDS: SpecialAward[] = [
@@ -40,10 +41,11 @@ const PREMIUM_AWARDS: SpecialAward[] = [
     year: "2025",
     location: "India (Global Recognition)",
     achievementLevel: "Continental Record",
-    summary: "Set a record for treating the youngest patient (an 11-year-old boy) for Cauda Equina Syndrome using a stitch-less 8mm monoportal endoscopic discectomy.",
+    summary: "Set a record for treating the youngest patient (an 11-year-old boy) for Cauda Equina Syndrome using a single-stitch 8mm monoportal endoscopic discectomy.",
     clinicalImpact: "Pioneered pediatric monoportal endoscopic discectomy, proving the safety of under-8mm keyhole procedures on children.",
     colorTheme: "gold",
-    metric: "Youngest CES Record"
+    metric: "Youngest CES Record",
+    imageUrl: "/awards-records.jpg"
   },
   {
     id: "award-india-records",
@@ -53,10 +55,11 @@ const PREMIUM_AWARDS: SpecialAward[] = [
     year: "2025",
     location: "India (Global Standard)",
     achievementLevel: "National Record",
-    summary: "Pioneered complex cervical and dorsal endoscopic spine surgeries at an international standard, completing a milestone of 50+ cases.",
+    summary: "Pioneered complex cervical and dorsal monoportal endoscopic spine surgeries at an international standard, completing a milestone of 50+ cases.",
     clinicalImpact: "Established international safety and volume standards for complex multi-level (cervical, dorsal, lumbar) monoportal spine surgeries.",
     colorTheme: "amber",
-    metric: "Global Pioneer"
+    metric: "Global Pioneer",
+    imageUrl: "/awards-records.jpg"
   },
   {
     id: "award-germany-fellowship",
@@ -67,7 +70,7 @@ const PREMIUM_AWARDS: SpecialAward[] = [
     location: "Germany & Hyderabad, India",
     achievementLevel: "Fellowship Certified",
     summary: "Advanced training at St. Anna Hospital, Germany under Prof. Dr. Sebastian Rutten & Prof. Dr. Martin Komp, followed by a MISS/FESS Fellowship under Dr. Sukumar Sura.",
-    clinicalImpact: "Integrates European motion-preservation techniques and Indian clinical volume expertise to deliver gold-standard endoscopic spine surgery.",
+    clinicalImpact: "Integrates European motion-preservation techniques and Indian clinical volume expertise to deliver gold-standard monoportal endoscopic spine surgery.",
     colorTheme: "sky",
     metric: "Global Fellowships"
   },
@@ -114,11 +117,11 @@ const PREMIUM_AWARDS: SpecialAward[] = [
     id: "award-book",
     category: "Academic Contributions",
     title: "Key Author: 'Lumbar Canal Stenosis' Instructional Guide",
-    by: "Full Endoscopic Spine Surgery Manual",
+    by: "Full Monoportal Endoscopic Spine Surgery Manual",
     year: "2024",
     location: "National Publication",
     achievementLevel: "Textbook Author",
-    summary: "Contributed a flagship clinical chapter to 'A Practical Manual on Full Endoscopic Spine Surgery', outlining advanced stenosis lateral-recess decompressions.",
+    summary: "Contributed a flagship clinical chapter to 'A Practical Manual on Full Monoportal Endoscopic Spine Surgery', outlining advanced stenosis lateral-recess decompressions.",
     clinicalImpact: "Provides pedagogical frameworks utilized by aspiring spine endoscopic fellows nationwide.",
     colorTheme: "amber",
     metric: "Published Chapter"
@@ -225,7 +228,7 @@ export default function AwardsSection() {
           <div className="flex items-center gap-2">
             <Trophy className="w-4 h-4 text-gold-400" />
             <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-gold-300 font-semibold">
-              BOARD CERTIFIED SPECIALIST LEADERSHIP
+              PIONEERING MONOPORTAL ENDOSCOPIC SPINE SURGERY
             </span>
           </div>
           <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl text-white tracking-tight leading-none">
@@ -326,61 +329,72 @@ export default function AwardsSection() {
                 <div className={`absolute -top-24 -right-24 w-60 h-60 rounded-full blur-3xl pointer-events-none opacity-20 ${currentTheme.accentGlow}`} />
 
                 {/* Top Title Bar */}
-                <div className="p-6 sm:p-8 space-y-6 text-left">
+                <div className="p-6 sm:p-8 space-y-6 text-left flex-1 flex flex-col justify-between">
                   
-                  {/* Category level and year badges */}
-                  <div className="flex items-center justify-between border-b border-white/5 pb-4">
-                    <span className="font-mono text-[9px] text-gray-400 tracking-[0.2em] uppercase">
-                      {currentAward.category}
-                    </span>
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-[10px] text-sky-400 bg-sky-500/10 border border-sky-400/20 px-2.5 py-0.5 rounded-full uppercase tracking-wider font-semibold">
-                        {currentAward.year}
+                  <div className="space-y-6">
+                    {/* Category level and year badges */}
+                    <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                      <span className="font-mono text-[9px] text-gray-400 tracking-[0.2em] uppercase">
+                        {currentAward.category}
                       </span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    {/* Big Award Title */}
-                    <div className="space-y-1.5">
-                      <h3 className="font-display font-extrabold text-xl sm:text-2xl text-white leading-tight">
-                        {currentAward.title}
-                      </h3>
-                      <p className="text-xs text-gold-300 font-mono">
-                        by {currentAward.by}
-                      </p>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-[10px] text-sky-400 bg-sky-500/10 border border-sky-400/20 px-2.5 py-0.5 rounded-full uppercase tracking-wider font-semibold">
+                          {currentAward.year}
+                        </span>
+                      </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-2 pt-1">
-                      <span className={`text-[10px] font-semibold border px-2.5 py-0.5 rounded-full ${currentTheme.badgeText}`}>
-                        ★ {currentAward.achievementLevel}
-                      </span>
-                      <span className="text-[10px] font-semibold bg-white/5 border border-white/10 text-white px-2.5 py-0.5 rounded-full">
-                        🏆 {currentAward.metric}
-                      </span>
-                    </div>
-
-                    {/* Paragraph summaries */}
-                    <div className="space-y-4 pt-2">
-                      <div>
-                        <p className="text-gray-400 text-xs font-mono uppercase tracking-widest mb-1.5">Surgical Detail & Context</p>
-                        <p className="text-gray-300 text-xs sm:text-sm font-sans leading-relaxed">
-                          {currentAward.summary}
+                    <div className="space-y-4">
+                      {/* Big Award Title */}
+                      <div className="space-y-1.5">
+                        <h3 className="font-display font-extrabold text-xl sm:text-2xl text-white leading-tight">
+                          {currentAward.title}
+                        </h3>
+                        <p className="text-xs text-gold-300 font-mono">
+                          by {currentAward.by}
                         </p>
                       </div>
 
-                      <div className="p-4 rounded-xl border border-white/5 bg-gradient-to-r from-white/[0.01] to-transparent space-y-1.5">
-                        <div className="flex items-center gap-2 text-gold-400">
-                          <Activity className="w-3.5 h-3.5 text-gold-400" />
-                          <p className="text-[10px] font-mono uppercase tracking-wider font-bold">Clinical Precision & Patient Outcomes</p>
+                      <div className="flex flex-wrap gap-2 pt-1">
+                        <span className={`text-[10px] font-semibold border px-2.5 py-0.5 rounded-full ${currentTheme.badgeText}`}>
+                          ★ {currentAward.achievementLevel}
+                        </span>
+                        <span className="text-[10px] font-semibold bg-white/5 border border-white/10 text-white px-2.5 py-0.5 rounded-full">
+                          🏆 {currentAward.metric}
+                        </span>
+                      </div>
+
+                      {/* Paragraph summaries */}
+                      <div className="space-y-4 pt-2">
+                        <div>
+                          <p className="text-gray-400 text-xs font-mono uppercase tracking-widest mb-1.5">Surgical Detail & Context</p>
+                          <p className="text-gray-300 text-xs sm:text-sm font-sans leading-relaxed">
+                            {currentAward.summary}
+                          </p>
                         </div>
-                        <p className="text-[11.5px] text-gray-400 leading-relaxed font-sans">
-                          {currentAward.clinicalImpact}
-                        </p>
+
+                        <div className="p-4 rounded-xl border border-white/5 bg-gradient-to-r from-white/[0.01] to-transparent space-y-1.5">
+                          <div className="flex items-center gap-2 text-gold-400">
+                            <Activity className="w-3.5 h-3.5 text-gold-400" />
+                            <p className="text-[10px] font-mono uppercase tracking-wider font-bold">Clinical Precision & Patient Outcomes</p>
+                          </div>
+                          <p className="text-[11.5px] text-gray-400 leading-relaxed font-sans">
+                            {currentAward.clinicalImpact}
+                          </p>
+                        </div>
                       </div>
                     </div>
-
                   </div>
+
+                  {currentAward.imageUrl && (
+                    <div className="mt-4 flex-1 w-full min-h-[220px] max-h-[380px] relative rounded-2xl overflow-hidden border border-white/10 group shadow-lg">
+                      <img
+                        src={currentAward.imageUrl}
+                        alt={currentAward.title}
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    </div>
+                  )}
 
                 </div>
 

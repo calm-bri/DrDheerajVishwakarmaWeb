@@ -3,9 +3,9 @@ import { SpineCondition, RecoveryTimelineStep, Testimonial, FAQItem, Internation
 export const conditionsData: SpineCondition[] = [
   {
     id: "fess",
-    name: "Full Endoscopic Spine Surgery (FESS)",
+    name: "Full Monoportal Endoscopic Spine Surgery (FESS)",
     shortDescription: "Ultra-minimally invasive intervention using an under-8mm endoscope, requiring only a single stitch and allowing direct visual access.",
-    fullDescription: "Full Endoscopic Spine Surgery (FESS) represents the absolute pinnacle of contemporary spinal care. By utilizing a single micro-portal under 8mm and requiring only a single stitch, Dr. Dheeraj Vishwakarma inserts a microscopic lens directly next to the compressed nerve roots. Specialized optical lighting showcases real-time neural pulsations under 4K magnification, guaranteeing unparalleled safety. No major muscles are severed or detached, which eliminates the heavy post-operative discomfort of old-fashioned surgery.",
+    fullDescription: "Full Monoportal Endoscopic Spine Surgery (FESS) represents the absolute pinnacle of contemporary spinal care. By utilizing a single micro-portal under 8mm and requiring only a single stitch, Dr. Dheeraj Vishwakarma inserts a microscopic lens directly next to the compressed nerve roots. Specialized optical lighting showcases real-time neural pulsations under 4K magnification, guaranteeing unparalleled safety. No major muscles are severed or detached, which eliminates the heavy post-operative discomfort of old-fashioned surgery.",
     symptoms: [
       "Radiating sciatic leg pain",
       "Lumbar or cervical herniation",
@@ -13,8 +13,8 @@ export const conditionsData: SpineCondition[] = [
       "Neurological motor weakness"
     ],
     treatmentMetric: "99.1% Visual Precision",
-    recoveryTime: "Full Walk within 2 Hours",
-    detailedKey: "Full Endoscopic Spine Surgery (FESS)",
+    recoveryTime: "Full Walk within 4-6 Hours",
+    detailedKey: "Full Monoportal Endoscopic Spine Surgery (FESS)",
     iconName: "Eye"
   },
   {
@@ -138,8 +138,8 @@ export const testimonialsData: Testimonial[] = [
     name: "Manoj Kumar Sharma",
     location: "Jaipur, Rajasthan (Google Verified Review)",
     condition: "L4-L5 Slipped Disc with Severe Sciatica",
-    quote: "I suffered from unbearable back and leg pain due to L4-L5 herniation for 6 months. Dr. Dheeraj diagnosed it perfectly and performed an endoscopic keyhole surgery. I walked on the same day within 2 hours. He is truly the best endoscopic spine doctor in Jaipur! Thank you, doctor, for giving me my life back.",
-    recoverySummary: "Walked 2 hours post-op, discharged within 24h",
+    quote: "I suffered from unbearable back and leg pain due to L4-L5 herniation for 6 months. Dr. Dheeraj diagnosed it perfectly and performed an endoscopic keyhole surgery. I walked on the same day within 4-6 hours. He is truly the best monoportal endoscopic spine doctor in Jaipur! Thank you, doctor, for giving me my life back.",
+    recoverySummary: "Walked 4-6 hours post-op, discharged within 24h",
     rating: 5
   },
   {
@@ -147,7 +147,7 @@ export const testimonialsData: Testimonial[] = [
     name: "Preeti Vyas",
     location: "Ajmer, Rajasthan (Google Verified Review)",
     condition: "Severe Cervical Spondylosis & Hand Numbness",
-    quote: "Others suggested open spinal fusion which was scary. Dr. Dheeraj Vishwakarma treated my neck issue endoscopically with a tiny 7mm cut. The hand numbness and shooting pain disappeared instantly. No fusion, no implants. Highly recommended!",
+    quote: "Others suggested open spinal fusion which was scary. Dr. Dheeraj Vishwakarma treated my neck issue endoscopically with a tiny 8mm cut. The hand numbness and shooting pain disappeared instantly. No fusion, no implants. Highly recommended!",
     recoverySummary: "Discharged next morning, back to work in 5 days",
     rating: 5
   },
@@ -165,7 +165,7 @@ export const testimonialsData: Testimonial[] = [
     name: "Dr. Sunil Maheshwari",
     location: "Udaipur, Rajasthan (Consultant Pediatrician)",
     condition: "Acute L5-S1 Slip Disc with Neurological Deficit",
-    quote: "As a fellow medical professional, I scrutinized all modern options for my L5-S1 slip disc. Dr. Dheeraj's surgical precision in FESS (Full Endoscopic Spine Surgery) is outstanding. The clean visibility and command kept my nerve roots safe. An excellent surgeon.",
+    quote: "As a fellow medical professional, I scrutinized all modern options for my L5-S1 slip disc. Dr. Dheeraj's surgical precision in FESS (Full Monoportal Endoscopic Spine Surgery) is outstanding. The clean visibility and command kept my nerve roots safe. An excellent surgeon.",
     recoverySummary: "Normal consulting practice resumed within a week",
     rating: 5
   },
@@ -183,7 +183,7 @@ export const testimonialsData: Testimonial[] = [
     name: "Amara Al-Jamil",
     location: "Dubai, UAE (International Patient Review)",
     condition: "Multi-level Lumbar Stenosis & Disk Herniation",
-    quote: "Flew from Dubai to Rajasthan specifically for Dr. Dheeraj's specialized endoscopic spine treatment. The clinical care, hospitality, and overall experience were remarkable. I am now back to my daily gym routine without any restrictions.",
+    quote: "Flew from Dubai to Rajasthan specifically for Dr. Dheeraj's specialized monoportal endoscopic spine treatment. The clinical care, hospitality, and overall experience were remarkable. I am now back to my daily gym routine without any restrictions.",
     recoverySummary: "Resumed daily gym routines after 4 weeks",
     rating: 5
   }
@@ -260,14 +260,14 @@ export const internationalDestinations: InternationalDestination[] = [
 export const faqData: FAQItem[] = [
   {
     id: "faq-1",
-    question: "What is the difference between Endoscopic Spine Surgery and traditional spine surgery?",
-    answer: "Traditional spine surgery requires a large incision of 3-5 inches, severe cutting and peeling of spine muscles, and a long hospital stay. Dr. Vishwakarma's Endoscopic Spine Surgery uses a tiny incision (~7mm, less than a finger-width), passes between muscles without ripping them, preserves the spinal joints, and allows patients to walk comfortably within hours afterward.",
+    question: "What is the difference between Monoportal Endoscopic Spine Surgery and traditional spine surgery?",
+    answer: "Traditional spine surgery requires a large incision of 3-5 inches, severe cutting and peeling of spine muscles, and a long hospital stay. Dr. Vishwakarma's Monoportal Endoscopic Spine Surgery uses a tiny incision (~8mm, less than a finger-width), passes between muscles without ripping them, preserves the spinal joints, and allows patients to walk comfortably within hours afterward.",
     category: "technology"
   },
   {
     id: "faq-2",
     question: "Do you use metal fusion screws and implants for all slip disc surgeries?",
-    answer: "Absolutely not. One of the main goals of Full Endoscopic Spine Surgery (FESS) is to protect your natural spine mobility. We work with micro-instruments to selectively extract the herniated disc tissue, leaving the healthy disc intact. Screws and fusions are reserved strictly for severe spinal column instability or spondylolisthesis.",
+    answer: "Absolutely not. One of the main goals of Full Monoportal Endoscopic Spine Surgery (FESS) is to protect your natural spine mobility. We work with micro-instruments to selectively extract the herniated disc tissue, leaving the healthy disc intact. Screws and fusions are reserved strictly for severe spinal column instability or spondylolisthesis.",
     category: "safety"
   },
   {
@@ -278,7 +278,7 @@ export const faqData: FAQItem[] = [
   },
   {
     id: "faq-4",
-    question: "Is endoscopic spine surgery safe under local/epidural anesthesia?",
+    question: "Is monoportal endoscopic spine surgery safe under local/epidural anesthesia?",
     answer: "Yes, it is incredibly safe. In fact, keeping the patient conscious but comfortable during the procedure is a great safety measure. Since the patient can respond, it provides immediate real-time biological feedback if a nerve structure is touched, almost completely eliminating any risk of nerve injury.",
     category: "safety"
   },

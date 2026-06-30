@@ -14,11 +14,11 @@ export default function Footer({ onNavigate }: FooterProps) {
     "@type": "Physician",
     "name": "Dr. Dheeraj Vishwakarma",
     "image": "https://drdheerajspine.com/logo.png",
-    "medicalSpecialty": "Endoscopic Spine Surgery, Spine Surgery, Neurosurgery",
+    "medicalSpecialty": "Monoportal Endoscopic Spine Surgery, Spine Surgery, Neurosurgery",
     "availableService": [
       {
         "@type": "MedicalProcedure",
-        "name": "Full Endoscopic Spine Surgery (FESS)",
+        "name": "Full Monoportal Endoscopic Spine Surgery (FESS)",
         "description": "Ultra minimally invasive surgical decompression using an under 8mm keyhole single-stitch endoscope."
       },
       {
@@ -84,13 +84,13 @@ export default function Footer({ onNavigate }: FooterProps) {
             </div>
 
             <p className="text-xs text-gray-400 leading-relaxed font-sans max-w-xs">
-              Pioneering Endoscopic Spine Surgeon & Board-certified Spinal Neurosurgeon specializing in high-definition keyhole Monoportal and Full Endoscopic Spine surgery techniques, offering rapid recoveries with same-day walking milestones.
+              Pioneering Monoportal Endoscopic Spine Surgeon & Board-certified Spinal Neurosurgeon specializing in high-definition keyhole Monoportal and Full Monoportal Endoscopic Spine surgery techniques, offering rapid recoveries with same-day walking milestones.
             </p>
 
             {/* Quick trust metrics */}
             <div className="flex items-center gap-2 text-[9px] font-mono tracking-widest uppercase bg-white/2 border border-white/5 py-1 px-3 rounded-lg w-fit">
               <Sparkles className="w-3.5 h-3.5 text-gold-400 animate-pulse" />
-              <span className="text-gray-300 font-bold">5,000+ Spine Release Operations</span>
+              <span className="text-gray-300 font-bold">100+ Monoportal Spine Release Operations</span>
             </div>
           </div>
 
@@ -101,7 +101,7 @@ export default function Footer({ onNavigate }: FooterProps) {
             </h5>
             <ul className="space-y-2.5 text-xs">
               {[
-                { label: "Full Endoscopic Spine Surgery (FESS)", target: "treatments-section" },
+                { label: "Full Monoportal Endoscopic Spine Surgery (FESS)", target: "treatments-section" },
                 { label: "Endoscopic Monoportal Spine Surgery", target: "treatments-section" },
                 { label: "Minimally Invasive Spine Surgery (MISS)", target: "treatments-section" },
                 { label: "Sciatica Trapped Root Release", target: "treatments-section" },

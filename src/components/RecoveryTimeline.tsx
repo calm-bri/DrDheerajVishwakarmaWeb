@@ -98,9 +98,9 @@ export default function RecoveryTimeline() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-10">
           {[
             {
-              metric: "< 7mm",
+              metric: "< 8mm",
               title: "Smaller Incisions",
-              desc: "Traditional surgeries require cuts of 100mm. Our endoscopic portal fits in a mini 7mm slot, requiring no traumatic muscle tearing."
+              desc: "Traditional surgeries require cuts of 100mm. Our endoscopic portal fits in a mini 8mm slot, requiring no traumatic muscle tearing."
             },
             {
               metric: "0% Screws",
@@ -108,7 +108,7 @@ export default function RecoveryTimeline() {
               desc: "Instead of rigid metal rods that permanently lock your joints, we relieve targeted core nerve compression, leaving 95% of natural discs untouched."
             },
             {
-              metric: "2 Hours",
+              metric: "4-6 Hours",
               title: "Rapid Independent Walking",
               desc: "Because paraspinous structures remain fully functional, patients safely stand, walk, and use recovery rooms comfortably the same afternoon."
             }

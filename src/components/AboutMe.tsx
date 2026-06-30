@@ -36,18 +36,18 @@ export default function AboutMe() {
 
   const educationalMilestones = [
     {
-      degree: "Advanced Clinical Training in Full Endoscopic Spine Surgery (FESS)",
+      degree: "Advanced Clinical Training in Full Monoportal Endoscopic Spine Surgery (FESS)",
       institution: "St. Anna Hospital, Germany",
       period: "2024",
       location: "Herne, Germany",
-      details: "Advanced clinical training in Full Endoscopic Spine Surgery under the mentorship of Professor Dr. Sebastian Rutten and Professor Dr. Martin Komp, internationally renowned pioneers."
+      details: "Advanced clinical training in Full Monoportal Endoscopic Spine Surgery under the mentorship of Professor Dr. Sebastian Rutten and Professor Dr. Martin Komp, internationally renowned pioneers."
     },
     {
-      degree: "Fellowship in Minimally Invasive Spine Surgery (MISS) & Full Endoscopic Spine Surgery (FESS)",
+      degree: "Fellowship in Minimally Invasive Spine Surgery (MISS) & Full Monoportal Endoscopic Spine Surgery (FESS)",
       institution: "Asian Spine Hospital, Hyderabad",
       period: "2024",
       location: "Hyderabad, India",
-      details: "Completed clinical fellowship under the guidance of Dr. Sukumar Sura, one of India's leading experts and pioneers in endoscopic spine surgery."
+      details: "Completed clinical fellowship under the guidance of Dr. Sukumar Sura, one of India's leading experts and pioneers in monoportal endoscopic spine surgery."
     },
     {
       degree: "Magister Chirurgiae (M.Ch) in Neurosurgery",
@@ -74,7 +74,7 @@ export default function AboutMe() {
 
   const executiveStrengths = [
     {
-      title: "Full Endoscopic Spine Surgery (FESS)",
+      title: "Full Monoportal Endoscopic Spine Surgery (FESS)",
       desc: "Mastery in monoportal endoscopic discectomy and neural decompressions. Able to operate through ultra-precision channels under 8mm with single-stitch closure."
     },
     {
@@ -91,17 +91,17 @@ export default function AboutMe() {
     {
       type: "Asia & India Book of Records",
       title: "Youngest Pediatric Endoscopic Discectomy",
-      event: "Recorded for treating the youngest patient (11-year-old) for Cauda Equina Syndrome using a stitch-less 8mm monoportal discectomy."
+      event: "Recorded for treating the youngest patient (11-year-old) for Cauda Equina Syndrome using a single-stitch 8mm monoportal discectomy."
     },
     {
       type: "India Book of Records",
       title: "Global Spine Endoscopy Pioneer",
-      event: "Pioneered complex cervical and dorsal endoscopic spine surgeries, completing a landmark milestone of 50+ multi-level cases."
+      event: "Pioneered complex cervical and dorsal monoportal endoscopic spine surgeries, completing a landmark milestone of 50+ multi-level cases."
     },
     {
       type: "Academic Book Chapter",
       title: "Lumbar Canal Stenosis",
-      event: "Contributed a key instructional chapter to 'A Practical Manual on Full Endoscopic Spine Surgery', sharing clinical principles with peers."
+      event: "Contributed a key instructional chapter to 'A Practical Manual on Full Monoportal Endoscopic Spine Surgery', sharing clinical principles with peers."
     },
     {
       type: "TYSA Orator Champion",
@@ -194,7 +194,7 @@ export default function AboutMe() {
               </div>
 
               <p className="text-gray-300 text-xs sm:text-sm leading-relaxed font-sans">
-                Dr. Dheeraj Vishwakarma is a pioneering endoscopic spine surgeon and board-certified neurosurgeon who completed his prestigious Magister Chirurgiae (M.Ch) residency at GIPMER, New Delhi. 
+                Dr. Dheeraj Vishwakarma is a pioneering monoportal endoscopic spine surgeon and board-certified neurosurgeon who completed his prestigious Magister Chirurgiae (M.Ch) residency at GIPMER, New Delhi. 
               </p>
               
               <p className="text-gray-400 text-xs leading-relaxed font-sans">

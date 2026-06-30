@@ -75,7 +75,7 @@ export default function Loader({ onComplete }: LoaderProps) {
               Dr. Dheeraj Vishwakarma
             </h2>
             <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest mt-1">
-              FULL ENDOSCOPIC SPINE CLINICAL DEPARTMENT
+              FULL MONOPORTAL ENDOSCOPIC SPINE CLINICAL DEPARTMENT
             </p>
           </motion.div>
 

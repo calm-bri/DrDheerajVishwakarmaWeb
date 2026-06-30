@@ -36,6 +36,18 @@ export interface ShowcaseItem {
 
 export const INITIAL_SHOWCASES: ShowcaseItem[] = [
   {
+    id: "sc-asia-india-records",
+    title: "Asia & India Book of Records Certification",
+    subtitle: "Pioneered youngest pediatric monoportal endoscopic discectomy milestone.",
+    description: "Dr. Dheeraj Vishwakarma holding the record certificates for the Asia Book of Records and India Book of Records, recognizing the world-record milestone of performing a single-stitch 8mm monoportal endoscopic discectomy on the youngest patient (11 years old) for Cauda Equina Syndrome.",
+    category: "news",
+    location: "Jaipur, India",
+    date: "July 2025",
+    imageUrl: "/awards-records.jpg",
+    sizeClass: "md:col-span-2 md:row-span-1 aspect-[16/10] sm:aspect-auto",
+    badge: "Asia & India Record"
+  },
+  {
     id: "sc-db-news",
     title: "Dainik Bhaskar: Spine Endoscopy Landmark",
     subtitle: "Pioneering cervical-dorsal monoportal endoscopic spine surgery milestone.",
@@ -49,9 +61,9 @@ export const INITIAL_SHOWCASES: ShowcaseItem[] = [
   },
   {
     id: "sc-rp-news",
-    title: "Rajasthan Patrika: Stitch-less Spine Care",
-    subtitle: "Pioneering <8mm single-stitch ambulatory endoscopic spine surgeries.",
-    description: "Special press release documenting the benefits of under-8mm stitch-less endoscopic surgery, explaining how avoiding muscle tears leads to same-day recovery milestones.",
+    title: "Rajasthan Patrika: Single-Stitch Spine Care",
+    subtitle: "Pioneering <8mm single-stitch ambulatory monoportal endoscopic spine surgeries.",
+    description: "Special press release documenting the benefits of under-8mm single-stitch endoscopic surgery, explaining how avoiding muscle tears leads to same-day recovery milestones.",
     category: "news",
     location: "India Desk",
     date: "August 2025",
@@ -76,7 +88,7 @@ export const INITIAL_SHOWCASES: ShowcaseItem[] = [
     id: "sc-1",
     title: "Dual-Portal Endoscopic Operating Suite Setup",
     subtitle: "High-definition camera consoles & saline Continuous Pressure irrigation system.",
-    description: "The main operating desk showing full-endoscopic spinal camera integration, dual continuous-flow pump nodes, and micro-manipulators. Keeping the incision under 7mm ensures absolute safety.",
+    description: "The main operating desk showing full-endoscopic spinal camera integration, dual continuous-flow pump nodes, and micro-manipulators. Keeping the incision under 8mm ensures absolute safety.",
     category: "surgical",
     location: "Surgical Theatre Unit A, India",
     date: "May 2026",
@@ -89,7 +101,7 @@ export const INITIAL_SHOWCASES: ShowcaseItem[] = [
     id: "sc-2",
     title: "Post-Operative Recovery Patient Assessment",
     subtitle: "Real-time neuro-pathway validation while the patient is awake.",
-    description: "Dr. Dheeraj Vishwakarma performing active motor checks immediately following a stitch-less transforaminal decompression. The patient walked independently within 3 hours.",
+    description: "Dr. Dheeraj Vishwakarma performing active motor checks immediately following a single-stitch transforaminal decompression. The patient walked independently within 3 hours.",
     category: "surgical",
     location: "Special Care Ward",
     date: "April 2026",
@@ -135,7 +147,7 @@ export const INITIAL_SHOWCASES: ShowcaseItem[] = [
   },
   {
     id: "sc-6",
-    title: "National Media Spotlight on Stitch-Less Interventions",
+    title: "National Media Spotlight on Single-Stitch Interventions",
     subtitle: "Special front-page feature covering the clinical shift to outpatient spine solutions.",
     description: "An extensive interview piece detailing how endoscopic micro-discectomies drastically lower risk variables for elderly patients with cardiovascular complex histories.",
     category: "news",
@@ -260,7 +272,7 @@ export default function Gallery() {
 
           <div className="md:text-right max-w-xs">
             <p className="font-sans text-xs text-stone-400 leading-relaxed font-normal">
-              Captured moments regarding the transition of <strong>Awake Endoscopic Spine Surgery</strong>. Click any card to launch the widescreen presentation stage.
+              Captured moments regarding the transition of <strong>Awake Monoportal Endoscopic Spine Surgery</strong>. Click any card to launch the widescreen presentation stage.
             </p>
           </div>
         </div>
@@ -530,7 +542,7 @@ export default function Gallery() {
 
       {/* Quick Layout resets in bottom layout */}
       <div className="mt-16 text-center text-[11px] text-stone-600 font-mono flex items-center justify-center gap-1.5">
-        <span>© Dr. Dheeraj Vishwakarma Endoscopic Spine Clinic Gallery.</span>
+        <span>© Dr. Dheeraj Vishwakarma Monoportal Endoscopic Spine Clinic Gallery.</span>
         <span>•</span>
         <button 
           onClick={handleResetCatalog}

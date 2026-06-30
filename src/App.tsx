@@ -91,24 +91,24 @@ export default function App() {
 
   // Dynamic SEO Page Title & Meta Description updates
   useEffect(() => {
-    let title = "Dr. Dheeraj Vishwakarma - Best Endoscopic Spine Surgeon in India";
-    let desc = "Dr. Dheeraj Vishwakarma is India's leading Endoscopic Spine Specialist & Board-Certified Neurosurgeon specializing in FESS (Full Endoscopic Spine Surgery) and stitchless <8mm spine care. Same-day walking recovery.";
+    let title = "Dr. Dheeraj Vishwakarma - Best Monoportal Endoscopic Spine Surgeon in India";
+    let desc = "Dr. Dheeraj Vishwakarma is India's leading Monoportal Endoscopic Spine Specialist & Board-Certified Neurosurgeon specializing in FESS (Full Monoportal Endoscopic Spine Surgery) and single stitch <8mm spine care. Same-day walking recovery.";
 
     switch (currentPage) {
       case "about":
         title = "About Dr. Dheeraj Vishwakarma | Credentials & Spine Care Experience";
-        desc = "Learn about Dr. Dheeraj Vishwakarma, India's premier Endoscopic Spine Surgeon & Board-Certified Neurosurgeon with extensive specialized training in advanced Germany spine endoscopy.";
+        desc = "Learn about Dr. Dheeraj Vishwakarma, India's premier Monoportal Endoscopic Spine Surgeon & Board-Certified Neurosurgeon with extensive specialized training in advanced Germany spine endoscopy.";
         break;
       case "treatments":
-        title = "Advanced Endoscopic Spine Treatments & Procedures | Dr. Dheeraj Vishwakarma";
-        desc = "Discover FESS (Full Endoscopic Spine Surgery), minimally invasive spine procedures, and treatments for slipped disc, sciatica, and stenosis.";
+        title = "Advanced Monoportal Endoscopic Spine Treatments & Procedures | Dr. Dheeraj Vishwakarma";
+        desc = "Discover FESS (Full Monoportal Endoscopic Spine Surgery), minimally invasive spine procedures, and treatments for slipped disc, sciatica, and stenosis.";
         break;
       case "international":
         title = "International Patients Spine Care Desk | Dr. Dheeraj Vishwakarma";
         desc = "Comprehensive clinical support for global spine surgery patients. Keyhole spinal surgery in India with same-day walk milestones and translation desk.";
         break;
       case "gallery":
-        title = "Endoscopic Spine Surgical Case Gallery | Dr. Dheeraj Vishwakarma";
+        title = "Monoportal Endoscopic Spine Surgical Case Gallery | Dr. Dheeraj Vishwakarma";
         desc = "Browse surgical case logs, 4K endoscopy recordings, and patient mobility testimonials showing rapid recovery milestones post spine release.";
         break;
     }

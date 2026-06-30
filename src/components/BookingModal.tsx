@@ -23,7 +23,7 @@ export default function BookingModal({ isOpen, onClose, preferredTreatmentId = "
   const [isUploading, setIsUploading] = useState(false);
 
   const treatments = [
-    { value: "fess", label: "Full Endoscopic Spine Surgery (FESS)" },
+    { value: "fess", label: "Full Monoportal Endoscopic Spine Surgery (FESS)" },
     { value: "monoportal", label: "Endoscopic Monoportal Spine Surgery" },
     { value: "miss", label: "Minimally Invasive Spine Surgery" },
     { value: "sciatica", label: "Sciatica Decompression" },
