@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
-import { Activity, Menu, X, CalendarCheck2, Globe, Lock } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { Menu, X, CalendarCheck2, Globe, Lock } from "lucide-react";
 import Logo from "./Logo";
 
 interface NavbarProps {
   onOpenBooking: () => void;
-  currentPage: "home" | "about" | "treatments" | "international" | "gallery" | "admin";
-  onNavigate: (page: "home" | "about" | "treatments" | "international" | "gallery" | "admin", scrollTargetId?: string) => void;
 }
 
-export default function Navbar({ onOpenBooking, currentPage, onNavigate }: NavbarProps) {
+export default function Navbar({ onOpenBooking }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -21,18 +21,18 @@ export default function Navbar({ onOpenBooking, currentPage, onNavigate }: Navba
   }, []);
 
   const menuItems = [
-    { label: "Home", page: "home" as const },
-    { label: "About", page: "about" as const },
-    { label: "Treatments", page: "treatments" as const },
-    { label: "Gallery", page: "gallery" as const },
-    { label: "Recovery Timeline", page: "home" as const, target: "recovery-section" },
-    { label: "Int'l Patients", page: "international" as const },
-    { label: "FAQ", page: "home" as const, target: "faq-section" }
+    { label: "Home", to: "/" },
+    { label: "About", to: "/about" },
+    { label: "Treatments", to: "/treatments" },
+    { label: "Blogs", to: "/blogs" },
+    { label: "Gallery", to: "/gallery" },
+    { label: "Recovery Timeline", to: "/#recovery-section" },
+    { label: "Int'l Patients", to: "/international" },
+    { label: "FAQ", to: "/#faq-section" }
   ];
 
-  const handleItemClick = (item: typeof menuItems[0]) => {
+  const handleItemClick = () => {
     setMobileMenuOpen(false);
-    onNavigate(item.page, item.target);
   };
 
   return (
@@ -49,40 +49,44 @@ export default function Navbar({ onOpenBooking, currentPage, onNavigate }: Navba
           }`}
         >
           {/* Logo Brand Frame */}
-          <div
-            onClick={() => onNavigate("home")}
+          <Link
+            to="/"
             className="flex items-center cursor-pointer group shrink-0"
           >
             <Logo mode="horizontal" className="scale-90 group-hover:scale-95 transition-all duration-300" />
-          </div>
+          </Link>
 
           {/* Core Navigation List - Desktop editorial style */}
           <nav className="hidden lg:flex items-center gap-1.5 p-1 glassmorphism rounded-full border border-white/5">
-            {menuItems.map((item) => (
-              <button
-                key={item.label}
-                onClick={() => handleItemClick(item)}
-                className={`text-xs px-4 py-1.5 rounded-full font-medium transition-all cursor-pointer relative ${
-                  currentPage === item.page && (!item.target || window.location.hash.includes(item.target))
-                    ? "text-gold-300 bg-white/10 border border-gold-400/20"
-                    : "text-gray-300 hover:text-white hover:bg-white/5"
-                }`}
-              >
-                {item.label}
-              </button>
-            ))}
+            {menuItems.map((item) => {
+              const isActive = item.to.includes("#")
+                ? location.pathname === "/" && location.hash === item.to.substring(item.to.indexOf("#"))
+                : location.pathname === item.to && !location.hash;
+
+              return (
+                <Link
+                  key={item.label}
+                  to={item.to}
+                  className={`text-xs px-4 py-1.5 rounded-full font-medium transition-all cursor-pointer relative ${
+                    isActive
+                      ? "text-gold-300 bg-white/10 border border-gold-400/20"
+                      : "text-gray-300 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Action CTAs */}
           <div className="flex items-center gap-1.5 xs:gap-2.5 shrink-0">
             {/* Secure Admin Portal Link */}
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onNavigate("admin");
-              }}
+            <Link
+              to="/admin"
+              onClick={handleItemClick}
               className={`flex items-center justify-center p-2 rounded-full border transition-all cursor-pointer ${
-                currentPage === "admin"
+                location.pathname === "/admin"
                   ? "border-gold-400/60 bg-gold-400/10 text-gold-300 shadow-[0_0_12px_rgba(193,161,113,0.25)]"
                   : "border-white/5 bg-white/2 hover:bg-white/5 text-gray-400 hover:text-white"
               }`}
@@ -90,16 +94,16 @@ export default function Navbar({ onOpenBooking, currentPage, onNavigate }: Navba
               id="admin-nav-button"
             >
               <Lock className="w-3.5 h-3.5" />
-            </button>
+            </Link>
 
             {/* International desk badge */}
-            <button
-              onClick={() => onNavigate("international")}
+            <Link
+              to="/international"
               className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-sky-400/20 bg-sky-400/5 text-sky-300 hover:bg-sky-400/10 text-[10px] font-bold tracking-wider uppercase transition-colors pointer-events-auto"
             >
               <Globe className="w-3.5 h-3.5" />
               <span>Int'l Desk</span>
-            </button>
+            </Link>
 
             {/* Premium Consult CTA */}
             <button
@@ -144,26 +148,25 @@ export default function Navbar({ onOpenBooking, currentPage, onNavigate }: Navba
           <nav className="flex-1 flex flex-col justify-center space-y-6 px-4">
             <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-gray-500">CLINICAL INDEX:</span>
             {menuItems.map((item, idx) => (
-              <button
+              <Link
                 key={item.label}
-                onClick={() => handleItemClick(item)}
-                className="text-left font-display font-semibold text-2xl text-gray-200 hover:text-gold-300 transition-colors cursor-pointer block"
+                to={item.to}
+                onClick={handleItemClick}
+                className="text-left font-display font-semibold text-2xl text-gray-200 hover:text-gold-300 transition-colors cursor-pointer block animate-fade-in"
                 style={{ animationDelay: `${idx * 50}ms` }}
               >
                 {item.label}
-              </button>
+              </Link>
             ))}
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onNavigate("admin");
-              }}
+            <Link
+              to="/admin"
+              onClick={handleItemClick}
               className="text-left font-display font-semibold text-xl text-gold-400 hover:text-gold-300 transition-colors cursor-pointer block pt-2 border-t border-white/5 flex items-center gap-2"
               id="mobile-admin-desk-link"
             >
               <Lock className="w-4 h-4 shrink-0 text-gold-400" />
               <span>Admin Desk</span>
-            </button>
+            </Link>
           </nav>
 
           {/* Quick contact / CTAs inside mobile menu drawer */}

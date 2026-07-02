@@ -1,11 +1,8 @@
-import { Activity, Mail, Phone, MapPin, Globe, Sparkles } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Mail, Phone, MapPin, Globe, Sparkles } from "lucide-react";
 import Logo from "./Logo";
 
-interface FooterProps {
-  onNavigate: (page: "home" | "about" | "treatments" | "international" | "gallery", scrollTargetId?: string) => void;
-}
-
-export default function Footer({ onNavigate }: FooterProps) {
+export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   // Structured medical schema metadata so that search engines index Dr. Vishwakarma perfectly in Google Search
@@ -49,17 +46,15 @@ export default function Footer({ onNavigate }: FooterProps) {
     }
   };
 
-  const handleSpecialtyClick = () => {
-    onNavigate("treatments");
-  };
-
   const portalLinks = [
-    { label: "Clinical Experience", page: "about" as const },
-    { label: "Specialty Treatments", page: "treatments" as const },
-    { label: "Surgical Media Gallery", page: "gallery" as const },
-    { label: "Recovery Timeline", page: "home" as const, target: "recovery-section" },
-    { label: "International Desk", page: "international" as const },
-    { label: "Surgical FAQ Desk", page: "home" as const, target: "faq-section" }
+    { label: "Clinical Experience", to: "/about" },
+    { label: "Specialty Treatments", to: "/treatments" },
+    { label: "Surgical Media Gallery", to: "/gallery" },
+    { label: "Medical Publications", to: "/blogs" },
+    { label: "Recovery Timeline", to: "/#recovery-section" },
+    { label: "International Desk", to: "/international" },
+    { label: "Surgical FAQ Desk", to: "/#faq-section" },
+    { label: "Contact & Bookings", to: "/contact" }
   ];
 
   return (
@@ -101,20 +96,20 @@ export default function Footer({ onNavigate }: FooterProps) {
             </h5>
             <ul className="space-y-2.5 text-xs">
               {[
-                { label: "Full Monoportal Endoscopic Spine Surgery (FESS)", target: "treatments-section" },
-                { label: "Endoscopic Monoportal Spine Surgery", target: "treatments-section" },
-                { label: "Minimally Invasive Spine Surgery (MISS)", target: "treatments-section" },
-                { label: "Sciatica Trapped Root Release", target: "treatments-section" },
-                { label: "Slip Disc Micro-discectomy Care", target: "treatments-section" },
-                { label: "Cervical & Lumbar Disclosures", target: "treatments-section" }
+                { label: "Full Monoportal Endoscopic Spine Surgery (FESS)", to: "/treatments#treatment-card-fess" },
+                { label: "Endoscopic Monoportal Spine Surgery", to: "/treatments#treatment-card-monoportal" },
+                { label: "Minimally Invasive Spine Surgery (MISS)", to: "/treatments#treatment-card-miss" },
+                { label: "Sciatica Trapped Root Release", to: "/treatments#treatment-card-sciatica" },
+                { label: "Slip Disc Micro-discectomy Care", to: "/treatments#treatment-card-slipdisc" },
+                { label: "Cervical & Lumbar Disclosures", to: "/treatments#treatment-card-cervical-lumbar" }
               ].map((link, idx) => (
                 <li key={idx}>
-                  <button
-                    onClick={handleSpecialtyClick}
+                  <Link
+                    to={link.to}
                     className="hover:text-gold-250 transition-colors pointer-events-auto text-left cursor-pointer"
                   >
                     {link.label}
-                  </button>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -128,12 +123,12 @@ export default function Footer({ onNavigate }: FooterProps) {
             <ul className="space-y-2.5 text-xs">
               {portalLinks.map((link, idx) => (
                 <li key={idx}>
-                  <button
-                    onClick={() => onNavigate(link.page, link.target)}
-                    className="hover:text-gold-250 transition-colors pointer-events-auto text-left cursor-pointer"
+                  <Link
+                    to={link.to}
+                    className="hover:text-gold-250 transition-colors pointer-events-auto text-left cursor-pointer block"
                   >
                     {link.label}
-                  </button>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -176,8 +171,6 @@ export default function Footer({ onNavigate }: FooterProps) {
           </div>
 
         </div>
-
-
 
         {/* Legal Disclaimer & Medical Compliance footnote */}
         <div className="pt-6 border-t border-white/5 text-[10px] text-gray-500 space-y-4 text-center sm:text-left leading-relaxed">

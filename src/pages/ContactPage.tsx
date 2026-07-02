@@ -1,0 +1,147 @@
+import { motion } from "motion/react";
+import { Mail, Phone, MapPin, Globe, Sparkles, Clock, CalendarCheck2 } from "lucide-react";
+import SEOComponent from "../components/SEOComponent";
+
+interface ContactPageProps {
+  onOpenBooking: () => void;
+}
+
+export default function ContactPage({ onOpenBooking }: ContactPageProps) {
+  return (
+    <motion.div
+      key="contact"
+      initial={{ opacity: 0, scale: 0.99 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.99 }}
+      transition={{ duration: 0.35, ease: "easeInOut" }}
+      className="pt-6 pb-20 px-4 xs:px-6 sm:px-8 max-w-5xl mx-auto text-white text-left"
+    >
+      <SEOComponent
+        title="Contact Dr. Dheeraj Vishwakarma | Spine Consultation & Clinics Desk"
+        description="Contact priority desk at +91 99993 45892 or schedule your endoscopic spine surgery consult online with Dr. Dheeraj Vishwakarma."
+        path="/contact"
+      />
+
+      <div className="absolute top-1/4 right-[10%] w-[400px] h-[400px] bg-gold-glow opacity-10 blur-3xl rounded-full pointer-events-none" />
+      
+      {/* Header section */}
+      <div className="pt-10 pb-8 relative border-b border-white/5 mb-12">
+        <span className="font-mono text-[10px] tracking-[0.3em] text-gold-400 font-bold uppercase inline-block mb-3 bg-gold-400/10 px-3 py-1 rounded-full border border-gold-400/20">
+          Prioritization Desk
+        </span>
+        <h1 className="font-display font-medium text-4xl sm:text-5xl tracking-tight text-white mb-2">
+          Contact & Bookings
+        </h1>
+        <p className="font-sans text-xs sm:text-sm text-gray-500 max-w-xl font-medium">
+          Schedule private telehealth consultations, submit MRI diagnostic logs, or coordinate in-person clinical department intakes.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+        {/* Left Column: Direct Inquiries (7 Cols) */}
+        <div className="md:col-span-7 space-y-6">
+          <div className="p-6 sm:p-8 rounded-3xl glassmorphism bg-cosmic-card/40 border border-white/5 space-y-6">
+            <h3 className="font-display font-semibold text-lg text-white flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-gold-400" />
+              Direct Clinical Channels
+            </h3>
+            
+            <div className="space-y-6 text-xs sm:text-sm">
+              <div className="flex gap-3">
+                <div className="w-9 h-9 rounded-lg bg-emerald-400/10 border border-emerald-400/25 flex items-center justify-center shrink-0">
+                  <Phone className="w-4.5 h-4.5 text-emerald-400" />
+                </div>
+                <div>
+                  <p className="font-mono text-[9px] uppercase tracking-wider text-gray-500">Priority Booking Hotline</p>
+                  <a href="tel:+919999345892" className="hover:text-gold-300 transition-colors text-white font-medium block mt-0.5">
+                    +91 99993 45892
+                  </a>
+                  <p className="text-[10px] text-gray-500 mt-0.5">Available for urgent triage & scheduler questions (9 AM - 7 PM IST)</p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <div className="w-9 h-9 rounded-lg bg-sky-400/10 border border-sky-400/25 flex items-center justify-center shrink-0">
+                  <Mail className="w-4.5 h-4.5 text-sky-400" />
+                </div>
+                <div>
+                  <p className="font-mono text-[9px] uppercase tracking-wider text-gray-500">Official Clinical Email</p>
+                  <a href="mailto:consult@drdheerajspine.com" className="hover:text-gold-300 transition-colors text-white font-medium block mt-0.5">
+                    consult@drdheerajspine.com
+                  </a>
+                  <p className="text-[10px] text-gray-500 mt-0.5">Send high-resolution lumbar/cervical MRI radiograph files for direct surgeon reviews.</p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <div className="w-9 h-9 rounded-lg bg-gold-400/10 border border-gold-400/25 flex items-center justify-center shrink-0">
+                  <MapPin className="w-4.5 h-4.5 text-gold-400" />
+                </div>
+                <div>
+                  <p className="font-mono text-[9px] uppercase tracking-wider text-gray-500">Outpatient Consultation Centers</p>
+                  <p className="text-white font-medium mt-0.5 leading-relaxed">
+                    Primary Department of Endoscopic Spine Care
+                  </p>
+                  <p className="text-[10px] text-gray-500 mt-0.5">
+                    Consulting at premium quaternary care partner hospitals across Jaipur and Delhi NCR, India.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <div className="w-9 h-9 rounded-lg bg-indigo-400/10 border border-indigo-400/25 flex items-center justify-center shrink-0">
+                  <Clock className="w-4.5 h-4.5 text-indigo-400" />
+                </div>
+                <div>
+                  <p className="font-mono text-[9px] uppercase tracking-wider text-gray-500">Outpatient Timings</p>
+                  <p className="text-white font-medium mt-0.5">
+                    Monday – Saturday: 10:00 AM – 4:00 PM
+                  </p>
+                  <p className="text-[10px] text-gray-500 mt-0.5">Prior bookings mandatory for all clinical consultations.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: Dynamic Scheduler Box (5 Cols) */}
+        <div className="md:col-span-5 space-y-6">
+          <div className="p-6 sm:p-8 rounded-3xl glassmorphism bg-gradient-to-br from-gold-400/[0.03] to-transparent border border-white/10 space-y-6 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-gold-400/5 rounded-full blur-xl" />
+            
+            <h3 className="font-display font-semibold text-lg text-white">
+              Instant Scheduling
+            </h3>
+            
+            <p className="text-xs text-gray-400 leading-relaxed font-sans">
+              Utilize our HIPAA secure portal to select your treatment, describe symptoms, and upload diagnostic files directly to our review server.
+            </p>
+
+            <div className="pt-4 border-t border-white/5 space-y-3 font-sans text-xs">
+              <div className="flex items-start gap-2.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-gold-400 mt-1.5" />
+                <span>MRI review in under 12 hours.</span>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-gold-400 mt-1.5" />
+                <span>Direct video feedback with Dr. Dheeraj.</span>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-gold-400 mt-1.5" />
+                <span>Complete post-op travel orientation support.</span>
+              </div>
+            </div>
+
+            <button
+              onClick={onOpenBooking}
+              className="w-full bg-gradient-to-r from-gold-400 to-gold-500 text-black hover:from-gold-500 hover:to-gold-600 py-3.5 px-4 rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-300 shadow-md hover:scale-103 cursor-pointer flex items-center justify-center gap-2 mt-4"
+            >
+              <CalendarCheck2 className="w-4 h-4 text-black" />
+              <span>Book Appointment</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
