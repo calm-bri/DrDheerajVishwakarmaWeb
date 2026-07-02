@@ -441,7 +441,80 @@ const INITIAL_FAQS = [
   }
 ];
 
-// Generic CRUD endpoints generator with Supabase DB queries
+const INITIAL_BLOGS = [
+  {
+    id: "fess-decompression-shift",
+    title: "Monoportal Endoscopic Spine Surgery: A Paradigm Shift in Spinal Decompression",
+    summary: "How FESS (Full Monoportal Endoscopic Spine Surgery) has revolutionized the treatment of herniations and stenosis by sparing paraspinous muscles and accelerating outpatient mobilization.",
+    content: "Full Monoportal Endoscopic Spine Surgery (FESS) has transformed patient options. Historically, open spine procedures required extensive muscle separation, leading to long recoveries. Endoscopic access through a single <8mm keyhole preserves spinal column structures. Active visualization under 4K saline pressure irrigation minimizes risk, offering a same-day walking milestone.",
+    category: "Clinical Guide",
+    date: "May 2026",
+    readTime: "6 min read",
+    author: "Dr. Dheeraj Vishwakarma"
+  },
+  {
+    id: "awake-spine-surgery-milestones",
+    title: "Awake Spine Surgery: Conscious Sedation & Patient Safety Protocols",
+    summary: "An in-depth review of patient responses and neurological safety margins when conducting keyhole lumbar decompressions under local conscious epidural anesthesia.",
+    content: "Performing spine decompressions while the patient is conscious represents a massive leap in patient safety. By avoiding general anesthesia, cardiac risk variables are lowered. More importantly, the patient can interact with the surgical officer. Real-time feedback during nerve root release ensures zero nerve injury.",
+    category: "Research",
+    date: "March 2026",
+    readTime: "8 min read",
+    author: "Dr. Dheeraj Vishwakarma"
+  },
+  {
+    id: "pediatric-cauda-equina-study",
+    title: "Pediatric Disk Herniations: Keyhole Decompression for Cauda Equina Syndrome",
+    summary: "A clinical case report analysis detailing the successful execution of an 8mm single-stitch discectomy on an 11-year-old pediatric patient, achieving Asia Book of Records recognition.",
+    content: "Pediatric cauda equina syndrome is rare and requires emergency action. This study documents the clinical path of the youngest patient (11 years) treated via transforaminal monoportal endoscopic discectomy. Preserving the growing spine's structural joints is crucial, and keyhole entry bypasses future scoliosis risks.",
+    category: "Case Study",
+    date: "July 2025",
+    readTime: "10 min read",
+    author: "Dr. Dheeraj Vishwakarma"
+  },
+  {
+    id: "lumbar-canal-stenosis-chapter",
+    title: "Academic Book Chapter: Lumbar Canal Stenosis Principles & Practice",
+    summary: "An overview of the instructional chapter contributed by Dr. Vishwakarma to the 'Practical Manual on Full Monoportal Endoscopic Spine Surgery' handbook.",
+    content: "This textbook chapter details safe bone drilling zones, anatomical markers, and continuous irrigation pump pressure calibration. It serves as a guide for spine surgery fellows learning full endoscopic monoportal decompression, teaching standard tricks and how to avoid complications.",
+    category: "Book Chapter",
+    date: "January 2025",
+    readTime: "15 min read",
+    author: "Dr. Dheeraj Vishwakarma"
+  }
+];
+
+// Helper to get local fallback data
+const getLocalData = (resourceName: string, defaults: any[]): any[] => {
+  const dataDir = path.join(__dirname, 'data');
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+  }
+  const filePath = path.join(dataDir, `${resourceName}.json`);
+  if (!fs.existsSync(filePath)) {
+    fs.writeFileSync(filePath, JSON.stringify(defaults, null, 2));
+    return defaults;
+  }
+  try {
+    const content = fs.readFileSync(filePath, 'utf8');
+    return JSON.parse(content);
+  } catch (err) {
+    console.error(`Error reading local data for ${resourceName}:`, err);
+    return defaults;
+  }
+};
+
+// Helper to save local fallback data
+const saveLocalData = (resourceName: string, data: any[]) => {
+  const dataDir = path.join(__dirname, 'data');
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+  }
+  const filePath = path.join(dataDir, `${resourceName}.json`);
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+};
+
+// Generic CRUD endpoints generator with Supabase DB queries and filesystem fallbacks
 const registerCrudRoutes = (resourceName: string, defaults: any[]) => {
   app.get(`/api/${resourceName}`, (req, res, next) => {
     if (resourceName === 'appointments') {
@@ -449,17 +522,17 @@ const registerCrudRoutes = (resourceName: string, defaults: any[]) => {
     }
     next();
   }, async (req, res) => {
-    if (!supabase) {
-      return res.status(500).json({ error: 'Supabase client is not initialized' });
-    }
     try {
+      if (!supabase) {
+        return res.json(getLocalData(resourceName, defaults));
+      }
       const { data, error } = await supabase.from(resourceName).select('*');
       if (error) {
-        console.error(`Supabase query failed for ${resourceName}:`, error.message);
-        return res.status(500).json({ error: error.message });
+        console.warn(`Supabase select failed for ${resourceName}, using local fallback:`, error.message);
+        const local = getLocalData(resourceName, defaults);
+        return res.json(local);
       }
       if (data) {
-        // Sort items if necessary (newest first for showcases, appointments, testimonials)
         if (resourceName === 'showcases' || resourceName === 'appointments' || resourceName === 'testimonials') {
           data.sort((a: any, b: any) => {
             const timeA = a.created_at ? new Date(a.created_at).getTime() : 0;
@@ -471,8 +544,8 @@ const registerCrudRoutes = (resourceName: string, defaults: any[]) => {
       }
       res.json([]);
     } catch (err: any) {
-      console.error(`Exception during Supabase query for ${resourceName}:`, err);
-      res.status(500).json({ error: err.message || 'Database exception occurred' });
+      console.warn(`Exception in select for ${resourceName}, using local fallback:`, err.message);
+      res.json(getLocalData(resourceName, defaults));
     }
   });
 
@@ -487,81 +560,116 @@ const registerCrudRoutes = (resourceName: string, defaults: any[]) => {
       newItem.id = `${resourceName.substring(0, 4)}-${Date.now()}`;
     }
 
-    if (!supabase) {
-      return res.status(500).json({ error: 'Supabase client is not initialized' });
-    }
-
     try {
+      if (!supabase) {
+        const local = getLocalData(resourceName, defaults);
+        local.push(newItem);
+        saveLocalData(resourceName, local);
+        return res.status(201).json(newItem);
+      }
       const { error } = await supabase.from(resourceName).insert(newItem);
       if (error) {
-        console.error(`Supabase insert failed for ${resourceName}:`, error.message);
-        return res.status(500).json({ error: error.message });
+        console.warn(`Supabase insert failed for ${resourceName}, using local fallback:`, error.message);
+        const local = getLocalData(resourceName, defaults);
+        local.push(newItem);
+        saveLocalData(resourceName, local);
+        return res.status(201).json(newItem);
       }
       res.status(201).json(newItem);
     } catch (err: any) {
-      console.error(`Exception during Supabase insert for ${resourceName}:`, err);
-      res.status(500).json({ error: err.message || 'Database exception occurred' });
+      console.warn(`Exception in insert for ${resourceName}, using local fallback:`, err.message);
+      const local = getLocalData(resourceName, defaults);
+      local.push(newItem);
+      saveLocalData(resourceName, local);
+      res.status(201).json(newItem);
     }
   });
 
   app.put(`/api/${resourceName}/:id`, verifyAdmin, async (req, res) => {
     const updatedFields = req.body;
-    if (!supabase) {
-      return res.status(500).json({ error: 'Supabase client is not initialized' });
-    }
-
     try {
+      if (!supabase) {
+        const local = getLocalData(resourceName, defaults);
+        const idx = local.findIndex((item: any) => item.id === req.params.id);
+        if (idx !== -1) {
+          local[idx] = { ...local[idx], ...updatedFields };
+          saveLocalData(resourceName, local);
+        }
+        return res.json({ id: req.params.id, ...updatedFields });
+      }
       const { error } = await supabase.from(resourceName).update(updatedFields).eq('id', req.params.id);
       if (error) {
-        console.error(`Supabase update failed for ${resourceName}:`, error.message);
-        return res.status(500).json({ error: error.message });
+        console.warn(`Supabase update failed for ${resourceName}, using local fallback:`, error.message);
+        const local = getLocalData(resourceName, defaults);
+        const idx = local.findIndex((item: any) => item.id === req.params.id);
+        if (idx !== -1) {
+          local[idx] = { ...local[idx], ...updatedFields };
+          saveLocalData(resourceName, local);
+        }
+        return res.json({ id: req.params.id, ...updatedFields });
       }
       res.json({ id: req.params.id, ...updatedFields });
     } catch (err: any) {
-      console.error(`Exception during Supabase update for ${resourceName}:`, err);
-      res.status(500).json({ error: err.message || 'Database exception occurred' });
+      console.warn(`Exception in update for ${resourceName}, using local fallback:`, err.message);
+      const local = getLocalData(resourceName, defaults);
+      const idx = local.findIndex((item: any) => item.id === req.params.id);
+      if (idx !== -1) {
+        local[idx] = { ...local[idx], ...updatedFields };
+        saveLocalData(resourceName, local);
+      }
+      res.json({ id: req.params.id, ...updatedFields });
     }
   });
 
   app.delete(`/api/${resourceName}/:id`, verifyAdmin, async (req, res) => {
-    if (!supabase) {
-      return res.status(500).json({ error: 'Supabase client is not initialized' });
-    }
-
     try {
+      if (!supabase) {
+        const local = getLocalData(resourceName, defaults);
+        const filtered = local.filter((item: any) => item.id !== req.params.id);
+        saveLocalData(resourceName, filtered);
+        return res.json({ success: true, id: req.params.id });
+      }
       const { error } = await supabase.from(resourceName).delete().eq('id', req.params.id);
       if (error) {
-        console.error(`Supabase delete failed for ${resourceName}:`, error.message);
-        return res.status(500).json({ error: error.message });
+        console.warn(`Supabase delete failed for ${resourceName}, using local fallback:`, error.message);
+        const local = getLocalData(resourceName, defaults);
+        const filtered = local.filter((item: any) => item.id !== req.params.id);
+        saveLocalData(resourceName, filtered);
+        return res.json({ success: true, id: req.params.id });
       }
       res.json({ success: true, id: req.params.id });
     } catch (err: any) {
-      console.error(`Exception during Supabase delete for ${resourceName}:`, err);
-      res.status(500).json({ error: err.message || 'Database exception occurred' });
+      console.warn(`Exception in delete for ${resourceName}, using local fallback:`, err.message);
+      const local = getLocalData(resourceName, defaults);
+      const filtered = local.filter((item: any) => item.id !== req.params.id);
+      saveLocalData(resourceName, filtered);
+      res.json({ success: true, id: req.params.id });
     }
   });
 
   app.post(`/api/${resourceName}/reset`, verifyAdmin, async (req, res) => {
-    if (!supabase) {
-      return res.status(500).json({ error: 'Supabase client is not initialized' });
-    }
-
     try {
-      // Safe delete: delete records that have valid ids (which is all)
+      if (!supabase) {
+        saveLocalData(resourceName, defaults);
+        return res.json(defaults);
+      }
       const { error: deleteError } = await supabase.from(resourceName).delete().neq('id', 'placeholder_safety_bypass');
       if (deleteError) {
-        console.error(`Supabase clear failed during reset for ${resourceName}:`, deleteError.message);
-        return res.status(500).json({ error: deleteError.message });
+        console.warn(`Supabase clear failed during reset for ${resourceName}, using local fallback:`, deleteError.message);
+        saveLocalData(resourceName, defaults);
+        return res.json(defaults);
       }
       const { error: insertError } = await supabase.from(resourceName).insert(defaults);
       if (insertError) {
-        console.error(`Supabase seed insertion failed for ${resourceName}:`, insertError.message);
-        return res.status(500).json({ error: insertError.message });
+        console.warn(`Supabase seed insertion failed for ${resourceName}, using local fallback:`, insertError.message);
+        saveLocalData(resourceName, defaults);
+        return res.json(defaults);
       }
       res.json(defaults);
     } catch (err: any) {
-      console.error(`Exception during Supabase reset for ${resourceName}:`, err);
-      res.status(500).json({ error: err.message || 'Database exception occurred' });
+      console.warn(`Exception in reset for ${resourceName}, using local fallback:`, err.message);
+      saveLocalData(resourceName, defaults);
+      res.json(defaults);
     }
   });
 };
@@ -582,6 +690,7 @@ registerCrudRoutes('showcases', INITIAL_SHOWCASES);
 registerCrudRoutes('testimonials', INITIAL_TESTIMONIALS);
 registerCrudRoutes('conditions', INITIAL_CONDITIONS);
 registerCrudRoutes('faqs', INITIAL_FAQS);
+registerCrudRoutes('blogs', INITIAL_BLOGS);
 
 // Generate signed upload URL endpoint
 app.post('/api/upload/sign', async (req, res) => {

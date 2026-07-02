@@ -27,7 +27,7 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
     { label: "Blogs", to: "/blogs" },
     { label: "Gallery", to: "/gallery" },
     { label: "Recovery Timeline", to: "/#recovery-section" },
-    { label: "Int'l Patients", to: "/international" },
+    { label: "Int'l Patients", to: "/international-patients" },
     { label: "FAQ", to: "/#faq-section" }
   ];
 
@@ -98,7 +98,7 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
 
             {/* International desk badge */}
             <Link
-              to="/international"
+              to="/international-patients"
               className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-sky-400/20 bg-sky-400/5 text-sky-300 hover:bg-sky-400/10 text-[10px] font-bold tracking-wider uppercase transition-colors pointer-events-auto"
             >
               <Globe className="w-3.5 h-3.5" />

@@ -365,9 +365,11 @@ export default function Gallery() {
                   <img
                     src={item.imageUrl}
                     alt={item.title}
+                    width="600"
+                    height="400"
+                    loading="lazy"
                     className="w-full h-full object-cover transition-transform duration-[800ms] ease-out group-hover:scale-110"
                     referrerPolicy="no-referrer"
-                    loading="lazy"
                   />
                   {/* Subtle vignette gradient overlays */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/10 group-hover:via-black/45 transition-all duration-300" />
@@ -400,9 +402,9 @@ export default function Gallery() {
                   </div>
 
                   {/* High display Title */}
-                  <h3 className="font-display font-medium text-base sm:text-lg text-white group-hover:text-gold-300 transition-colors leading-snug tracking-tight mb-1">
+                  <h2 className="font-display font-medium text-base sm:text-lg text-white group-hover:text-gold-300 transition-colors leading-snug tracking-tight mb-1">
                     {item.title}
-                  </h3>
+                  </h2>
 
                   {/* Subtitle / Descriptive Label */}
                   <p className="text-xs text-stone-300/80 line-clamp-1 group-hover:text-stone-200 transition-colors font-sans">
@@ -472,6 +474,9 @@ export default function Gallery() {
                 <img
                   src={activeItem.imageUrl}
                   alt={activeItem.title}
+                  width="800"
+                  height="600"
+                  loading="lazy"
                   className="max-w-full max-h-[50vh] md:max-h-full object-contain p-2"
                   referrerPolicy="no-referrer"
                 />

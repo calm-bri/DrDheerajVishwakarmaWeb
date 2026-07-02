@@ -2,7 +2,8 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { 
   SpineCondition, 
   Testimonial, 
-  FAQItem 
+  FAQItem,
+  BlogArticle
 } from "../types";
 import { 
   conditionsData, 
@@ -60,6 +61,13 @@ interface DataContextType {
   updateCondition: (id: string, updated: Partial<SpineCondition>) => void;
   deleteCondition: (id: string) => void;
   resetConditions: () => void;
+
+  // Blogs (Publications)
+  blogs: BlogArticle[];
+  addBlog: (blog: BlogArticle) => void;
+  updateBlog: (id: string, updated: Partial<BlogArticle>) => void;
+  deleteBlog: (id: string) => void;
+  resetBlogs: () => void;
 
   // Administrative Auth
   adminPin: string;
@@ -155,21 +163,26 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Conditions state initialized with defaults
   const [conditions, setConditions] = useState<SpineCondition[]>(conditionsData);
 
+  // Blogs state initialized with defaults
+  const [blogs, setBlogs] = useState<BlogArticle[]>([]);
+
   // Fetch initial public data from backend API
   useEffect(() => {
     const loadPublicData = async () => {
       try {
-        const [scsRes, faqsRes, testsRes, condsRes] = await Promise.all([
+        const [scsRes, faqsRes, testsRes, condsRes, blogsRes] = await Promise.all([
           fetch('/api/showcases'),
           fetch('/api/faqs'),
           fetch('/api/testimonials'),
-          fetch('/api/conditions')
+          fetch('/api/conditions'),
+          fetch('/api/blogs')
         ]);
 
         if (scsRes.ok) setShowcases(await scsRes.json());
         if (faqsRes.ok) setFaqs(await faqsRes.json());
         if (testsRes.ok) setTestimonials(await testsRes.json());
         if (condsRes.ok) setConditions(await condsRes.json());
+        if (blogsRes.ok) setBlogs(await blogsRes.json());
       } catch (error) {
         console.warn("Failed to fetch initial public data from backend server. Using local presets.", error);
       }
@@ -463,6 +476,58 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       .catch(err => console.error("Error resetting conditions on server:", err));
   };
 
+  // Blog operations
+  const addBlog = (blog: BlogArticle) => {
+    setBlogs(prev => [blog, ...prev]);
+
+    fetch('/api/blogs', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-admin-pin': adminPin
+      },
+      body: JSON.stringify(blog)
+    }).catch(err => console.error("Error creating blog on server:", err));
+  };
+
+  const updateBlog = (id: string, updated: Partial<BlogArticle>) => {
+    setBlogs(prev => 
+      prev.map(b => b.id === id ? { ...b, ...updated } : b)
+    );
+
+    fetch(`/api/blogs/${id}`, {
+      method: 'PUT',
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-admin-pin': adminPin
+      },
+      body: JSON.stringify(updated)
+    }).catch(err => console.error(`Error updating blog ${id} on server:`, err));
+  };
+
+  const deleteBlog = (id: string) => {
+    setBlogs(prev => prev.filter(b => b.id !== id));
+
+    fetch(`/api/blogs/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'x-admin-pin': adminPin
+      }
+    }).catch(err => console.error(`Error deleting blog ${id} on server:`, err));
+  };
+
+  const resetBlogs = () => {
+    fetch('/api/blogs/reset', { 
+      method: 'POST',
+      headers: {
+        'x-admin-pin': adminPin
+      }
+    })
+      .then(res => res.json())
+      .then(data => setBlogs(data))
+      .catch(err => console.error("Error resetting blogs on server:", err));
+  };
+
   return (
     <DataContext.Provider value={{
       appointments,
@@ -493,6 +558,12 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       updateCondition,
       deleteCondition,
       resetConditions,
+
+      blogs,
+      addBlog,
+      updateBlog,
+      deleteBlog,
+      resetBlogs,
 
       adminPin,
       setAdminPin

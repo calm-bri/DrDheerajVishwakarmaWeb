@@ -1,72 +1,37 @@
 import { useState } from "react";
 import { motion } from "motion/react";
-import { Sparkles, Calendar, BookOpen, Clock, ChevronRight, Search, FileText } from "lucide-react";
+import { Calendar, BookOpen, Clock, Search } from "lucide-react";
 import SEOComponent from "../components/SEOComponent";
-
-interface BlogArticle {
-  id: string;
-  title: string;
-  summary: string;
-  content: string;
-  category: "Case Study" | "Research" | "Book Chapter" | "Clinical Guide";
-  date: string;
-  readTime: string;
-  author: string;
-}
-
-const ARTICLES: BlogArticle[] = [
-  {
-    id: "fess-decompression-shift",
-    title: "Monoportal Endoscopic Spine Surgery: A Paradigm Shift in Spinal Decompression",
-    summary: "How FESS (Full Monoportal Endoscopic Spine Surgery) has revolutionized the treatment of herniations and stenosis by sparing paraspinous muscles and accelerating outpatient mobilization.",
-    content: "Full Monoportal Endoscopic Spine Surgery (FESS) has transformed patient options. Historically, open spine procedures required extensive muscle separation, leading to long recoveries. Endoscopic access through a single <8mm keyhole preserves spinal column structures. Active visualization under 4K saline pressure irrigation minimizes risk, offering a same-day walking milestone.",
-    category: "Clinical Guide",
-    date: "May 2026",
-    readTime: "6 min read",
-    author: "Dr. Dheeraj Vishwakarma"
-  },
-  {
-    id: "awake-spine-surgery-milestones",
-    title: "Awake Spine Surgery: Conscious Sedation & Patient Safety Protocols",
-    summary: "An in-depth review of patient responses and neurological safety margins when conducting keyhole lumbar decompressions under local conscious epidural anesthesia.",
-    content: "Performing spine decompressions while the patient is conscious represents a massive leap in patient safety. By avoiding general anesthesia, cardiac risk variables are lowered. More importantly, the patient can interact with the surgical officer. Real-time feedback during nerve root release ensures zero nerve injury.",
-    category: "Research",
-    date: "March 2026",
-    readTime: "8 min read",
-    author: "Dr. Dheeraj Vishwakarma"
-  },
-  {
-    id: "pediatric-cauda-equina-study",
-    title: "Pediatric Disk Herniations: Keyhole Decompression for Cauda Equina Syndrome",
-    summary: "A clinical case report analysis detailing the successful execution of an 8mm single-stitch discectomy on an 11-year-old pediatric patient, achieving Asia Book of Records recognition.",
-    content: "Pediatric cauda equina syndrome is rare and requires emergency action. This study documents the clinical path of the youngest patient (11 years) treated via transforaminal monoportal endoscopic discectomy. Preserving the growing spine's structural joints is crucial, and keyhole entry bypasses future scoliosis risks.",
-    category: "Case Study",
-    date: "July 2025",
-    readTime: "10 min read",
-    author: "Dr. Dheeraj Vishwakarma"
-  },
-  {
-    id: "lumbar-canal-stenosis-chapter",
-    title: "Academic Book Chapter: Lumbar Canal Stenosis Principles & Practice",
-    summary: "An overview of the instructional chapter contributed by Dr. Vishwakarma to the 'Practical Manual on Full Monoportal Endoscopic Spine Surgery' handbook.",
-    content: "This textbook chapter details safe bone drilling zones, anatomical markers, and continuous irrigation pump pressure calibration. It serves as a guide for spine surgery fellows learning full endoscopic monoportal decompression, teaching standard tricks and how to avoid complications.",
-    category: "Book Chapter",
-    date: "January 2025",
-    readTime: "15 min read",
-    author: "Dr. Dheeraj Vishwakarma"
-  }
-];
+import { useData } from "../context/DataContext";
 
 export default function BlogsPage() {
+  const { blogs } = useData();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
-  const filtered = ARTICLES.filter(art => {
+  const filtered = blogs.filter(art => {
     const matchesSearch = art.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           art.summary.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === "all" || art.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
+
+  const blogSchemas = blogs.map((art) => ({
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": art.title,
+    "description": art.summary,
+    "author": {
+      "@type": "Person",
+      "name": art.author
+    },
+    "publisher": {
+      "@type": "Person",
+      "name": "Dr. Dheeraj Vishwakarma"
+    },
+    "datePublished": art.id === "pediatric-cauda-equina-study" ? "2025-07-15" : "2026-03-15",
+    "mainEntityOfPage": `https://www.endoscopicspinecare.com/blogs#${art.id}`
+  }));
 
   return (
     <motion.div
@@ -78,9 +43,10 @@ export default function BlogsPage() {
       className="pt-6 pb-20 px-4 xs:px-6 sm:px-8 max-w-6xl mx-auto text-white text-left"
     >
       <SEOComponent
-        title="Medical Blogs & Spine Surgery Publications | Dr. Dheeraj Vishwakarma"
-        description="Read Dr. Dheeraj Vishwakarma's academic book chapters, case studies, and clinical guides on Full Monoportal Endoscopic Spine Surgery (FESS)."
+        title="Medical Publications & Spine Surgery Research Articles"
+        description="Read academic book chapters, case logs, and clinical research papers on Full Monoportal Endoscopic Spine Surgery (FESS) by Dr. Dheeraj Vishwakarma."
         path="/blogs"
+        schemas={blogSchemas}
       />
 
       <div className="absolute top-10 left-10 w-96 h-96 bg-gold-400/5 rounded-full pointer-events-none blur-[140px]" />
@@ -148,14 +114,14 @@ export default function BlogsPage() {
                     {art.category}
                   </span>
                   <div className="flex items-center gap-1.5">
-                    <Calendar className="w-3 h-3" />
+                    <Calendar className="w-3.5 h-3.5" />
                     <span>{art.date}</span>
                   </div>
                 </div>
 
-                <h3 className="font-display font-medium text-lg text-white hover:text-gold-300 transition-colors leading-snug">
+                <h2 className="font-display font-medium text-lg text-white hover:text-gold-300 transition-colors leading-snug">
                   {art.title}
-                </h3>
+                </h2>
 
                 <p className="text-xs text-gray-400 font-sans leading-relaxed line-clamp-3">
                   {art.summary}

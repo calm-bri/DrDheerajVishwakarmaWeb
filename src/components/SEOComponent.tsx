@@ -5,12 +5,37 @@ interface SEOProps {
   description: string;
   path: string;
   keywords?: string;
+  schemas?: any[];
 }
 
-export default function SEOComponent({ title, description, path, keywords }: SEOProps) {
+export default function SEOComponent({ title, description, path, keywords, schemas = [] }: SEOProps) {
   const baseUrl = "https://www.endoscopicspinecare.com";
   const canonicalUrl = `${baseUrl}${path}`;
   const defaultKeywords = "Dr. Dheeraj Vishwakarma, spine surgeon India, monoportal endoscopic spine surgery Jaipur, best spine surgeon Jaipur, FESS spine surgery, single stitch spine surgery India, awake spine surgery, slipped disc treatment India, sciatica doctor Jaipur, spine doctor Rajasthan, endo spine surgeon";
+
+  // Generate automated BreadcrumbList schema if it's an inner page
+  const allSchemas = [...schemas];
+  if (path && path !== "/") {
+    const pageName = path.replace("/", "").replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+    allSchemas.push({
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": `${baseUrl}/`
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": pageName,
+          "item": canonicalUrl
+        }
+      ]
+    });
+  }
 
   return (
     <Helmet>
@@ -33,6 +58,13 @@ export default function SEOComponent({ title, description, path, keywords }: SEO
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={`${baseUrl}/logo.png`} />
+
+      {/* Structured Schema Script Injections */}
+      {allSchemas.map((schema, idx) => (
+        <script key={idx} type="application/ld+json">
+          {JSON.stringify(schema)}
+        </script>
+      ))}
     </Helmet>
   );
 }

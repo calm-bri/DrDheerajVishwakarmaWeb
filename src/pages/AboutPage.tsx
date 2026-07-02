@@ -5,6 +5,24 @@ import Testimonials from "../components/Testimonials";
 import SEOComponent from "../components/SEOComponent";
 
 export default function AboutPage() {
+  const aboutSchemas = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Physician",
+      "name": "Dr. Dheeraj Vishwakarma",
+      "image": "https://www.endoscopicspinecare.com/logo.png",
+      "telephone": "+91-99993-45892",
+      "priceRange": "$$",
+      "medicalSpecialty": "Monoportal Endoscopic Spine Surgery, Spine Surgery, Neurosurgery",
+      "jobTitle": "Monoportal Endoscopic Spine Surgeon & Neurosurgeon",
+      "alumniOf": {
+        "@type": "EducationalOrganization",
+        "name": "Govind Ballabh Pant Institute of Post Graduate Medical Education and Research (GIPMER)"
+      },
+      "knowsAbout": ["FESS Spine Specialty", "Endoscopic Monoportal Spine Surgery", "Minimally Invasive Spine Surgery", "Sciatica Treatment", "Slip Disc Treatment"]
+    }
+  ];
+
   return (
     <motion.div
       key="about"
@@ -15,9 +33,10 @@ export default function AboutPage() {
       className="pt-6"
     >
       <SEOComponent
-        title="About Dr. Dheeraj Vishwakarma | Credentials & Spine Care Experience"
-        description="Learn about Dr. Dheeraj Vishwakarma, India's premier Monoportal Endoscopic Spine Surgeon & Board-Certified Neurosurgeon with extensive specialized training in advanced Germany spine endoscopy."
+        title="About Dr. Dheeraj Vishwakarma | Endoscopic Spine Expert"
+        description="Learn about Dr. Dheeraj Vishwakarma, India's pioneer in monoportal endoscopic spine surgery. Credentials, Germany training, and outpatient clinical record."
         path="/about"
+        schemas={aboutSchemas}
       />
       <AboutMe />
       <AwardsSection />

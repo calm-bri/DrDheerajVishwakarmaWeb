@@ -13,8 +13,8 @@ export default function GalleryPage() {
       className="pt-6"
     >
       <SEOComponent
-        title="Monoportal Endoscopic Spine Surgical Case Gallery | Dr. Dheeraj Vishwakarma"
-        description="Browse surgical case logs, 4K endoscopy recordings, and patient mobility testimonials showing rapid recovery milestones post spine release."
+        title="Endoscopic Spine Surgery Case Gallery & Video Records"
+        description="Browse surgical cases, 4K spine endoscopy logs, and verified recovery testimonials demonstrating direct outpatient mobility post transforaminal release."
         path="/gallery"
       />
       <Gallery />

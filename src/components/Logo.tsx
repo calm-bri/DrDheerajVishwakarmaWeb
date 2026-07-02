@@ -25,6 +25,9 @@ export default function Logo({ className = "", mode = "full", lightBg = false }:
           <img
             src="/logo.png"
             alt="Brain and Spine Endoscopic Surgeon"
+            width="176"
+            height="176"
+            loading="lazy"
             onError={() => setImageError(true)}
             className="w-full h-full object-cover rounded-full scale-[1.15] transition-all duration-300"
             referrerPolicy="no-referrer"

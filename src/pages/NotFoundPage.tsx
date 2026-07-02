@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { Link } from "react-router-dom";
-import { ShieldAlert, ChevronRight, Home, HelpCircle } from "lucide-react";
+import { ShieldAlert, Home, HelpCircle } from "lucide-react";
 import SEOComponent from "../components/SEOComponent";
 
 export default function NotFoundPage() {

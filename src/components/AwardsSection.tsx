@@ -391,6 +391,9 @@ export default function AwardsSection() {
                       <img
                         src={currentAward.imageUrl}
                         alt={currentAward.title}
+                        width="600"
+                        height="380"
+                        loading="lazy"
                         className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     </div>

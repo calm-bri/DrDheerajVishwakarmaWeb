@@ -149,9 +149,9 @@ export default function AboutMe() {
               <Compass className="w-3.5 h-3.5 text-sky-400" />
               <span className="text-[10px] font-mono uppercase tracking-[0.2em] font-semibold">About the Surgeon-in-Chief</span>
             </div>
-            <h2 className="font-display font-bold text-4xl sm:text-5xl text-white tracking-tight leading-none">
+            <h1 className="font-display font-bold text-4xl sm:text-5xl text-white tracking-tight leading-none">
               Decade of Academic Excellence & <span className="text-gold-400">700+ Successes.</span>
-            </h2>
+            </h1>
           </div>
           <div className="md:col-span-4 text-left md:text-right pb-1">
             <span className="font-mono text-xs text-gray-500 uppercase tracking-widest block">
@@ -234,7 +234,7 @@ export default function AboutMe() {
           >
             <div className="flex items-center gap-2 text-gold-400">
               <GraduationCap className="w-5 h-5" />
-              <h3 className="font-display font-medium text-lg text-white">Surgical Training & Degrees</h3>
+              <h2 className="font-display font-medium text-lg text-white">Surgical Training & Degrees</h2>
             </div>
 
             <div className="relative border-l border-white/10 pl-6 sm:pl-8 ml-3 space-y-8">
@@ -268,7 +268,7 @@ export default function AboutMe() {
             <div className="pt-6 border-t border-white/5 space-y-4">
               <div className="flex items-center gap-2 text-sky-400">
                 <Briefcase className="w-5 h-5 text-sky-400" />
-                <h4 className="font-display font-semibold text-sm text-white">Clinical Strengths & Surgical Capabilities</h4>
+                <h3 className="font-display font-semibold text-sm text-white">Clinical Strengths & Surgical Capabilities</h3>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -292,7 +292,7 @@ export default function AboutMe() {
           <div className="lg:col-span-8 flex flex-col p-6 sm:p-8 rounded-3xl glassmorphism border border-white/5 bg-gradient-to-br from-white/[0.01] to-transparent space-y-6">
             <div className="flex items-center gap-2 text-gold-400">
               <Award className="w-5 h-5" />
-              <h3 className="font-display font-medium text-lg text-white">Prestigious Awards & Academic Contributions</h3>
+              <h2 className="font-display font-medium text-lg text-white">Prestigious Awards & Academic Contributions</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-left">
@@ -319,7 +319,7 @@ export default function AboutMe() {
             <div className="space-y-5">
               <div className="flex items-center gap-2 text-gold-400">
                 <Users className="w-5 h-5" />
-                <h3 className="font-display font-medium text-lg text-white">Board Memberships</h3>
+                <h2 className="font-display font-medium text-lg text-white">Board Memberships</h2>
               </div>
               
               <ul className="space-y-3 font-sans text-xs text-left">

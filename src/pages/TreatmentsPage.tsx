@@ -17,7 +17,7 @@ export default function TreatmentsPage({ onOpenBooking }: TreatmentsPageProps) {
       className="pt-6"
     >
       <SEOComponent
-        title="Advanced Monoportal Endoscopic Spine Treatments & Procedures | Dr. Dheeraj Vishwakarma"
+        title="Endoscopic Spine Treatments & Keyhole Spinal Procedures"
         description="Discover FESS (Full Monoportal Endoscopic Spine Surgery), minimally invasive spine procedures, and treatments for slipped disc, sciatica, and stenosis."
         path="/treatments"
       />

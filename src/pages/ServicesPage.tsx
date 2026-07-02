@@ -17,7 +17,7 @@ export default function ServicesPage({ onOpenBooking }: ServicesPageProps) {
       className="pt-6"
     >
       <SEOComponent
-        title="Spine Care Services & Minimally Invasive Decompression | Dr. Dheeraj Vishwakarma"
+        title="Spine Care Services | Keyhole Decompression Procedures"
         description="Explore our specialized spine care services including monoportal endoscopy, discectomy, and spinal stenosis treatment under Dr. Dheeraj Vishwakarma."
         path="/services"
       />

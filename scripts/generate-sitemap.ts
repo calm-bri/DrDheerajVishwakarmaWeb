@@ -14,7 +14,7 @@ const routes = [
   { path: 'blogs', priority: '0.7', changefreq: 'weekly' },
   { path: 'gallery', priority: '0.7', changefreq: 'weekly' },
   { path: 'contact', priority: '0.7', changefreq: 'weekly' },
-  { path: 'international', priority: '0.7', changefreq: 'weekly' }
+  { path: 'international-patients', priority: '0.7', changefreq: 'weekly' }
 ];
 
 const baseUrl = 'https://www.endoscopicspinecare.com';

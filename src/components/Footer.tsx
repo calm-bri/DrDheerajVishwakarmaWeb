@@ -5,66 +5,19 @@ import Logo from "./Logo";
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
-  // Structured medical schema metadata so that search engines index Dr. Vishwakarma perfectly in Google Search
-  const doctorSchema = {
-    "@context": "https://schema.org",
-    "@type": "Physician",
-    "name": "Dr. Dheeraj Vishwakarma",
-    "image": "https://www.endoscopicspinecare.com/logo.png",
-    "medicalSpecialty": "Monoportal Endoscopic Spine Surgery, Spine Surgery, Neurosurgery",
-    "availableService": [
-      {
-        "@type": "MedicalProcedure",
-        "name": "Full Monoportal Endoscopic Spine Surgery (FESS)",
-        "description": "Ultra minimally invasive surgical decompression using an under 8mm keyhole single-stitch endoscope."
-      },
-      {
-        "@type": "MedicalProcedure",
-        "name": "Endoscopic Monoportal Spine Surgery",
-        "description": "Port spine decompression to remove calcified vertebrae spurs or herniations."
-      },
-      {
-        "@type": "MedicalProcedure",
-        "name": "Sciatica Decompression Relief Treatment"
-      }
-    ],
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "Leading Quaternary Care Spine Department, Sector 51",
-      "addressLocality": "Primary Outpatient Centers",
-      "addressRegion": "Pan-India",
-      "postalCode": "122003",
-      "addressCountry": "IN"
-    },
-    "telephone": "+91-99993-45892",
-    "knowsAbout": ["FESS Spine Specialty", "Endoscopic Monoportal Spine Surgery", "Minimally Invasive Spine Surgery", "Sciatica Treatment", "Slip Disc Treatment"],
-    "priceRange": "$$",
-    "geo": {
-      "@type": "GeoCoordinates",
-      "latitude": "28.4595",
-      "longitude": "77.0266"
-    }
-  };
-
   const portalLinks = [
     { label: "Clinical Experience", to: "/about" },
     { label: "Specialty Treatments", to: "/treatments" },
     { label: "Surgical Media Gallery", to: "/gallery" },
     { label: "Medical Publications", to: "/blogs" },
     { label: "Recovery Timeline", to: "/#recovery-section" },
-    { label: "International Desk", to: "/international" },
+    { label: "International Desk", to: "/international-patients" },
     { label: "Surgical FAQ Desk", to: "/#faq-section" },
     { label: "Contact & Bookings", to: "/contact" }
   ];
 
   return (
     <footer className="relative bg-cosmic-bg text-gray-400 pt-20 pb-8 px-4 sm:px-6 md:px-8 border-t border-white/5 overflow-hidden">
-      {/* JSON-LD Schema Injector */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(doctorSchema) }}
-      />
-
       <div className="absolute bottom-0 right-0 w-[400px] h-[300px] bg-radial-glow opacity-15 blur-3xl rounded-full pointer-events-none" />
 
       <div className="w-full max-w-6xl mx-auto relative z-10 space-y-16">

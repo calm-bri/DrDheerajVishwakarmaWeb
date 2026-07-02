@@ -17,9 +17,9 @@ export default function InternationalPage({ onOpenBooking }: InternationalPagePr
       className="pt-6"
     >
       <SEOComponent
-        title="International Patients Spine Care Desk | Dr. Dheeraj Vishwakarma"
+        title="International Patients Spine Desk | Keyhole Spine Care"
         description="Comprehensive clinical support for global spine surgery patients. Keyhole spinal surgery in India with same-day walk milestones and translation desk."
-        path="/international"
+        path="/international-patients"
       />
       <InternationalPatients onOpenBooking={onOpenBooking} />
     </motion.div>

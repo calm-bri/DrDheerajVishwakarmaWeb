@@ -1,6 +1,6 @@
 import { useState, useEffect, lazy, Suspense } from "react";
 import { AnimatePresence } from "motion/react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import Loader from "./components/Loader";
 import BioBackground from "./components/BioBackground";
 import Navbar from "./components/Navbar";
@@ -90,7 +90,8 @@ export default function App() {
                   <Route path="/blogs" element={<BlogsPage />} />
                   <Route path="/gallery" element={<GalleryPage />} />
                   <Route path="/contact" element={<ContactPage onOpenBooking={() => handleOpenBooking()} />} />
-                  <Route path="/international" element={<InternationalPage onOpenBooking={() => handleOpenBooking("fess")} />} />
+                  <Route path="/international" element={<Navigate to="/international-patients" replace />} />
+                  <Route path="/international-patients" element={<InternationalPage onOpenBooking={() => handleOpenBooking("fess")} />} />
                   <Route path="/admin" element={<AdminPage />} />
                   <Route path="*" element={<NotFoundPage />} />
                 </Routes>

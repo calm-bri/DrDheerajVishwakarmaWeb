@@ -44,3 +44,14 @@ export interface InternationalDestination {
   averageTravelDays: string;
   supportServices: string[];
 }
+
+export interface BlogArticle {
+  id: string;
+  title: string;
+  summary: string;
+  content: string;
+  category: string;
+  date: string;
+  readTime: string;
+  author: string;
+}

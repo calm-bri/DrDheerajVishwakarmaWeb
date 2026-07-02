@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { Mail, Phone, MapPin, Globe, Sparkles, Clock, CalendarCheck2 } from "lucide-react";
+import { Mail, Phone, MapPin, Sparkles, Clock, CalendarCheck2 } from "lucide-react";
 import SEOComponent from "../components/SEOComponent";
 
 interface ContactPageProps {
@@ -7,6 +7,25 @@ interface ContactPageProps {
 }
 
 export default function ContactPage({ onOpenBooking }: ContactPageProps) {
+  const contactSchemas = [
+    {
+      "@context": "https://schema.org",
+      "@type": "MedicalClinic",
+      "name": "Dr. Dheeraj Vishwakarma Spine Consultation Desk",
+      "image": "https://www.endoscopicspinecare.com/logo.png",
+      "telephone": "+91-99993-45892",
+      "priceRange": "$$",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Sector 51",
+        "addressLocality": "Jaipur",
+        "addressRegion": "Rajasthan",
+        "postalCode": "302015",
+        "addressCountry": "IN"
+      }
+    }
+  ];
+
   return (
     <motion.div
       key="contact"
@@ -17,9 +36,10 @@ export default function ContactPage({ onOpenBooking }: ContactPageProps) {
       className="pt-6 pb-20 px-4 xs:px-6 sm:px-8 max-w-5xl mx-auto text-white text-left"
     >
       <SEOComponent
-        title="Contact Dr. Dheeraj Vishwakarma | Spine Consultation & Clinics Desk"
-        description="Contact priority desk at +91 99993 45892 or schedule your endoscopic spine surgery consult online with Dr. Dheeraj Vishwakarma."
+        title="Contact Dr. Dheeraj Vishwakarma | Spine Clinic Bookings"
+        description="Contact our clinical consultation desk at +91 99993 45892 or submit MRI scans online to schedule keyhole endoscopic spine surgery with Dr. Vishwakarma."
         path="/contact"
+        schemas={contactSchemas}
       />
 
       <div className="absolute top-1/4 right-[10%] w-[400px] h-[400px] bg-gold-glow opacity-10 blur-3xl rounded-full pointer-events-none" />
@@ -41,10 +61,10 @@ export default function ContactPage({ onOpenBooking }: ContactPageProps) {
         {/* Left Column: Direct Inquiries (7 Cols) */}
         <div className="md:col-span-7 space-y-6">
           <div className="p-6 sm:p-8 rounded-3xl glassmorphism bg-cosmic-card/40 border border-white/5 space-y-6">
-            <h3 className="font-display font-semibold text-lg text-white flex items-center gap-2">
+            <h2 className="font-display font-semibold text-lg text-white flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-gold-400" />
               Direct Clinical Channels
-            </h3>
+            </h2>
             
             <div className="space-y-6 text-xs sm:text-sm">
               <div className="flex gap-3">
@@ -109,9 +129,9 @@ export default function ContactPage({ onOpenBooking }: ContactPageProps) {
           <div className="p-6 sm:p-8 rounded-3xl glassmorphism bg-gradient-to-br from-gold-400/[0.03] to-transparent border border-white/10 space-y-6 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-24 h-24 bg-gold-400/5 rounded-full blur-xl" />
             
-            <h3 className="font-display font-semibold text-lg text-white">
+            <h2 className="font-display font-semibold text-lg text-white">
               Instant Scheduling
-            </h3>
+            </h2>
             
             <p className="text-xs text-gray-400 leading-relaxed font-sans">
               Utilize our HIPAA secure portal to select your treatment, describe symptoms, and upload diagnostic files directly to our review server.

@@ -17,8 +17,8 @@ export default function ConditionsPage({ onOpenBooking }: ConditionsPageProps) {
       className="pt-6"
     >
       <SEOComponent
-        title="Spine Conditions & Pathologies Treated | Dr. Dheeraj Vishwakarma"
-        description="Find details about spine conditions treated using keyhole endoscopic procedures by Dr. Dheeraj Vishwakarma, including slip disc, stenosis, sciatica."
+        title="Spine Conditions Treated | Endoscopic Decompression"
+        description="Diagnose and treat slip disc, spinal canal stenosis, and sciatica using advanced keyhole endoscopic spine procedures under Dr. Dheeraj Vishwakarma."
         path="/conditions"
       />
       <Conditions onOpenBooking={onOpenBooking} />

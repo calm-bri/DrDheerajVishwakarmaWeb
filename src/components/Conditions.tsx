@@ -38,9 +38,9 @@ export default function Conditions({ onOpenBooking }: ConditionsProps) {
                 SPINAL NERVE PATHWAY DECOMPRESSION
               </span>
             </div>
-            <h3 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl text-white tracking-tight">
+            <h1 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl text-white tracking-tight">
               Advanced Clinical Specialties<span className="text-gold-400">.</span>
-            </h3>
+            </h1>
             <p className="text-gray-400 text-xs sm:text-sm leading-relaxed font-sans">
               Dr. Dheeraj Vishwakarma specializes in keyhole procedures that spare the paraspinous muscles, offering world-class comfort, fast-tracked mobility, and anatomical preservation options.
             </p>
@@ -108,9 +108,9 @@ export default function Conditions({ onOpenBooking }: ConditionsProps) {
 
                     {/* Pathology Header */}
                     <div className="space-y-1.5">
-                      <h4 className="font-display font-medium text-lg leading-tight text-white group-hover:text-gold-200 transition-colors">
+                      <h2 className="font-display font-medium text-lg leading-tight text-white group-hover:text-gold-200 transition-colors">
                         {item.name}
-                      </h4>
+                      </h2>
                       <p className="text-xs text-gray-400 leading-relaxed font-sans line-clamp-3">
                         {item.shortDescription}
                       </p>
@@ -155,10 +155,10 @@ export default function Conditions({ onOpenBooking }: ConditionsProps) {
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 p-6 md:p-8 rounded-2xl bg-gradient-to-r from-stone-900 to-cosmic-card border border-white/10 relative overflow-hidden">
           <div className="absolute inset-0 bg-radial-glow opacity-20 pointer-events-none" />
           <div className="space-y-1.5 text-left md:max-w-xl">
-            <h5 className="font-display font-medium text-base text-white flex items-center gap-2">
+            <h3 className="font-display font-medium text-base text-white flex items-center gap-2">
               <Zap className="w-4.5 h-4.5 text-gold-400 animate-pulse" />
               Severe Nerve Pinch Invalidation?
-            </h5>
+            </h3>
             <p className="text-xs text-gray-400 leading-relaxed font-sans">
               If you or a loved one are experiencing acute sciatic foot drop, severe walking claudication under 100 meters, or heavy radiating spine shocks, schedule an immediate priority telehealth consultation with Dr. Vishwakarma within 2 hours.
             </p>

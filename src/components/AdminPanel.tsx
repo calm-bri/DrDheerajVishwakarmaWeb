@@ -68,6 +68,12 @@ export default function AdminPanel() {
     deleteCondition,
     resetConditions,
 
+    blogs,
+    addBlog,
+    updateBlog,
+    deleteBlog,
+    resetBlogs,
+
     adminPin,
     setAdminPin
   } = useData();
@@ -93,7 +99,7 @@ export default function AdminPanel() {
   }, []);
 
   // Tabs management
-  type ActiveTab = "appointments" | "showcases" | "faqs" | "testimonials" | "conditions" | "settings";
+  type ActiveTab = "appointments" | "showcases" | "blogs" | "faqs" | "testimonials" | "conditions" | "settings";
   const [activeTab, setActiveTab] = useState<ActiveTab>("appointments");
 
   // Filter and search states
@@ -103,7 +109,7 @@ export default function AdminPanel() {
   // Create & Edit Modal states
   const [editingItem, setEditingItem] = useState<{ type: string; id: string; data: any } | null>(null);
   const [isOpenForm, setIsOpenForm] = useState(false);
-  const [formType, setFormType] = useState<"appointment" | "showcase" | "faq" | "testimonial" | "condition">("appointment");
+  const [formType, setFormType] = useState<"appointment" | "showcase" | "blogs" | "faq" | "testimonial" | "condition">("appointment");
   const [isUploading, setIsUploading] = useState(false);
 
   // Calendar view states
@@ -146,10 +152,11 @@ export default function AdminPanel() {
   };
 
   // Safe reset configurations
-  const handleSystemReset = (type: "all" | "galleries" | "faqs" | "testimonials" | "conditions") => {
+  const handleSystemReset = (type: "all" | "galleries" | "blogs" | "faqs" | "testimonials" | "conditions") => {
     if (!confirm("Are you sure you want to restore default demo records? Your custom edits will be reverted.")) return;
     
     if (type === "all" || type === "galleries") resetShowcases();
+    if (type === "all" || type === "blogs") resetBlogs();
     if (type === "all" || type === "faqs") resetFAQs();
     if (type === "all" || type === "testimonials") resetTestimonials();
     if (type === "all" || type === "conditions") resetConditions();
@@ -195,16 +202,17 @@ export default function AdminPanel() {
   };
 
   // CRUD operation triggers (Modal launcher)
-  const openEditModal = (type: "appointment" | "showcase" | "faq" | "testimonial" | "condition", id: string, data: any) => {
+  const openEditModal = (type: "appointment" | "showcase" | "blogs" | "faq" | "testimonial" | "condition", id: string, data: any) => {
     setEditingItem({ type, id, data: { ...data } });
     setFormType(type);
     setIsOpenForm(true);
   };
 
-  const openCreateModal = (type: "appointment" | "showcase" | "faq" | "testimonial" | "condition", prefillData?: any) => {
+  const openCreateModal = (type: "appointment" | "showcase" | "blogs" | "faq" | "testimonial" | "condition", prefillData?: any) => {
     const emptyModels = {
       appointment: { fullName: "", email: "", phone: "", selectedTreatment: "fess", symptoms: "", sessionType: "video", isInternational: false, status: "pending", bookingDate: "", bookingTime: "11:30 AM" },
       showcase: { id: `sc-${Date.now()}`, title: "", subtitle: "", description: "", category: "surgical", location: "Jaipur Clinic", date: "May 2026", imageUrl: "", sizeClass: "md:col-span-1 md:row-span-1", badge: "New Case" },
+      blogs: { id: `blog-${Date.now()}`, title: "", summary: "", content: "", category: "Clinical Guide", date: "May 2026", readTime: "6 min read", author: "Dr. Dheeraj Vishwakarma" },
       faq: { id: `faq-${Date.now()}`, question: "", answer: "", category: "technology" },
       testimonial: { id: `test-${Date.now()}`, name: "", location: "Google Review", condition: "", quote: "", recoverySummary: "", rating: 5 },
       condition: { id: `cond-${Date.now()}`, name: "", shortDescription: "", fullDescription: "", symptoms: [], treatmentMetric: "99% Precision", recoveryTime: "Walk Same Day", detailedKey: "", iconName: "Zap" }
@@ -253,6 +261,12 @@ export default function AdminPanel() {
       } else {
         addCondition(data);
       }
+    } else if (type === "blogs") {
+      if (id) {
+        updateBlog(id, data);
+      } else {
+        addBlog(data);
+      }
     }
 
     setIsOpenForm(false);
@@ -264,6 +278,7 @@ export default function AdminPanel() {
 
     if (type === "appointment") deleteAppointment(id);
     if (type === "showcase") deleteShowcase(id);
+    if (type === "blogs") deleteBlog(id);
     if (type === "faq") deleteFAQ(id);
     if (type === "testimonial") deleteTestimonial(id);
     if (type === "condition") deleteCondition(id);
@@ -426,6 +441,7 @@ export default function AdminPanel() {
         {[
           { id: "appointments", label: "Appointments Queue", icon: Calendar },
           { id: "showcases", label: "Photo Gallery", icon: Layers },
+          { id: "blogs", label: "Publications Manager", icon: FileText },
           { id: "conditions", label: "Treatments", icon: TrendingUp },
           { id: "testimonials", label: "Testimonials", icon: Star },
           { id: "faqs", label: "FAQ Center", icon: HelpCircle },
@@ -1023,6 +1039,58 @@ export default function AdminPanel() {
           </div>
         )}
 
+        {/* 4.5 Blogs TAB */}
+        {activeTab === "blogs" && (
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h3 className="font-display font-medium text-lg text-white">Clinical Publications & Blogs</h3>
+              <button
+                onClick={() => openCreateModal("blogs")}
+                className="flex items-center gap-1.5 bg-gold-400 hover:bg-gold-500 text-black px-4.5 py-2 rounded-xl text-xs font-bold cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" /> Create Publication
+              </button>
+            </div>
+
+            <div className="space-y-4 text-left">
+              {blogs.map((b) => (
+                <div key={b.id} className="bg-black/20 p-5 rounded-2xl border border-white/5 flex flex-col sm:flex-row justify-between gap-4">
+                  <div className="space-y-1.5 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="bg-sky-400/5 border border-sky-400/10 text-sky-400 px-2.5 py-0.5 rounded text-[9.5px] font-mono uppercase tracking-wider">
+                        Category: {b.category}
+                      </span>
+                      <span className="text-[10px] text-stone-500 font-mono">
+                        Published: {b.date} • {b.readTime} • By {b.author}
+                      </span>
+                    </div>
+                    <h4 className="font-display font-medium text-stone-100 text-sm sm:text-base pt-1">
+                      {b.title}
+                    </h4>
+                    <p className="text-xs text-stone-400 leading-relaxed max-w-3xl mb-2 font-semibold">{b.summary}</p>
+                    <p className="text-[11px] text-stone-500 bg-black/10 p-2.5 rounded-xl border border-white/5 line-clamp-3 font-sans leading-relaxed">{b.content}</p>
+                  </div>
+
+                  <div className="flex gap-2 justify-end pt-3 sm:pt-0 border-t sm:border-t-0 border-white/5">
+                    <button
+                      onClick={() => openEditModal("blogs", b.id, b)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-mono font-bold cursor-pointer"
+                    >
+                      <Edit2 className="w-3 h-3" /> Edit
+                    </button>
+                    <button
+                      onClick={() => deleteItem("blogs", b.id)}
+                      className="p-1.5 rounded-lg bg-rose-500/15 border border-rose-500/20 text-rose-455 hover:bg-rose-550 hover:text-white transition-colors cursor-pointer"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* 5. FAQs TAB */}
         {activeTab === "faqs" && (
           <div className="space-y-6">
@@ -1139,6 +1207,12 @@ export default function AdminPanel() {
                   className="bg-rose-500/15 hover:bg-rose-500 text-rose-400 hover:text-white border border-rose-500/25 px-4 py-2 rounded-full text-xs font-bold transition-all font-mono cursor-pointer"
                 >
                   Reset Entire Database Factory
+                </button>
+                <button
+                  onClick={() => handleSystemReset("blogs")}
+                  className="bg-white/5 hover:bg-white/10 text-stone-300 border border-white/10 px-4 py-2 rounded-full text-xs font-bold font-mono cursor-pointer"
+                >
+                  Reset Publications
                 </button>
                 <button
                   onClick={() => handleSystemReset("galleries")}
@@ -1812,6 +1886,93 @@ export default function AdminPanel() {
                         required
                         value={editingItem.data.answer || ""}
                         onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, answer: e.target.value } })}
+                        className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* 6. Blogs/Publications editing fields */}
+                {formType === "blogs" && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1.5 col-span-2">
+                      <label className="text-stone-400 font-bold">Article Title *</label>
+                      <input
+                        type="text"
+                        required
+                        value={editingItem.data.title || ""}
+                        onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, title: e.target.value } })}
+                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="text-stone-400 font-bold">Category Class *</label>
+                      <select
+                        value={editingItem.data.category || "Clinical Guide"}
+                        onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, category: e.target.value } })}
+                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none"
+                      >
+                        <option value="Clinical Guide">Clinical Guide</option>
+                        <option value="Research">Research</option>
+                        <option value="Case Study">Case Study</option>
+                        <option value="Book Chapter">Book Chapter</option>
+                      </select>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="text-stone-400 font-bold">Read Time *</label>
+                      <input
+                        type="text"
+                        required
+                        value={editingItem.data.readTime || ""}
+                        onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, readTime: e.target.value } })}
+                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none"
+                        placeholder="e.g. 6 min read"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="text-stone-400 font-bold">Publish Date *</label>
+                      <input
+                        type="text"
+                        required
+                        value={editingItem.data.date || ""}
+                        onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, date: e.target.value } })}
+                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none"
+                        placeholder="e.g. May 2026"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="text-stone-400 font-bold">Author *</label>
+                      <input
+                        type="text"
+                        required
+                        value={editingItem.data.author || "Dr. Dheeraj Vishwakarma"}
+                        onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, author: e.target.value } })}
+                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5 col-span-2">
+                      <label className="text-stone-400 font-bold">Summary *</label>
+                      <textarea
+                        rows={2}
+                        required
+                        value={editingItem.data.summary || ""}
+                        onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, summary: e.target.value } })}
+                        className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white focus:outline-none"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5 col-span-2">
+                      <label className="text-stone-400 font-bold">Rich Publication Content *</label>
+                      <textarea
+                        rows={6}
+                        required
+                        value={editingItem.data.content || ""}
+                        onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, content: e.target.value } })}
                         className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white focus:outline-none"
                       />
                     </div>

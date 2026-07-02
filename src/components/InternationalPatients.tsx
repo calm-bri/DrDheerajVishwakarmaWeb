@@ -24,9 +24,9 @@ export default function InternationalPatients({ onOpenBooking }: InternationalPa
                 GLOBAL PATIENT CARE & COORDINATION
               </span>
             </div>
-            <h3 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl text-white tracking-tight">
+            <h1 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl text-white tracking-tight">
               International Consultation Desk<span className="text-gold-400">.</span>
-            </h3>
+            </h1>
             <p className="text-gray-400 text-xs sm:text-sm leading-relaxed font-sans">
               India is an internationally trusted healthcare hub. Dr. Dheeraj Vishwakarma’s specialist international desk provides a seamless support path for overseas patients, offering fast-track diagnostic support, prioritized operating room slots, and robust multilingual translation services.
             </p>
@@ -59,7 +59,7 @@ export default function InternationalPatients({ onOpenBooking }: InternationalPa
                     <CalendarCheck2 className="w-4.5 h-4.5" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-semibold text-white">Priority Slots & Scheduling</h4>
+                    <h2 className="text-sm font-semibold text-white">Priority Slots & Scheduling</h2>
                     <p className="text-xs text-gray-450 leading-relaxed font-sans mt-1">
                       Expedited, priority scheduling for specialist clinical appointments, MRI diagnostic scans, and endoscopic theater booking on arrival.
                     </p>
@@ -72,7 +72,7 @@ export default function InternationalPatients({ onOpenBooking }: InternationalPa
                     <Languages className="w-4.5 h-4.5" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-semibold text-white">Language Desk & Host Support</h4>
+                    <h2 className="text-sm font-semibold text-white">Language Desk & Host Support</h2>
                     <p className="text-xs text-gray-450 leading-relaxed font-sans mt-1">
                       Dedicated language support officers and interpreters (facilitating fluent English, Arabic, Bengali, and regional communication).
                     </p>
@@ -85,7 +85,7 @@ export default function InternationalPatients({ onOpenBooking }: InternationalPa
                     <Stethoscope className="w-4.5 h-4.5" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-semibold text-white">Clinical Pre-Triage Support</h4>
+                    <h2 className="text-sm font-semibold text-white">Clinical Pre-Triage Support</h2>
                     <p className="text-xs text-gray-450 leading-relaxed font-sans mt-1">
                       Virtual clinical MRI review and detailed preoperative telehealth consultations with Dr. Dheeraj before travel booking.
                     </p>
@@ -98,7 +98,7 @@ export default function InternationalPatients({ onOpenBooking }: InternationalPa
                     <FileSliders className="w-4.5 h-4.5" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-semibold text-white">Claims & Documentation Assist</h4>
+                    <h2 className="text-sm font-semibold text-white">Claims & Documentation Assist</h2>
                     <p className="text-xs text-gray-450 leading-relaxed font-sans mt-1">
                       Fast-track medical visa recommendation letters, medical reports, and comprehensive post-discharge coordination.
                     </p>
@@ -137,9 +137,9 @@ export default function InternationalPatients({ onOpenBooking }: InternationalPa
             </div>
 
             <div className="space-y-6">
-              <h5 className="font-display font-medium text-lg text-white">
+              <h2 className="font-display font-medium text-lg text-white">
                 Clinical Care Suite & Facilities
-              </h5>
+              </h2>
               <p className="text-xs text-gray-400 leading-relaxed font-sans">
                 Dr. Vishwakarma operates across premier quaternary care hospitals in India, equipped with state-of-the-art diagnostic instruments:
               </p>
