@@ -13,7 +13,7 @@ export default function Footer({ onNavigate }: FooterProps) {
     "@context": "https://schema.org",
     "@type": "Physician",
     "name": "Dr. Dheeraj Vishwakarma",
-    "image": "https://drdheerajspine.com/logo.png",
+    "image": "https://www.endoscopicspinecare.com/logo.png",
     "medicalSpecialty": "Monoportal Endoscopic Spine Surgery, Spine Surgery, Neurosurgery",
     "availableService": [
       {
