@@ -1,4 +1,4 @@
-import { SpineCondition, RecoveryTimelineStep, Testimonial, FAQItem, InternationalDestination } from "./types";
+import { SpineCondition, RecoveryTimelineStep, Testimonial, FAQItem, InternationalDestination, BlogArticle } from "./types";
 
 export const conditionsData: SpineCondition[] = [
   {
@@ -287,5 +287,48 @@ export const faqData: FAQItem[] = [
     question: "How do I secure an online video consultation with Dr. Dheeraj Vishwakarma?",
     answer: "You can click on 'Book Consultation' to upload your latest MRI scan reports. Our international desk reviews your medical history within 12 hours, and sets up a high-definition Zoom or WhatsApp video call directly with Dr. Dheeraj Vishwakarma.",
     category: "booking"
+  }
+];
+
+export const blogsData: BlogArticle[] = [
+  {
+    id: "fess-decompression-shift",
+    title: "Monoportal Endoscopic Spine Surgery: A Paradigm Shift in Spinal Decompression",
+    summary: "How FESS (Full Monoportal Endoscopic Spine Surgery) has revolutionized the treatment of herniations and stenosis by sparing paraspinous muscles and accelerating outpatient mobilization.",
+    content: "Full Monoportal Endoscopic Spine Surgery (FESS) has transformed patient options. Historically, open spine procedures required extensive muscle separation, leading to long recoveries. Endoscopic access through a single <8mm keyhole preserves spinal column structures. Active visualization under 4K saline pressure irrigation minimizes risk, offering a same-day walking milestone.",
+    category: "Clinical Guide",
+    date: "May 2026",
+    readTime: "6 min read",
+    author: "Dr. Dheeraj Vishwakarma"
+  },
+  {
+    id: "awake-spine-surgery-milestones",
+    title: "Awake Spine Surgery: Conscious Sedation & Patient Safety Protocols",
+    summary: "An in-depth review of patient responses and neurological safety margins when conducting keyhole lumbar decompressions under local conscious epidural anesthesia.",
+    content: "Performing spine decompressions while the patient is conscious represents a massive leap in patient safety. By avoiding general anesthesia, cardiac risk variables are lowered. More importantly, the patient can interact with the surgical officer. Real-time feedback during nerve root release ensures zero nerve injury.",
+    category: "Research",
+    date: "March 2026",
+    readTime: "8 min read",
+    author: "Dr. Dheeraj Vishwakarma"
+  },
+  {
+    id: "pediatric-cauda-equina-study",
+    title: "Pediatric Disk Herniations: Keyhole Decompression for Cauda Equina Syndrome",
+    summary: "A clinical case report analysis detailing the successful execution of an 8mm single-stitch discectomy on an 11-year-old pediatric patient, achieving Asia Book of Records recognition.",
+    content: "Pediatric cauda equina syndrome is rare and requires emergency action. This study documents the clinical path of the youngest patient (11 years) treated via transforaminal monoportal endoscopic discectomy. Preserving the growing spine's structural joints is crucial, and keyhole entry bypasses future scoliosis risks.",
+    category: "Case Study",
+    date: "July 2025",
+    readTime: "10 min read",
+    author: "Dr. Dheeraj Vishwakarma"
+  },
+  {
+    id: "lumbar-canal-stenosis-chapter",
+    title: "Academic Book Chapter: Lumbar Canal Stenosis Principles & Practice",
+    summary: "An overview of the instructional chapter contributed by Dr. Vishwakarma to the 'Practical Manual on Full Monoportal Endoscopic Spine Surgery' handbook.",
+    content: "This textbook chapter details safe bone drilling zones, anatomical markers, and continuous irrigation pump pressure calibration. It serves as a guide for spine surgery fellows learning full endoscopic monoportal decompression, teaching standard tricks and how to avoid complications.",
+    category: "Book Chapter",
+    date: "January 2025",
+    readTime: "15 min read",
+    author: "Dr. Dheeraj Vishwakarma"
   }
 ];
