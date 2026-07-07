@@ -332,4 +332,3 @@ export const blogsData: BlogArticle[] = [
     author: "Dr. Dheeraj Vishwakarma"
   }
 ];
-

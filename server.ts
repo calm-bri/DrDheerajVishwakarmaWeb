@@ -10,6 +10,7 @@ const __dirname = path.dirname(__filename);
 
 // Load environmental variables
 dotenv.config();
+dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
 
 const app = express();
 const PORT = process.env.PORT || 3001;
