@@ -8,7 +8,8 @@ import {
 import { 
   conditionsData, 
   testimonialsData, 
-  faqData 
+  faqData,
+  blogsData
 } from "../data";
 import { ShowcaseItem, INITIAL_SHOWCASES } from "../components/Gallery";
 
@@ -164,7 +165,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [conditions, setConditions] = useState<SpineCondition[]>(conditionsData);
 
   // Blogs state initialized with defaults
-  const [blogs, setBlogs] = useState<BlogArticle[]>([]);
+  const [blogs, setBlogs] = useState<BlogArticle[]>(blogsData);
 
   // Fetch initial public data from backend API
   useEffect(() => {

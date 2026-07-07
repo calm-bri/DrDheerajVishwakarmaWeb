@@ -27,9 +27,9 @@ export default function Footer() {
           
           {/* Col 1: Bio Authoritative Brand Box */}
           <div className="md:col-span-4 space-y-5 text-left">
-            <div className="flex items-center">
+            <Link to="/" className="flex items-center hover:opacity-90 transition-opacity w-fit block" aria-label="Go to home page">
               <Logo mode="horizontal" className="scale-100 origin-left" />
-            </div>
+            </Link>
 
             <p className="text-xs text-gray-400 leading-relaxed font-sans max-w-xs">
               Pioneering Monoportal Endoscopic Spine Surgeon & Board-certified Spinal Neurosurgeon specializing in high-definition keyhole Monoportal and Full Monoportal Endoscopic Spine surgery techniques, offering rapid recoveries with same-day walking milestones.
@@ -44,9 +44,9 @@ export default function Footer() {
 
           {/* Col 2: Clinical Care Director Index */}
           <div className="md:col-span-3 text-left space-y-4">
-            <h5 className="font-mono text-[10px] text-white uppercase tracking-[0.25em] font-extrabold pb-1.5 border-b border-white/5">
+            <span className="font-mono text-[10px] text-white uppercase tracking-[0.25em] font-extrabold pb-1.5 border-b border-white/5 block">
               Surgical Specialties
-            </h5>
+            </span>
             <ul className="space-y-2.5 text-xs">
               {[
                 { label: "Full Monoportal Endoscopic Spine Surgery (FESS)", to: "/treatments#treatment-card-fess" },
@@ -70,9 +70,9 @@ export default function Footer() {
 
           {/* Col 3: Portal Help Links */}
           <div className="md:col-span-2 text-left space-y-4">
-            <h5 className="font-mono text-[10px] text-white uppercase tracking-[0.25em] font-extrabold pb-1.5 border-b border-white/5">
+            <span className="font-mono text-[10px] text-white uppercase tracking-[0.25em] font-extrabold pb-1.5 border-b border-white/5 block">
               Patient Portal Map
-            </h5>
+            </span>
             <ul className="space-y-2.5 text-xs">
               {portalLinks.map((link, idx) => (
                 <li key={idx}>
@@ -89,28 +89,43 @@ export default function Footer() {
 
           {/* Col 4: Reach Contacts Info */}
           <div className="md:col-span-3 text-left space-y-4">
-            <h5 className="font-mono text-[10px] text-white uppercase tracking-[0.25em] font-extrabold pb-1.5 border-b border-white/5">
+            <span className="font-mono text-[10px] text-white uppercase tracking-[0.25em] font-extrabold pb-1.5 border-b border-white/5 block">
               Direct Clinical Inquiries
-            </h5>
+            </span>
             <div className="space-y-3.5 text-xs select-text">
               <div className="flex gap-2.5">
                 <MapPin className="w-4 h-4 text-gold-400 shrink-0 mt-0.5" />
-                <p className="leading-snug text-gray-300">
-                  Operating in top-tier premium multi-specialty surgical hospitals across India (Pan-India outpatient consultations)
-                </p>
+                <div className="leading-snug text-gray-300 space-y-1">
+                  <a 
+                    href="https://www.google.com/maps/search/?api=1&query=Aarogya+Multispeciality+Center+Patrakar+Colony+Jaipur" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="hover:text-gold-400 transition-colors block cursor-pointer"
+                  >
+                    • Aarogya Multispeciality Center, Mansarovar, Jaipur
+                  </a>
+                  <a 
+                    href="https://www.google.com/maps/search/?api=1&query=Geetanjali+Hospital+Bhakrota+Jaipur" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="hover:text-gold-400 transition-colors block cursor-pointer"
+                  >
+                    • Geetanjali Hospital, Bhakrota, Jaipur
+                  </a>
+                </div>
               </div>
 
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-sky-400 shrink-0" />
-                <a href="mailto:consult@drdheerajspine.com" className="hover:text-gold-400">
-                  consult@drdheerajspine.com
+                <a href="mailto:drajvishu2020@gmail.com" className="hover:text-gold-400">
+                  drajvishu2020@gmail.com
                 </a>
               </div>
 
               <div className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-emerald-400 shrink-0" />
-                <a href="tel:+919999345892" className="hover:text-gold-400">
-                  +91 99993 45892 (Priority desk)
+                <a href="tel:+918999898129" className="hover:text-gold-400">
+                  +91 89998 98129 (Priority desk)
                 </a>
               </div>
 
@@ -126,7 +141,7 @@ export default function Footer() {
         </div>
 
         {/* Legal Disclaimer & Medical Compliance footnote */}
-        <div className="pt-6 border-t border-white/5 text-[10px] text-gray-500 space-y-4 text-center sm:text-left leading-relaxed">
+        <div className="pt-6 border-t border-white/5 text-[10px] text-gray-400 space-y-4 text-center sm:text-left leading-relaxed">
           <p className="max-w-4xl mx-auto md:mx-0">
             <strong>Clinical Disclaimer:</strong> The information provided on this premium micro-surgical repository is designed for educational purposes only and should not be used as a substitute for active personalized diagnostic consultation. Decisions regarding spinal care should be formulated in direct coordination with Dr. Dheeraj Vishwakarma’s verified clinical surgical officers on reviewing physical MRI radiographs.
           </p>
@@ -134,11 +149,34 @@ export default function Footer() {
           <div className="flex flex-col sm:flex-row sm:justify-between items-center gap-4 text-[9px] uppercase font-mono">
             <p>© {currentYear} Dr. Dheeraj Vishwakarma. Built with futuristic clinical technology standards.</p>
             <div className="flex gap-4">
-              <a href="#booking-modal-overlay" className="hover:text-white">HIPAA Secure</a>
+              <button 
+                onClick={() => {
+                  const btn = document.getElementById("hero-cta-consult") || document.getElementById("intl-book-consult-btn") || document.querySelector("[id*='booking']");
+                  if (btn) (btn as HTMLElement).click();
+                }}
+                className="hover:text-white transition-colors cursor-pointer bg-transparent border-none p-0 text-[9px] uppercase font-mono text-gray-400"
+              >
+                HIPAA Secure
+              </button>
               <span>|</span>
-              <a href="#booking-modal-overlay" className="hover:text-white">GDPR Compliant</a>
+              <button 
+                onClick={() => {
+                  const btn = document.getElementById("hero-cta-consult") || document.getElementById("intl-book-consult-btn") || document.querySelector("[id*='booking']");
+                  if (btn) (btn as HTMLElement).click();
+                }}
+                className="hover:text-white transition-colors cursor-pointer bg-transparent border-none p-0 text-[9px] uppercase font-mono text-gray-400"
+              >
+                GDPR Compliant
+              </button>
               <span>|</span>
-              <a href="#loading-overlay" className="hover:text-white">Core Web Vitals 100</a>
+              <button 
+                onClick={() => {
+                  window.location.reload();
+                }}
+                className="hover:text-white transition-colors cursor-pointer bg-transparent border-none p-0 text-[9px] uppercase font-mono text-gray-400"
+              >
+                Core Web Vitals 100
+              </button>
             </div>
           </div>
         </div>

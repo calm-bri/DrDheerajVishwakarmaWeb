@@ -35,12 +35,12 @@ export default function InternationalPatients({ onOpenBooking }: InternationalPa
           <div className="hidden md:flex items-center gap-6 text-xs font-mono text-gray-400">
             <div>
               <span className="text-gray-500 block font-bold">CONTACT INT'L DESK</span>
-              <a href="mailto:intl@drdheerajspine.com" className="text-gold-300 hover:underline">intl@drdheerajspine.com</a>
+              <a href="mailto:drajvishu2020@gmail.com" className="text-gold-300 hover:underline">drajvishu2020@gmail.com</a>
             </div>
             <div className="w-[1px] h-8 bg-white/10" />
             <div>
               <span className="text-gray-500 block font-bold">TELEHEALTH WHATSAPP</span>
-              <a href="tel:+919999345892" className="text-white hover:underline">+91 99993 45892</a>
+              <a href="tel:+918999898129" className="text-white hover:underline">+91 89998 98129</a>
             </div>
           </div>
         </div>
@@ -120,7 +120,7 @@ export default function InternationalPatients({ onOpenBooking }: InternationalPa
               </button>
 
               <a
-                href="https://wa.me/919999345892"
+                href="https://wa.me/918999898129"
                 className="flex-1 bg-white hover:bg-gray-200 px-6 py-4 rounded-full text-black text-center font-extrabold text-xs tracking-wider uppercase transition-all duration-300 hover:scale-[1.02] flex items-center justify-center gap-1.5"
                 id="intl-call-desk-btn"
               >
@@ -164,7 +164,7 @@ export default function InternationalPatients({ onOpenBooking }: InternationalPa
                       {idx + 1}
                     </div>
                     <div>
-                      <h6 className="text-xs font-semibold text-white">{item.title}</h6>
+                      <h3 className="text-xs font-semibold text-white">{item.title}</h3>
                       <p className="text-[11px] text-gray-455 leading-normal">{item.desc}</p>
                     </div>
                   </div>

@@ -23,7 +23,7 @@ async function check() {
       console.log("The 'blogs' table DOES NOT exist. We need to create it.");
     }
   } else {
-    console.log("Success! 'blogs' table exists. Current items count:", data.length);
+    console.log("Success! 'blogs' table exists. Current items:", JSON.stringify(data, null, 2));
   }
 }
 

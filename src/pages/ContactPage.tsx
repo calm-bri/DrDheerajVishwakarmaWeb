@@ -37,7 +37,7 @@ export default function ContactPage({ onOpenBooking }: ContactPageProps) {
     >
       <SEOComponent
         title="Contact Dr. Dheeraj Vishwakarma | Spine Clinic Bookings"
-        description="Contact our clinical consultation desk at +91 99993 45892 or submit MRI scans online to schedule keyhole endoscopic spine surgery with Dr. Vishwakarma."
+        description="Contact our clinical consultation desk at +91 89998 98129 or submit MRI scans online to schedule keyhole endoscopic spine surgery with Dr. Vishwakarma."
         path="/contact"
         schemas={contactSchemas}
       />
@@ -73,8 +73,8 @@ export default function ContactPage({ onOpenBooking }: ContactPageProps) {
                 </div>
                 <div>
                   <p className="font-mono text-[9px] uppercase tracking-wider text-gray-500">Priority Booking Hotline</p>
-                  <a href="tel:+919999345892" className="hover:text-gold-300 transition-colors text-white font-medium block mt-0.5">
-                    +91 99993 45892
+                  <a href="tel:+918999898129" className="hover:text-gold-300 transition-colors text-white font-medium block mt-0.5">
+                    +91 89998 98129
                   </a>
                   <p className="text-[10px] text-gray-500 mt-0.5">Available for urgent triage & scheduler questions (9 AM - 7 PM IST)</p>
                 </div>
@@ -86,8 +86,8 @@ export default function ContactPage({ onOpenBooking }: ContactPageProps) {
                 </div>
                 <div>
                   <p className="font-mono text-[9px] uppercase tracking-wider text-gray-500">Official Clinical Email</p>
-                  <a href="mailto:consult@drdheerajspine.com" className="hover:text-gold-300 transition-colors text-white font-medium block mt-0.5">
-                    consult@drdheerajspine.com
+                  <a href="mailto:drajvishu2020@gmail.com" className="hover:text-gold-300 transition-colors text-white font-medium block mt-0.5">
+                    drajvishu2020@gmail.com
                   </a>
                   <p className="text-[10px] text-gray-500 mt-0.5">Send high-resolution lumbar/cervical MRI radiograph files for direct surgeon reviews.</p>
                 </div>
@@ -99,12 +99,26 @@ export default function ContactPage({ onOpenBooking }: ContactPageProps) {
                 </div>
                 <div>
                   <p className="font-mono text-[9px] uppercase tracking-wider text-gray-500">Outpatient Consultation Centers</p>
-                  <p className="text-white font-medium mt-0.5 leading-relaxed">
-                    Primary Department of Endoscopic Spine Care
-                  </p>
-                  <p className="text-[10px] text-gray-500 mt-0.5">
-                    Consulting at premium quaternary care partner hospitals across Jaipur and Delhi NCR, India.
-                  </p>
+                  <div className="text-white font-medium mt-2 leading-relaxed space-y-3">
+                    <a 
+                      href="https://www.google.com/maps/search/?api=1&query=Aarogya+Multispeciality+Center+Patrakar+Colony+Jaipur" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="block group/link cursor-pointer hover:text-gold-300 transition-colors"
+                    >
+                      <p className="text-xs font-semibold flex items-center gap-1 group-hover/link:text-gold-300">• Aarogya Multispeciality Center <span className="opacity-0 group-hover/link:opacity-100 transition-opacity text-[10px] font-mono font-normal">(View Map)</span></p>
+                      <p className="text-[10px] text-gray-400 font-normal ml-2.5">S-5, Bhaskar Enclave, Above YES Bank, Patrakar Colony, Mansarovar, Jaipur</p>
+                    </a>
+                    <a 
+                      href="https://www.google.com/maps/search/?api=1&query=Geetanjali+Hospital+Bhakrota+Jaipur" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="block group/link cursor-pointer hover:text-gold-300 transition-colors"
+                    >
+                      <p className="text-xs font-semibold flex items-center gap-1 group-hover/link:text-gold-300">• Geetanjali Hospital <span className="opacity-0 group-hover/link:opacity-100 transition-opacity text-[10px] font-mono font-normal">(View Map)</span></p>
+                      <p className="text-[10px] text-gray-400 font-normal ml-2.5">Jaat Colony, Bhakrota, Ajmer Road, Jaipur</p>
+                    </a>
+                  </div>
                 </div>
               </div>
 

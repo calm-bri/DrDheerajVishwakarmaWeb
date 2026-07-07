@@ -26,7 +26,8 @@ export default function App() {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [preferredTreatment, setPreferredTreatment] = useState("");
 
-  const { pathname, hash } = useLocation();
+  const location = useLocation();
+  const { pathname, hash } = location;
 
   const handleOpenBooking = (treatmentId = "") => {
     setPreferredTreatment(treatmentId);
@@ -81,7 +82,8 @@ export default function App() {
               </div>
             }>
               <AnimatePresence mode="wait">
-                <Routes location={useLocation()} {...({ key: pathname } as any)}>
+                {/* @ts-expect-error key is a standard React prop but not declared in RoutesProps */}
+                <Routes location={location} key={pathname}>
                   <Route path="/" element={<Home onOpenBooking={handleOpenBooking} />} />
                   <Route path="/about" element={<AboutPage />} />
                   <Route path="/services" element={<ServicesPage onOpenBooking={handleOpenBooking} />} />

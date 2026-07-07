@@ -326,6 +326,7 @@ export default function Gallery() {
               <button 
                 onClick={() => setSearchQuery("")}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                aria-label="Clear search query"
               >
                 <X className="w-3 h-3" />
               </button>
@@ -442,6 +443,7 @@ export default function Gallery() {
                 onClick={closeLightbox}
                 className="p-2.5 cursor-pointer rounded-full bg-white/10 border border-white/15 text-white hover:bg-white/20 hover:scale-105 transition-all text-xs font-bold flex items-center gap-1.5"
                 id="lightbox-close-btn"
+                aria-label="Close gallery details"
               >
                 <X className="w-4 h-4" />
                 <span className="hidden xs:inline">Close</span>
@@ -452,6 +454,7 @@ export default function Gallery() {
             <button
               onClick={handlePrev}
               className="absolute left-2 sm:left-4 z-40 p-2 sm:p-3 cursor-pointer rounded-full bg-white/5 hover:bg-white/15 border border-white/5 hover:scale-110 text-gray-300 hover:text-white transition-all"
+              aria-label="Previous gallery item"
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
@@ -460,6 +463,7 @@ export default function Gallery() {
             <button
               onClick={handleNext}
               className="absolute right-2 sm:right-4 z-40 p-2 sm:p-3 cursor-pointer rounded-full bg-white/5 hover:bg-white/15 border border-white/5 hover:scale-110 text-gray-300 hover:text-white transition-all"
+              aria-label="Next gallery item"
             >
               <ChevronRight className="w-6 h-6" />
             </button>

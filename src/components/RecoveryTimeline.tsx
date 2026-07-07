@@ -29,9 +29,9 @@ export default function RecoveryTimeline() {
             <Award className="w-3.5 h-3.5 text-sky-400" />
             <span className="text-[10px] font-mono uppercase tracking-[0.15em] font-medium">RECONSTRUCTED MOBILITY OUTLOOK</span>
           </div>
-          <h3 className="font-display font-medium text-3xl sm:text-4xl md:text-5xl text-white tracking-tight">
+          <h2 className="font-display font-medium text-3xl sm:text-4xl md:text-5xl text-white tracking-tight">
             The Keyhole Recovery Timeline<span className="text-gold-400">.</span>
-          </h3>
+          </h2>
           <p className="text-gray-400 text-xs sm:text-sm leading-relaxed max-w-lg mx-auto font-sans">
             By avoiding large surgical open cuts and protecting delicate paraspinal muscle connections, our micro-portal recoveries follow a swift, highly reliable physiological path.
           </p>
@@ -74,9 +74,9 @@ export default function RecoveryTimeline() {
                   </span>
 
                   {/* Title */}
-                  <h4 className="font-display font-medium text-sm text-white group-hover:text-gold-300 transition-colors mb-1.5">
+                  <h3 className="font-display font-medium text-sm text-white group-hover:text-gold-300 transition-colors mb-1.5">
                     {step.title}
-                  </h4>
+                  </h3>
 
                   {/* Body Copy */}
                   <p className="text-gray-400 text-xs leading-relaxed font-sans mb-3 min-h-[48px]">
@@ -117,7 +117,7 @@ export default function RecoveryTimeline() {
               <span className="font-display font-bold text-3xl text-gold-400 block tracking-tight">
                 {item.metric}
               </span>
-              <h5 className="font-display font-medium text-sm text-white">{item.title}</h5>
+              <h3 className="font-display font-medium text-sm text-white">{item.title}</h3>
               <p className="text-xs text-gray-400 leading-relaxed font-sans">{item.desc}</p>
             </div>
           ))}

@@ -26,9 +26,9 @@ export default function FAQ() {
             <Sparkles className="w-3.5 h-3.5 text-gold-400" />
             <span className="text-[10px] font-mono uppercase tracking-[0.2em] font-medium">ANSWERING CLINICAL CONCERNS</span>
           </div>
-          <h3 className="font-display font-medium text-3xl sm:text-4xl text-white tracking-tight">
+          <h2 className="font-display font-medium text-3xl sm:text-4xl text-white tracking-tight">
             Consultation Q&A Science<span className="text-gold-400">.</span>
-          </h3>
+          </h2>
           <p className="text-gray-400 text-xs sm:text-sm font-sans leading-relaxed">
             Unravel details on clinical recovery rates, localized anesthesia configurations, keyhole incisions sizes, and what travel protocols international patients should follow below.
           </p>
@@ -99,11 +99,11 @@ export default function FAQ() {
               OR TALK LIVE ON CLINICAL WHATSAPP:
             </span>
             <a
-              href="tel:+919999345892"
+              href="tel:+918999898129"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/15 text-[10px] font-mono text-emerald-400 font-bold uppercase hover:bg-emerald-500/20 transition-colors"
             >
               <PhoneCall className="w-3.5 h-3.5" />
-              <span>+91 99993 45892</span>
+              <span>+91 89998 98129</span>
             </a>
           </div>
         </div>

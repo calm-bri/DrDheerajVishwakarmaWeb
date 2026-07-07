@@ -288,11 +288,11 @@ export default function AwardsSection() {
                         <span className="font-mono text-[8px] uppercase tracking-widest text-gray-500 block">
                           {award.category}
                         </span>
-                        <h4 className={`font-display font-bold text-xs leading-snug transition-colors ${
+                        <h3 className={`font-display font-bold text-xs leading-snug transition-colors ${
                           isActive ? "text-white" : "text-gray-400 group-hover:text-gray-200"
                         }`}>
                           {award.title}
-                        </h4>
+                        </h3>
                       </div>
                     </div>
 

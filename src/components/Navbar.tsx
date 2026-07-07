@@ -27,7 +27,6 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
     { label: "Blogs", to: "/blogs" },
     { label: "Gallery", to: "/gallery" },
     { label: "Recovery Timeline", to: "/#recovery-section" },
-    { label: "Int'l Patients", to: "/international-patients" },
     { label: "FAQ", to: "/#faq-section" }
   ];
 
@@ -39,13 +38,13 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
     <>
       <header
         id="navbar-header"
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 px-2 xs:px-4 sm:px-6 py-2.5 xs:py-4 md:py-6 flex justify-center`}
+        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 px-4 sm:px-6 md:px-8 py-4 md:py-6 flex justify-center`}
       >
         <div
-          className={`w-full max-w-6xl flex items-center justify-between px-2.5 xs:px-4 sm:px-6 py-2 xs:py-3 rounded-full transition-all duration-300 ${
+          className={`w-full max-w-6xl flex items-center justify-between rounded-full transition-all duration-300 ${
             scrolled
-              ? "glassmorphism shadow-[0_10px_30px_rgba(0,0,0,0.5)] border-white/10 scale-[0.98] md:scale-95"
-              : "bg-transparent border-transparent"
+              ? "glassmorphism shadow-[0_10px_30px_rgba(0,0,0,0.5)] border-white/10 py-2 sm:py-2.5 px-4 sm:px-6"
+              : "bg-transparent border-transparent py-3 sm:py-4 px-4 sm:px-6"
           }`}
         >
           {/* Logo Brand Frame */}
@@ -80,12 +79,12 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
           </nav>
 
           {/* Action CTAs */}
-          <div className="flex items-center gap-1.5 xs:gap-2.5 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
             {/* Secure Admin Portal Link */}
             <Link
               to="/admin"
               onClick={handleItemClick}
-              className={`flex items-center justify-center p-2 rounded-full border transition-all cursor-pointer ${
+              className={`hidden md:flex items-center justify-center p-2 rounded-full border transition-all cursor-pointer ${
                 location.pathname === "/admin"
                   ? "border-gold-400/60 bg-gold-400/10 text-gold-300 shadow-[0_0_12px_rgba(193,161,113,0.25)]"
                   : "border-white/5 bg-white/2 hover:bg-white/5 text-gray-400 hover:text-white"
@@ -105,22 +104,11 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
               <span>Int'l Desk</span>
             </Link>
 
-            {/* Premium Consult CTA */}
-            <button
-              id="navbar-cta-consult"
-              onClick={onOpenBooking}
-              className="bg-gradient-to-r from-gold-400 to-gold-500 text-black hover:from-gold-500 hover:to-gold-600 px-3 py-2 sm:px-5 sm:py-2.5 rounded-full text-[10px] sm:text-xs font-bold tracking-wider uppercase transition-all duration-300 shadow-[0_0_20px_rgba(193,161,113,0.15)] hover:scale-105 cursor-pointer flex items-center gap-1 sm:gap-1.5"
-            >
-              <CalendarCheck2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 text-black" />
-              <span className="hidden md:inline">Schedule Consultation</span>
-              <span className="hidden xs:inline md:hidden">Request Appointment</span>
-              <span className="xs:hidden">Inquire</span>
-            </button>
-
             {/* Mobile Drawer Trigger */}
             <button
               onClick={() => setMobileMenuOpen(true)}
               className="lg:hidden p-1.5 sm:p-2 text-gray-300 hover:text-white rounded-full hover:bg-white/5 transition-colors cursor-pointer"
+              aria-label="Open navigation menu"
             >
               <Menu className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
             </button>
@@ -130,7 +118,7 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
 
       {/* Fullscreen Mobile Drawer overlays */}
       {mobileMenuOpen && (
-        <div id="mobile-navigation-menu" className="fixed inset-0 z-50 bg-cosmic-bg/95 backdrop-blur-xl flex flex-col p-6 overflow-hidden">
+        <div id="mobile-navigation-menu" className="fixed inset-0 z-50 bg-cosmic-bg/95 backdrop-blur-xl flex flex-col p-6 overflow-y-auto">
           {/* Header block */}
           <div className="flex justify-between items-center pb-8 border-b border-white/5">
             <div className="flex items-center">
@@ -139,6 +127,7 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
             <button
               onClick={() => setMobileMenuOpen(false)}
               className="p-2 text-gray-400 hover:text-white rounded-full bg-white/5"
+              aria-label="Close navigation menu"
             >
               <X className="w-5 h-5" />
             </button>
@@ -146,7 +135,7 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
 
           {/* Links list column */}
           <nav className="flex-1 flex flex-col justify-center space-y-6 px-4">
-            <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-gray-500">CLINICAL INDEX:</span>
+            <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-gray-400">CLINICAL INDEX:</span>
             {menuItems.map((item, idx) => (
               <Link
                 key={item.label}

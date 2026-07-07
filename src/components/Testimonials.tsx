@@ -38,9 +38,9 @@ export default function Testimonials() {
           <span className="text-[10px] font-mono uppercase tracking-[0.22em] text-gold-400 font-semibold">
             ESTABLISHED QUALITY REVIEWS
           </span>
-          <h3 className="font-display font-medium text-3xl sm:text-4xl text-white tracking-tight">
+          <h2 className="font-display font-medium text-3xl sm:text-4xl text-white tracking-tight">
             Restored Lives, Shared Voices<span className="text-gold-400">.</span>
-          </h3>
+          </h2>
           <p className="text-gray-400 text-xs sm:text-sm font-sans leading-relaxed">
             Read clinical critiques and recovery testimonials written directly by other healthcare professionals and international patients after our keyhole spinal releases.
           </p>
@@ -86,7 +86,7 @@ export default function Testimonials() {
                     <User className="w-5 h-5 text-gold-400" />
                   </div>
                   <div>
-                    <h5 className="font-display font-semibold text-white text-sm">
+                    <h3 className="font-display font-semibold text-white text-sm">
                       {(() => {
                         const name = current.name;
                         if (name.includes("Colonel") || name.includes("Col.")) {
@@ -109,7 +109,7 @@ export default function Testimonials() {
                         }
                         return "Verified Patient";
                       })()}
-                    </h5>
+                    </h3>
                     <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">{current.location}</p>
                   </div>
                 </div>
@@ -127,12 +127,14 @@ export default function Testimonials() {
             <button
               onClick={handlePrev}
               className="w-11 h-11 rounded-full bg-cosmic-card hover:bg-gold-400 hover:text-black border border-white/10 text-gold-300 flex items-center justify-center transition-all cursor-pointer shadow-md"
+              aria-label="Previous testimonial"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
             <button
               onClick={handleNext}
               className="w-11 h-11 rounded-full bg-cosmic-card hover:bg-gold-400 hover:text-black border border-white/10 text-gold-300 flex items-center justify-center transition-all cursor-pointer shadow-md"
+              aria-label="Next testimonial"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
@@ -145,10 +147,13 @@ export default function Testimonials() {
             <button
               key={t.id}
               onClick={() => setActiveIdx(idx)}
-              className={`h-1.5 rounded-full transition-all cursor-pointer ${
+              className="p-3 cursor-pointer flex items-center justify-center relative before:content-[''] before:absolute before:-inset-2"
+              aria-label={`Go to testimonial ${idx + 1}`}
+            >
+              <span className={`h-1.5 rounded-full transition-all block ${
                 safeIdx === idx ? "w-8 bg-gold-400" : "w-2 bg-white/10 hover:bg-white/20"
-              }`}
-            />
+              }`} />
+            </button>
           ))}
         </div>
 
