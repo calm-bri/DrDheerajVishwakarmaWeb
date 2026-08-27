@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import Logo from "./Logo";
 import { 
@@ -14,6 +15,16 @@ import {
 } from "lucide-react";
 
 export default function AboutMe() {
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+
+  useEffect(() => {
+    if (isHovered) return;
+    const interval = setInterval(() => {
+      setIsFlipped((prev) => !prev);
+    }, 3500); // smooth flip interval
+    return () => clearInterval(interval);
+  }, [isHovered]);
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -180,21 +191,31 @@ export default function AboutMe() {
             <div className="space-y-6">
               {/* Interactive 3D Flip Card: Logo Front / Doctor Portrait Back */}
               <div className="flex justify-center border-b border-white/5 pb-6">
-                <div className="relative w-full max-w-[280px] aspect-[4/5] cursor-pointer perspective-1000 group">
-                  <div className="relative w-full h-full duration-700 transform-style-3d group-hover:rotate-y-180 transition-transform">
+                <div 
+                  onMouseEnter={() => {
+                    setIsHovered(true);
+                    setIsFlipped(true);
+                  }}
+                  onMouseLeave={() => {
+                    setIsHovered(false);
+                    setIsFlipped(false);
+                  }}
+                  onClick={() => setIsFlipped(!isFlipped)}
+                  className="relative w-full max-w-[280px] aspect-[4/5] cursor-pointer perspective-1000"
+                >
+                  <div className={`relative w-full h-full duration-[800ms] transform-style-3d transition-transform ${
+                    isFlipped ? "rotate-y-180" : ""
+                  }`}>
                     {/* Front: Logo Banner */}
                     <div className="absolute inset-0 w-full h-full backface-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-sky-950/20 to-cosmic-card/90 flex flex-col items-center justify-center p-6 shadow-2xl">
                       <Logo mode="full" className="scale-95" />
-                      <div className="absolute bottom-4 text-[9px] font-mono tracking-[0.2em] text-gold-400 uppercase animate-pulse">
-                        Hover to Flip Card
-                      </div>
                     </div>
 
                     {/* Back: Doctor Portrait */}
                     <div className="absolute inset-0 w-full h-full backface-hidden rounded-2xl border border-gold-400/20 overflow-hidden shadow-2xl rotate-y-180 bg-zinc-950">
                       <img 
-                        src="/germany_fess_scrubs.jpg" 
-                        alt="Dr. Dheeraj Vishwakarma in Germany scrubs" 
+                        src="/doctor_white_coat.png" 
+                        alt="Dr. Dheeraj Vishwakarma" 
                         className="w-full h-full object-cover rounded-2xl"
                         loading="lazy"
                         referrerPolicy="no-referrer"
@@ -206,7 +227,7 @@ export default function AboutMe() {
                       <div className="absolute bottom-0 left-0 right-0 p-5 text-left z-10">
                         <span className="font-mono text-[8px] text-gold-400 uppercase tracking-[0.25em] block mb-0.5 font-bold">SURGEON-IN-CHIEF</span>
                         <h4 className="font-display font-black text-sm tracking-wide text-white">Dr. Dheeraj Vishwakarma</h4>
-                        <p className="font-sans text-[10px] text-gray-300">FESS Training, Herne Germany</p>
+                        <p className="font-sans text-[10px] text-gray-300">Monoportal Endoscopic Spine Care</p>
                       </div>
                     </div>
                   </div>
