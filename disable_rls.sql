@@ -1,6 +1,0 @@
--- Disable Row Level Security (RLS) on public read-only tables to allow anonymous fetches
-ALTER TABLE blogs DISABLE ROW LEVEL SECURITY;
-ALTER TABLE showcases DISABLE ROW LEVEL SECURITY;
-ALTER TABLE testimonials DISABLE ROW LEVEL SECURITY;
-ALTER TABLE conditions DISABLE ROW LEVEL SECURITY;
-ALTER TABLE faqs DISABLE ROW LEVEL SECURITY;
