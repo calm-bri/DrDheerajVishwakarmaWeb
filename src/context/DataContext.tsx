@@ -154,6 +154,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Showcase state initialized with defaults
   const [showcases, setShowcases] = useState<ShowcaseItem[]>(INITIAL_SHOWCASES);
+  const [dbShowcaseIds, setDbShowcaseIds] = useState<Set<string>>(new Set());
 
   // FAQs state initialized with defaults
   const [faqs, setFaqs] = useState<FAQItem[]>(faqData);
@@ -171,19 +172,87 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const loadPublicData = async () => {
       try {
-        const [scsRes, faqsRes, testsRes, condsRes, blogsRes] = await Promise.all([
+        const [scsRes, faqsRes, testsRes, condsRes, blogsRes, galleryRes] = await Promise.all([
           fetch('/api/showcases'),
           fetch('/api/faqs'),
           fetch('/api/testimonials'),
           fetch('/api/conditions'),
-          fetch('/api/blogs')
+          fetch('/api/blogs'),
+          fetch('/api/gallery-images')
         ]);
 
-        if (scsRes.ok) setShowcases(await scsRes.json());
-        if (faqsRes.ok) setFaqs(await faqsRes.json());
-        if (testsRes.ok) setTestimonials(await testsRes.json());
-        if (condsRes.ok) setConditions(await condsRes.json());
-        if (blogsRes.ok) setBlogs(await blogsRes.json());
+        let dbData: ShowcaseItem[] = [];
+        if (scsRes.ok) {
+          const resJson = await scsRes.json();
+          if (Array.isArray(resJson)) {
+            dbData = resJson;
+            setDbShowcaseIds(new Set(dbData.map((s: any) => s.id)));
+          }
+        }
+
+        let storageData: any[] = [];
+        if (galleryRes.ok) {
+          const resJson = await galleryRes.json();
+          if (Array.isArray(resJson)) {
+            storageData = resJson;
+          }
+        }
+
+        // Map storage images to ShowcaseItem objects
+        const mappedStorageItems: ShowcaseItem[] = storageData.map((img: any) => {
+          const nameLower = img.id.toLowerCase();
+          let category: "surgical" | "news" | "workshop" = "surgical";
+          let badge = "Clinical Showcase";
+
+          if (nameLower.includes("news") || nameLower.includes("press") || nameLower.includes("media")) {
+            category = "news";
+            badge = "Press Release";
+          } else if (nameLower.includes("workshop") || nameLower.includes("lecture") || nameLower.includes("hands")) {
+            category = "workshop";
+            badge = "Event Workshop";
+          }
+
+          return {
+            id: img.id,
+            title: img.title || "Surgical Case Milestone",
+            subtitle: img.subtitle || "Monoportal Endoscopic Spine Care Gallery",
+            description: img.description || "Clinical highlight captured during monoportal FESS decompression, medical training workshop lectures, or book presentation milestones.",
+            category,
+            location: "Jaipur Clinic",
+            date: "June 2026",
+            imageUrl: img.imageUrl,
+            sizeClass: "md:col-span-1 md:row-span-1 aspect-square sm:aspect-auto",
+            badge,
+            featuredInHero: false
+          };
+        });
+
+        // Merge them
+        const combined = [...dbData];
+        mappedStorageItems.forEach(supItem => {
+          if (!combined.some(c => c.imageUrl === supItem.imageUrl || c.id === supItem.id)) {
+            combined.push(supItem);
+          }
+        });
+
+        setShowcases(combined);
+
+        if (faqsRes.ok) {
+          const resJson = await faqsRes.json();
+          if (Array.isArray(resJson)) setFaqs(resJson);
+        }
+        if (testsRes.ok) {
+          const resJson = await testsRes.json();
+          if (Array.isArray(resJson)) setTestimonials(resJson);
+        }
+        if (condsRes.ok) {
+          const resJson = await condsRes.json();
+          if (Array.isArray(resJson)) setConditions(resJson);
+        }
+        if (blogsRes.ok) {
+          const resJson = await blogsRes.json();
+          if (Array.isArray(resJson)) setBlogs(resJson);
+        }
       } catch (error) {
         console.warn("Failed to fetch initial public data from backend server. Using local presets.", error);
       }
@@ -272,6 +341,11 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Showcase operations
   const addShowcase = (showcase: ShowcaseItem) => {
     setShowcases(prev => [showcase, ...prev]);
+    setDbShowcaseIds(prev => {
+      const next = new Set(prev);
+      next.add(showcase.id);
+      return next;
+    });
 
     fetch('/api/showcases', {
       method: 'POST',
@@ -284,18 +358,45 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const updateShowcase = (id: string, updated: Partial<ShowcaseItem>) => {
+    const currentItem = showcases.find(sc => sc.id === id);
+    if (!currentItem) return;
+
+    const fullUpdatedItem = { ...currentItem, ...updated };
+
     setShowcases(prev => 
-      prev.map(sc => sc.id === id ? { ...sc, ...updated } : sc)
+      prev.map(sc => sc.id === id ? fullUpdatedItem : sc)
     );
 
-    fetch(`/api/showcases/${id}`, {
-      method: 'PUT',
-      headers: { 
-        'Content-Type': 'application/json',
-        'x-admin-pin': adminPin
-      },
-      body: JSON.stringify(updated)
-    }).catch(err => console.error(`Error updating showcase ${id} on server:`, err));
+    // If this item was loaded from storage bucket but not yet saved in the DB,
+    // we must insert (POST) it so it becomes a DB-backed record with all fields.
+    if (!dbShowcaseIds.has(id)) {
+      fetch('/api/showcases', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-admin-pin': adminPin
+        },
+        body: JSON.stringify(fullUpdatedItem)
+      })
+        .then(() => {
+          setDbShowcaseIds(prev => {
+            const next = new Set(prev);
+            next.add(id);
+            return next;
+          });
+        })
+        .catch(err => console.error(`Error saving storage showcase ${id} to DB:`, err));
+    } else {
+      // Otherwise, update existing record with standard PUT
+      fetch(`/api/showcases/${id}`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-admin-pin': adminPin
+        },
+        body: JSON.stringify(updated)
+      }).catch(err => console.error(`Error updating showcase ${id} on server:`, err));
+    }
   };
 
   const deleteShowcase = (id: string) => {

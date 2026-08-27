@@ -1,7 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
+import { useData } from "../context/DataContext";
 
 export default function ParallaxCarousel() {
+  const { showcases } = useData();
+
   // Backup images
   const fallbackImages = [
     {
@@ -39,7 +42,12 @@ export default function ParallaxCarousel() {
     },
   ];
 
-  const [galleryItems, setGalleryItems] = useState<any[]>(fallbackImages);
+  // Filter showcases to include only image assets
+  const images = showcases.filter(
+    (item) => !item.videoUrl && item.imageUrl
+  );
+
+  const galleryItems = images.length > 0 ? images : fallbackImages;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -47,23 +55,6 @@ export default function ParallaxCarousel() {
   const dragStartX = useRef(0);
   const dragStartOffset = useRef(0);
   const carouselRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const fetchSupabaseImages = async () => {
-      try {
-        const response = await fetch("/api/gallery-images");
-        if (response.ok) {
-          const data = await response.json();
-          if (Array.isArray(data) && data.length > 0) {
-            setGalleryItems(data);
-          }
-        }
-      } catch (err) {
-        console.warn("Failed to fetch gallery images from Supabase, using fallback images.", err);
-      }
-    };
-    fetchSupabaseImages();
-  }, []);
 
   const totalItems = galleryItems.length;
 
