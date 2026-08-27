@@ -55,3 +55,12 @@ export interface BlogArticle {
   readTime: string;
   author: string;
 }
+
+export interface VideoItem {
+  id: string;
+  title: string;
+  description: string;
+  poster: string;
+  videoUrl: string;
+  category: string;
+}

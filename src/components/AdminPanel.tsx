@@ -211,7 +211,7 @@ export default function AdminPanel() {
   const openCreateModal = (type: "appointment" | "showcase" | "blogs" | "faq" | "testimonial" | "condition", prefillData?: any) => {
     const emptyModels = {
       appointment: { fullName: "", email: "", phone: "", selectedTreatment: "fess", symptoms: "", sessionType: "video", isInternational: false, status: "pending", bookingDate: "", bookingTime: "11:30 AM" },
-      showcase: { id: `sc-${Date.now()}`, title: "", subtitle: "", description: "", category: "surgical", location: "Jaipur Clinic", date: "May 2026", imageUrl: "", sizeClass: "md:col-span-1 md:row-span-1", badge: "New Case" },
+      showcase: { id: `sc-${Date.now()}`, title: "", subtitle: "", description: "", category: "surgical", location: "Jaipur Clinic", date: "May 2026", imageUrl: "", sizeClass: "md:col-span-1 md:row-span-1", badge: "New Case", featuredInHero: false },
       blogs: { id: `blog-${Date.now()}`, title: "", summary: "", content: "", category: "Clinical Guide", date: "May 2026", readTime: "6 min read", author: "Dr. Dheeraj Vishwakarma" },
       faq: { id: `faq-${Date.now()}`, question: "", answer: "", category: "technology" },
       testimonial: { id: `test-${Date.now()}`, name: "", location: "Google Review", condition: "", quote: "", recoverySummary: "", rating: 5 },
@@ -880,6 +880,11 @@ export default function AdminPanel() {
                     <span className="absolute top-2.5 left-2.5 bg-black/75 px-2.5 py-0.5 rounded text-[8px] font-mono tracking-wider font-extrabold uppercase text-gold-300 border border-white/10">
                       {sc.badge}
                     </span>
+                    {sc.featuredInHero && (
+                      <span className="absolute top-2.5 right-2.5 bg-emerald-500/90 text-white px-2.5 py-0.5 rounded text-[8px] font-mono tracking-wider font-extrabold uppercase border border-emerald-400/20">
+                        Hero Active
+                      </span>
+                    )}
                   </div>
 
                   <div className="p-4 flex-1 flex flex-col justify-between text-left">
@@ -1684,6 +1689,22 @@ export default function AdminPanel() {
                         onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, description: e.target.value } })}
                         className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white focus:outline-none"
                       />
+                    </div>
+
+                    <div className="col-span-2 flex items-center gap-3 pt-2">
+                      <input
+                        type="checkbox"
+                        id="featuredInHeroCheckbox"
+                        checked={!!editingItem.data.featuredInHero}
+                        onChange={(e) => setEditingItem({ 
+                          ...editingItem, 
+                          data: { ...editingItem.data, featuredInHero: e.target.checked } 
+                        })}
+                        className="w-5 h-5 rounded border-white/10 bg-black/40 text-gold-400 focus:ring-0 focus:ring-offset-0 cursor-pointer"
+                      />
+                      <label htmlFor="featuredInHeroCheckbox" className="text-stone-300 font-medium text-sm select-none cursor-pointer">
+                        Featured in Hero Carousel (Show this image/video in the main Hero slideshow)
+                      </label>
                     </div>
                   </div>
                 )}

@@ -776,6 +776,45 @@ app.post('/api/upload/sign', async (req, res) => {
   }
 });
 
+// API endpoint to retrieve all public image files inside the Supabase 'gallery' storage bucket
+app.get('/api/gallery-images', async (req, res) => {
+  try {
+    if (!supabase) {
+      return res.json([]);
+    }
+    const { data, error } = await supabase.storage.from('gallery').list('', {
+      limit: 100,
+      offset: 0,
+      sortBy: { column: 'name', order: 'asc' }
+    });
+
+    if (error) {
+      console.warn("Failed to fetch gallery bucket list from Supabase:", error.message);
+      return res.json([]);
+    }
+
+    if (data) {
+      const images = data
+        .filter(file => {
+          const name = file.name.toLowerCase();
+          return name.endsWith('.jpg') || name.endsWith('.jpeg') || name.endsWith('.png') || name.endsWith('.webp') || name.endsWith('.gif');
+        })
+        .map(file => ({
+          id: `supabase-${file.name}`,
+          imageUrl: `${supabaseUrl}/storage/v1/object/public/gallery/${encodeURIComponent(file.name)}`,
+          title: "Surgical Case Milestone",
+          subtitle: "Monoportal Endoscopic Spine Care Gallery",
+          description: "Clinical highlight captured during monoportal FESS decompression, medical training workshop lectures, or book presentation milestones."
+        }));
+      return res.json(images);
+    }
+    res.json([]);
+  } catch (err: any) {
+    console.error("Exception loading gallery images:", err);
+    res.json([]);
+  }
+});
+
 // Legacy uploads redirect router
 app.get('/uploads/:fileName', (req, res) => {
   const { fileName } = req.params;

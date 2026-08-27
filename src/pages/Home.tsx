@@ -1,11 +1,17 @@
+import { useState } from "react";
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
 import Hero from "../components/Hero";
+import IncisionComparison from "../components/IncisionComparison";
+import ParallaxCarousel from "../components/ParallaxCarousel";
+import VideoDiscovery from "../components/VideoDiscovery";
 import RecoveryTimeline from "../components/RecoveryTimeline";
 import Testimonials from "../components/Testimonials";
 import AwardsSection from "../components/AwardsSection";
 import FAQ from "../components/FAQ";
 import SEOComponent from "../components/SEOComponent";
+import { videoData } from "../data";
+import { VideoItem } from "../types";
 
 interface HomeProps {
   onOpenBooking: (preferredTreatmentId?: string) => void;
@@ -13,6 +19,8 @@ interface HomeProps {
 
 export default function Home({ onOpenBooking }: HomeProps) {
   const navigate = useNavigate();
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const [activeVideo, setActiveVideo] = useState<VideoItem>(videoData[0]);
 
   const homeSchemas = [
     {
@@ -117,6 +125,21 @@ export default function Home({ onOpenBooking }: HomeProps) {
         onOpenBooking={() => onOpenBooking("fess")}
         onExploreScience={() => navigate("/treatments")}
         onNavigateAbout={() => navigate("/about")}
+        onPlayVideo={() => setIsVideoModalOpen(true)}
+      />
+
+      {/* 1.2 In-depth Incision and Surgical Trauma Comparison Section */}
+      <IncisionComparison />
+
+      {/* 1.3 Animated Lenticular Image Showcase Gallery */}
+      <ParallaxCarousel />
+
+      {/* 1.5 Scroll-triggered Video Discovery Section */}
+      <VideoDiscovery
+        isModalOpen={isVideoModalOpen}
+        setIsModalOpen={setIsVideoModalOpen}
+        activeVideo={activeVideo}
+        setActiveVideo={setActiveVideo}
       />
 
       {/* 2. Interactive Recovery Milestones timeline */}

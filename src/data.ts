@@ -1,4 +1,4 @@
-import { SpineCondition, RecoveryTimelineStep, Testimonial, FAQItem, InternationalDestination, BlogArticle } from "./types";
+import { SpineCondition, RecoveryTimelineStep, Testimonial, FAQItem, InternationalDestination, BlogArticle, VideoItem } from "./types";
 
 export const conditionsData: SpineCondition[] = [
   {
@@ -330,5 +330,39 @@ export const blogsData: BlogArticle[] = [
     date: "January 2025",
     readTime: "15 min read",
     author: "Dr. Dheeraj Vishwakarma"
+  }
+];
+
+export const socialLinks = {
+  whatsapp: "https://wa.me/918999898129",
+  instagram: "https://www.instagram.com/drdheerajneurospine/",
+  facebook: "https://www.facebook.com/dheeraj.vishwakarma.39/",
+  linkedin: "https://www.linkedin.com/in/drdheerajneurospine/"
+};
+
+export const videoData: VideoItem[] = [
+  {
+    id: "endoscopic-spine-introduction",
+    title: "Understanding Endoscopic Spine Surgery",
+    description: "Dr. Dheeraj Vishwakarma details the Full Monoportal Endoscopic Spine Surgery (FESS) procedure, keyhole instruments, and rapid discharge milestones.",
+    poster: "/endoscopic_spine_poster.jpg",
+    videoUrl: "https://iplsqsfgnmomqqhnvydz.supabase.co/storage/v1/object/public/Video/3cd88781-6f0f-4598-ae80-222fb55c84ed.mp4",
+    category: "Educational"
+  },
+  {
+    id: "awake-discharge-milestones",
+    title: "Awake Same-Day Recovery Milestones",
+    description: "Witness real-time postoperative milestones as patients sit up, stand, and comfortably walk within hours of their endoscopic spine release.",
+    poster: "/awards-records.jpg",
+    videoUrl: "https://iplsqsfgnmomqqhnvydz.supabase.co/storage/v1/object/public/Video/6dec41ca-3266-4f13-9b26-d0709bbfd938.mp4",
+    category: "Recovery Timeline"
+  },
+  {
+    id: "fess-instrumentation",
+    title: "FESS Keyhole Instrumentation & Safety Calibration",
+    description: "Explore the advanced 8mm optical lens decompressions, precision drills, and saline irrigation calibration protocols used in modern spine surgery.",
+    poster: "/endoscopic_spine_poster.jpg",
+    videoUrl: "https://iplsqsfgnmomqqhnvydz.supabase.co/storage/v1/object/public/Video/d380a0a2-98d7-48c6-a93a-3424208cb39d.mp4",
+    category: "Clinical Tech"
   }
 ];

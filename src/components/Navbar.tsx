@@ -167,7 +167,7 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
               }}
               className="w-full bg-gradient-to-r from-gold-400 to-gold-500 text-black py-4.5 rounded-full text-center font-bold tracking-wider text-xs uppercase shadow-md block"
             >
-              Inquire for Appointment Scheduling
+              Book Appointment
             </button>
             <div className="text-center font-mono text-[9px] text-gray-500 tracking-wider">
               DR. DHEERAJ VISHWAKARMA / PAN-INDIA CLINICAL CONSULTATIONS

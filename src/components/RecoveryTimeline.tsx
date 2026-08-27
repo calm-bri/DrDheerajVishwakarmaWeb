@@ -1,126 +1,174 @@
-import { useState } from "react";
+import React from "react";
 import { motion } from "motion/react";
-import { recoverySteps } from "../data";
-import { Clock, Footprints, Home, Laptop, Zap, CheckCircle2, Award } from "lucide-react";
+import { Clock, Footprints, Home, Laptop, Zap, ArrowRight, ArrowDown } from "lucide-react";
 
 export default function RecoveryTimeline() {
-  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
-
-  const iconMap: Record<string, any> = {
-    Activity: Clock,
-    Footprints: Footprints,
-    Home: Home,
-    Laptop: Laptop,
-    Zap: Zap
-  };
+  const steps = [
+    {
+      id: 1,
+      time: "HOUR 0-2",
+      title: "Keyhole Decompression",
+      description: "Immediate pain relief",
+      icon: Clock,
+      color: "text-sky-400",
+      borderColor: "border-sky-500/20",
+      bgColor: "bg-sky-500/5",
+      iconBg: "bg-sky-400/10"
+    },
+    {
+      id: 2,
+      time: "HOUR 4",
+      title: "First Steps",
+      description: "Walk on your own",
+      icon: Footprints,
+      color: "text-teal-400",
+      borderColor: "border-teal-500/20",
+      bgColor: "bg-teal-500/5",
+      iconBg: "bg-teal-400/10"
+    },
+    {
+      id: 3,
+      time: "DAY 1",
+      title: "Go Home",
+      description: "Discharge & simple home care",
+      icon: Home,
+      color: "text-emerald-400",
+      borderColor: "border-emerald-500/20",
+      bgColor: "bg-emerald-500/5",
+      iconBg: "bg-emerald-400/10"
+    },
+    {
+      id: 4,
+      time: "DAY 5-7",
+      title: "Desk Work Resumes",
+      description: "Light work & screen time",
+      icon: Laptop,
+      color: "text-indigo-400",
+      borderColor: "border-indigo-500/20",
+      bgColor: "bg-indigo-500/5",
+      iconBg: "bg-indigo-400/10"
+    },
+    {
+      id: 5,
+      time: "WEEK 4",
+      title: "Full Activity",
+      description: "Exercise & daily freedom",
+      icon: Zap,
+      color: "text-lime-400",
+      borderColor: "border-lime-500/20",
+      bgColor: "bg-lime-500/5",
+      iconBg: "bg-lime-400/10"
+    }
+  ];
 
   return (
     <section
       id="recovery-section"
-      className="relative py-24 px-4 sm:px-6 md:px-8 border-t border-white/5"
+      className="relative py-20 px-4 sm:px-6 md:px-8 border-t border-white/5 bg-cosmic-bg overflow-hidden"
     >
-      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-gold-glow opacity-20 blur-3xl rounded-full pointer-events-none" />
+      {/* Background Video Loop */}
+      <div className="absolute inset-0 w-full h-full z-0 overflow-hidden pointer-events-none select-none">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-contain opacity-75"
+        >
+          <source
+            src="https://iplsqsfgnmomqqhnvydz.supabase.co/storage/v1/object/public/Video/eb53d874-f09e-4297-828b-474675034725.mp4"
+            type="video/mp4"
+          />
+        </video>
+        {/* Cinematic radial & linear darkness gradients to protect text contrast and blend edges */}
+        <div className="absolute inset-0 bg-gradient-to-t from-cosmic-bg via-transparent to-cosmic-bg opacity-90" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_20%,#030509_90%)] opacity-85" />
+      </div>
 
-      <div className="w-full max-w-5xl mx-auto relative z-10 space-y-16">
+      <div className="w-full max-w-5xl mx-auto relative z-10 space-y-12">
         
-        {/* Editorial Title Block */}
-        <div className="text-center max-w-2xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-sky-400/20 bg-sky-400/5 text-sky-300">
-            <Award className="w-3.5 h-3.5 text-sky-400" />
-            <span className="text-[10px] font-mono uppercase tracking-[0.15em] font-medium">RECONSTRUCTED MOBILITY OUTLOOK</span>
-          </div>
-          <h2 className="font-display font-medium text-3xl sm:text-4xl md:text-5xl text-white tracking-tight">
-            The Keyhole Recovery Timeline<span className="text-gold-400">.</span>
+        {/* Header Title block matching the reference image */}
+        <div className="text-center max-w-2xl mx-auto space-y-2">
+          <h2 className="font-display font-bold text-3xl sm:text-4xl text-white tracking-widest uppercase select-none">
+            Recovery Flow
           </h2>
-          <p className="text-gray-400 text-xs sm:text-sm leading-relaxed max-w-lg mx-auto font-sans">
-            By avoiding large surgical open cuts and protecting delicate paraspinal muscle connections, our micro-portal recoveries follow a swift, highly reliable physiological path.
+          <p className="text-gray-400 text-xs sm:text-sm font-sans">
+            Simple Daily Progression
           </p>
         </div>
 
-        {/* Dynamic Timeline Layout */}
-        <div className="relative border-l border-white/10 md:border-l-0 md:flex md:justify-between md:items-start gap-4 pt-8 md:before:absolute md:before:top-[125px] md:before:left-4 md:before:right-4 md:before:h-[1px] md:before:bg-white/10 md:before:z-0">
-          
-          {recoverySteps.map((step, idx) => {
-            const IconComp = iconMap[step.iconName] || Clock;
-            const isHovered = hoveredIdx === idx;
-
+        {/* Timeline Progression Row (Mobile: Vertical Stack, Desktop: Horizontal Row) */}
+        <div className="flex flex-col lg:flex-row justify-between items-center lg:items-stretch gap-4 lg:gap-0 w-full">
+          {steps.map((step, idx) => {
+            const IconComp = step.icon;
             return (
-              <div
-                key={idx}
-                onMouseEnter={() => setHoveredIdx(idx)}
-                onMouseLeave={() => setHoveredIdx(null)}
-                className="relative pl-8 md:pl-0 md:pt-16 md:flex-1 text-left md:text-center pb-12 md:pb-0 group transition-all duration-300"
-              >
-                {/* Timeline dot / icon bubble */}
-                <div
-                  className={`absolute -left-4 md:left-1/2 md:-translate-x-1/2 top-1.5 md:top-6 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 z-10 ${
-                    isHovered
-                      ? "bg-gold-400 text-black scale-110 shadow-[0_0_15px_rgba(193,161,113,0.5)] border-gold-400"
-                      : "bg-cosmic-card border border-white/10 text-gold-300"
-                  }`}
-                >
-                  <IconComp className="w-4.5 h-4.5 group-hover:animate-pulse" />
-                </div>
+              <React.Fragment key={step.id}>
+                {/* Milestone Card */}
+                <div className="w-full max-w-sm lg:w-auto lg:flex-1 px-1.5 sm:px-2">
+                  <div className={`glassmorphism rounded-2xl border ${step.borderColor} p-6 flex flex-col items-center text-center space-y-4 shadow-xl hover:border-white/20 transition-all duration-300 min-h-[220px] h-full`}>
+                    
+                    {/* Circle Icon Bubble */}
+                    <div className={`w-14 h-14 rounded-full border border-white/10 flex items-center justify-center ${step.iconBg} ${step.color}`}>
+                      <IconComp className="w-6 h-6" />
+                    </div>
 
-                {/* Card Container holding milestones details */}
-                <div className={`transition-all duration-300 rounded-xl p-5 md:mt-2 text-left ${
-                  isHovered 
-                    ? "bg-white/2 border border-white/10 shadow-[0_10px_20px_rgba(0,0,0,0.4)] translate-y-[-4px]" 
-                    : "bg-transparent border border-transparent"
-                }`}>
-                  {/* Step Day / Hour */}
-                  <span className="font-mono text-[10px] text-sky-400 font-bold tracking-widest uppercase block mb-1">
-                    {step.day}
-                  </span>
+                    {/* Stage Timeline */}
+                    <span className={`font-mono text-xs uppercase tracking-wider font-bold ${step.color}`}>
+                      {step.time}
+                    </span>
 
-                  {/* Title */}
-                  <h3 className="font-display font-medium text-sm text-white group-hover:text-gold-300 transition-colors mb-1.5">
-                    {step.title}
-                  </h3>
+                    {/* Text Details */}
+                    <div className="space-y-1 select-text">
+                      <h3 className="font-display font-bold text-sm sm:text-base text-white">
+                        {step.title}
+                      </h3>
+                      <p className="text-gray-400 text-[11px] sm:text-xs leading-relaxed font-sans">
+                        {step.description}
+                      </p>
+                    </div>
 
-                  {/* Body Copy */}
-                  <p className="text-gray-400 text-xs leading-relaxed font-sans mb-3 min-h-[48px]">
-                    {step.description}
-                  </p>
-
-                  {/* Target Success metric bar */}
-                  <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/10 text-[9px] font-mono text-emerald-400 uppercase font-semibold">
-                    <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
-                    <span>{step.milestone}</span>
                   </div>
                 </div>
-              </div>
+
+                {/* Arrow Connector (between cards) */}
+                {idx < steps.length - 1 && (
+                  <>
+                    {/* Mobile Vertical Arrow */}
+                    <div className="flex lg:hidden justify-center items-center text-sky-400 shrink-0 py-2 select-none animate-pulse">
+                      <ArrowDown className="w-5 h-5" />
+                    </div>
+                    {/* Desktop Horizontal Arrow */}
+                    <div className="hidden lg:flex justify-center items-center text-sky-400 shrink-0 px-0.5 select-none animate-pulse">
+                      <ArrowRight className="w-5 h-5" />
+                    </div>
+                  </>
+                )}
+              </React.Fragment>
             );
           })}
         </div>
 
-        {/* Benefits Comparison Bento Callouts */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-10">
-          {[
-            {
-              metric: "< 8mm",
-              title: "Smaller Incisions",
-              desc: "Traditional surgeries require cuts of 100mm. Our endoscopic portal fits in a mini 8mm slot, requiring no traumatic muscle tearing."
-            },
-            {
-              metric: "0% Screws",
-              title: "Motion Preservation",
-              desc: "Instead of rigid metal rods that permanently lock your joints, we relieve targeted core nerve compression, leaving 95% of natural discs untouched."
-            },
-            {
-              metric: "4-6 Hours",
-              title: "Rapid Independent Walking",
-              desc: "Because paraspinous structures remain fully functional, patients safely stand, walk, and use recovery rooms comfortably the same afternoon."
-            }
-          ].map((item, idx) => (
-            <div key={idx} className="p-6 rounded-2xl glassmorphism text-left space-y-3 hover:border-gold-400/30 transition-colors">
-              <span className="font-display font-bold text-3xl text-gold-400 block tracking-tight">
-                {item.metric}
-              </span>
-              <h3 className="font-display font-medium text-sm text-white">{item.title}</h3>
-              <p className="text-xs text-gray-400 leading-relaxed font-sans">{item.desc}</p>
-            </div>
-          ))}
+        {/* Visual timeline axis line under the cards (Desktop Only) */}
+        <div className="hidden lg:block relative max-w-4xl mx-auto mt-8 select-none">
+          {/* Connecting line */}
+          <div className="absolute top-1/2 left-[10%] right-[10%] h-[1px] bg-white/10 -translate-y-1/2" />
+          {/* Axis dots */}
+          <div className="grid grid-cols-5 justify-items-center">
+            {steps.map((step) => (
+              <div 
+                key={step.id} 
+                className="w-3.5 h-3.5 rounded-full bg-gray-600 border-[3px] border-cosmic-bg relative z-10 -translate-y-1" 
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Centered safety badge at the bottom */}
+        <div className="flex justify-center pt-4">
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-emerald-500/10 bg-emerald-500/5 text-emerald-400 text-[11px] font-mono uppercase tracking-[0.2em] font-semibold select-none shadow-[0_0_15px_rgba(16,185,129,0.05)]">
+            <Zap className="w-3.5 h-3.5 fill-current" />
+            <span>Safe • Fast • Effective</span>
+          </div>
         </div>
 
       </div>

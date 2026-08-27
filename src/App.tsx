@@ -7,6 +7,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import BookingModal from "./components/BookingModal";
 import Breadcrumbs from "./components/Breadcrumbs";
+import SocialActionCard from "./components/SocialActionCard";
 
 // Lazy load pages
 const Home = lazy(() => import("./pages/Home"));
@@ -110,6 +111,9 @@ export default function App() {
             onClose={handleCloseBooking}
             preferredTreatmentId={preferredTreatment}
           />
+
+          {/* Floating Social Connections widget */}
+          <SocialActionCard />
 
         </div>
       )}

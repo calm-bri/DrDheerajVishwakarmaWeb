@@ -32,6 +32,7 @@ export interface ShowcaseItem {
   videoUrl?: string; // Optional surgical animation video link
   sizeClass: string; // Asymmetric grid span settings mimicking the loaded desert look!
   badge: string;
+  featuredInHero?: boolean; // Show in main Hero carousel
 }
 
 export const INITIAL_SHOWCASES: ShowcaseItem[] = [
