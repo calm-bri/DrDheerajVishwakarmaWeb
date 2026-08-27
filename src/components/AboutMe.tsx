@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import Logo from "./Logo";
-import { 
-  GraduationCap, 
-  Briefcase, 
-  Award, 
-  CheckCircle2, 
-  Users, 
-  HeartPulse, 
-  BookOpen, 
-  Compass, 
+import {
+  GraduationCap,
+  Briefcase,
+  Award,
+  CheckCircle2,
+  Users,
+  HeartPulse,
+  BookOpen,
+  Compass,
   ShieldCheck,
   Cpu
 } from "lucide-react";
@@ -38,8 +38,8 @@ export default function AboutMe() {
 
   const itemVariants = {
     hidden: { opacity: 0, y: 15 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
       transition: { duration: 0.5, ease: "easeOut" }
     }
@@ -150,9 +150,9 @@ export default function AboutMe() {
       {/* Background spotlights & visual ambient grid lines */}
       <div className="absolute top-1/4 right-[10%] w-[500px] h-[350px] bg-gold-glow opacity-10 blur-3xl rounded-full pointer-events-none" />
       <div className="absolute bottom-1/4 left-[5%] w-[450px] h-[350px] bg-sky-500/10 opacity-10 blur-3xl rounded-full pointer-events-none" />
-      
+
       <div className="w-full max-w-6xl mx-auto relative z-10 space-y-16">
-        
+
         {/* Editorial Title Blocks */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-end">
           <div className="md:col-span-8 space-y-3">
@@ -172,26 +172,26 @@ export default function AboutMe() {
         </div>
 
         {/* Major Medical Bento Rows */}
-        <motion.div 
+        <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
           className="grid grid-cols-1 lg:grid-cols-12 gap-8"
         >
-          
+
           {/* Column 1: Main Surgeon Credential and Resume Bio */}
-          <motion.div 
+          <motion.div
             variants={itemVariants}
             className="lg:col-span-4 flex flex-col justify-between p-6 sm:p-8 rounded-3xl glassmorphism border border-white/5 bg-gradient-to-br from-white/[0.02] to-transparent space-y-8 relative overflow-hidden"
           >
             {/* Visual shine overlay */}
             <div className="absolute -top-32 -left-32 w-64 h-64 bg-gold-400/5 blur-3xl rounded-full pointer-events-none" />
-            
+
             <div className="space-y-6">
               {/* Interactive 3D Flip Card: Logo Front / Doctor Portrait Back */}
               <div className="flex justify-center border-b border-white/5 pb-6">
-                <div 
+                <div
                   onMouseEnter={() => {
                     setIsHovered(true);
                     setIsFlipped(true);
@@ -203,9 +203,8 @@ export default function AboutMe() {
                   onClick={() => setIsFlipped(!isFlipped)}
                   className="relative w-full max-w-[280px] aspect-[4/5] cursor-pointer perspective-1000"
                 >
-                  <div className={`relative w-full h-full duration-[800ms] transform-style-3d transition-transform ${
-                    isFlipped ? "rotate-y-180" : ""
-                  }`}>
+                  <div className={`relative w-full h-full duration-[800ms] transform-style-3d transition-transform ${isFlipped ? "rotate-y-180" : ""
+                    }`}>
                     {/* Front: Logo Banner */}
                     <div className="absolute inset-0 w-full h-full backface-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-sky-950/20 to-cosmic-card/90 flex flex-col items-center justify-center p-6 shadow-2xl">
                       <Logo mode="full" className="scale-95" />
@@ -213,21 +212,21 @@ export default function AboutMe() {
 
                     {/* Back: Doctor Portrait */}
                     <div className="absolute inset-0 w-full h-full backface-hidden rounded-2xl border border-gold-400/20 overflow-hidden shadow-2xl rotate-y-180 bg-zinc-950">
-                      <img 
-                        src="/doctor_white_coat.png" 
-                        alt="Dr. Dheeraj Vishwakarma" 
+                      <img
+                        src="/doctor_white_coat.png"
+                        alt="Dr. Dheeraj Vishwakarma"
                         className="w-full h-full object-cover rounded-2xl"
                         loading="lazy"
                         referrerPolicy="no-referrer"
                       />
                       {/* Dark overlay gradient */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-transparent" />
-                      
+
                       {/* Surgeon detail overlays */}
                       <div className="absolute bottom-0 left-0 right-0 p-5 text-left z-10">
                         <span className="font-mono text-[8px] text-gold-400 uppercase tracking-[0.25em] block mb-0.5 font-bold">SURGEON-IN-CHIEF</span>
                         <h4 className="font-display font-black text-sm tracking-wide text-white">Dr. Dheeraj Vishwakarma</h4>
-                        <p className="font-sans text-[10px] text-gray-300">Monoportal Endoscopic Spine Care</p>
+                        <p className="font-sans text-[10px] text-gray-300">Monoportal Endoscopic Spine Specialist</p>
                       </div>
                     </div>
                   </div>
@@ -245,9 +244,9 @@ export default function AboutMe() {
               </div>
 
               <p className="text-gray-300 text-xs sm:text-sm leading-relaxed font-sans">
-                Dr. Dheeraj Vishwakarma is a pioneering monoportal endoscopic spine surgeon and board-certified neurosurgeon who completed his prestigious Magister Chirurgiae (M.Ch) residency at GIPMER, New Delhi. 
+                Dr. Dheeraj Vishwakarma is a pioneering monoportal endoscopic spine surgeon and board-certified neurosurgeon who completed his prestigious Magister Chirurgiae (M.Ch) residency at GIPMER, New Delhi.
               </p>
-              
+
               <p className="text-gray-400 text-xs leading-relaxed font-sans">
                 Bringing clinical pedigree and advanced procedural innovation, Dr. Dheeraj specializes in ultra-minimally invasive techniques. Through a single-stitch keyhole incision under 8mm, he decompresses nerve routes cleanly—minimizing diagnostic hospital stay and returning mobility in hours.
               </p>
@@ -279,7 +278,7 @@ export default function AboutMe() {
           </motion.div>
 
           {/* Column 2: Rigorous Education & Experience Timelines */}
-          <motion.div 
+          <motion.div
             variants={itemVariants}
             className="lg:col-span-8 flex flex-col p-6 sm:p-8 rounded-3xl glassmorphism border border-white/5 bg-gradient-to-br from-sky-500/[0.01] to-transparent space-y-8"
           >
@@ -293,7 +292,7 @@ export default function AboutMe() {
                 <div key={idx} className="relative group">
                   {/* Timeline point node */}
                   <div className="absolute -left-[31px] sm:-left-[39px] top-1 w-[9px] h-[9px] bg-sky-500 rounded-full border-4 border-cosmic-bg group-hover:bg-gold-400 transition-colors duration-200" />
-                  
+
                   <div className="space-y-1.5 text-left">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <h4 className="font-display font-semibold text-sm sm:text-base text-white group-hover:text-gold-300 transition-colors">
@@ -307,7 +306,7 @@ export default function AboutMe() {
                     <p className="text-xs text-gray-400 font-medium">
                       {milestone.institution} — <span className="text-gray-500">{milestone.location}</span>
                     </p>
-                    
+
                     <p className="text-[11px] text-gray-500 leading-relaxed font-sans max-w-2xl">
                       {milestone.details}
                     </p>
@@ -338,7 +337,7 @@ export default function AboutMe() {
 
         {/* Achievements Timeline & Paper Contributions */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-6">
-          
+
           {/* Awards & Chapters Bento Box */}
           <div className="lg:col-span-8 flex flex-col p-6 sm:p-8 rounded-3xl glassmorphism border border-white/5 bg-gradient-to-br from-white/[0.01] to-transparent space-y-6">
             <div className="flex items-center gap-2 text-gold-400">
@@ -372,7 +371,7 @@ export default function AboutMe() {
                 <Users className="w-5 h-5" />
                 <h2 className="font-display font-medium text-lg text-white">Board Memberships</h2>
               </div>
-              
+
               <ul className="space-y-3 font-sans text-xs text-left">
                 {memberships.map((memb, idx) => (
                   <li key={idx} className="flex items-center gap-2.5 text-gray-300">
