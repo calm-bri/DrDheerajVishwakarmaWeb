@@ -186,7 +186,61 @@ export const INITIAL_SHOWCASES: ShowcaseItem[] = [
 
 export default function Gallery() {
   const { showcases, addShowcase, resetShowcases } = useData();
-  const items = showcases;
+  const [supabaseItems, setSupabaseItems] = useState<ShowcaseItem[]>([]);
+
+  useEffect(() => {
+    const fetchSupabaseImages = async () => {
+      try {
+        const response = await fetch("/api/gallery-images");
+        if (response.ok) {
+          const data = await response.json();
+          if (Array.isArray(data) && data.length > 0) {
+            const mapped = data.map((img: any) => {
+              const nameLower = img.id.toLowerCase();
+              let category: "surgical" | "news" | "workshop" = "surgical";
+              let badge = "Clinical Showcase";
+
+              if (nameLower.includes("news") || nameLower.includes("press") || nameLower.includes("media")) {
+                category = "news";
+                badge = "Press Release";
+              } else if (nameLower.includes("workshop") || nameLower.includes("lecture") || nameLower.includes("hands")) {
+                category = "workshop";
+                badge = "Event Workshop";
+              }
+
+              return {
+                id: img.id,
+                title: img.title || "Surgical Case Milestone",
+                subtitle: img.subtitle || "Monoportal Endoscopic Spine Care Gallery",
+                description: img.description || "Clinical highlight captured during monoportal FESS decompression, medical training workshop lectures, or book presentation milestones.",
+                category,
+                location: "Jaipur Clinic",
+                date: "June 2026",
+                imageUrl: img.imageUrl,
+                sizeClass: "md:col-span-1 md:row-span-1 aspect-square sm:aspect-auto",
+                badge,
+                featuredInHero: false
+              };
+            });
+            setSupabaseItems(mapped);
+          }
+        }
+      } catch (err) {
+        console.warn("Failed to fetch gallery images from Supabase.", err);
+      }
+    };
+    fetchSupabaseImages();
+  }, []);
+
+  const items = React.useMemo(() => {
+    const combined = [...showcases];
+    supabaseItems.forEach(supItem => {
+      if (!combined.some(c => c.imageUrl === supItem.imageUrl || c.id === supItem.id)) {
+        combined.push(supItem);
+      }
+    });
+    return combined;
+  }, [showcases, supabaseItems]);
 
   const [activeCategory, setActiveCategory] = useState<"all" | "surgical" | "news" | "workshop">("all");
   const [searchQuery, setSearchQuery] = useState("");

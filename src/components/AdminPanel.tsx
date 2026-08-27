@@ -898,19 +898,34 @@ export default function AdminPanel() {
                       <p className="text-xs text-stone-400 line-clamp-2 leading-relaxed">{sc.subtitle}</p>
                     </div>
 
-                    <div className="flex gap-2 pt-2 border-t border-white/5">
+                    <div className="flex flex-col gap-2 pt-2 border-t border-white/5">
                       <button
-                        onClick={() => openEditModal("showcase", sc.id, sc)}
-                        className="flex-1 flex justify-center items-center gap-1 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-[10px] font-mono font-bold cursor-pointer"
+                        onClick={() => {
+                          updateShowcase(sc.id, { featuredInHero: !sc.featuredInHero });
+                        }}
+                        className={`w-full flex justify-center items-center gap-1.5 py-1.5 rounded-lg border text-[10px] font-mono font-bold cursor-pointer transition-all duration-200 ${
+                          sc.featuredInHero 
+                            ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.05)]" 
+                            : "bg-white/5 border-white/10 text-stone-400 hover:bg-white/10 hover:text-white"
+                        }`}
                       >
-                        <Edit2 className="w-3 h-3" /> Edit
+                        <Sparkles className="w-3 h-3 text-gold-400" />
+                        {sc.featuredInHero ? "Featured in Hero Showcase" : "Feature in Hero Showcase"}
                       </button>
-                      <button
-                        onClick={() => deleteItem("showcase", sc.id)}
-                        className="p-1.5 rounded-lg bg-rose-500/15 border border-rose-500/20 text-rose-450 hover:bg-rose-500 hover:text-white transition-colors cursor-pointer"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                      <div className="flex gap-2 w-full">
+                        <button
+                          onClick={() => openEditModal("showcase", sc.id, sc)}
+                          className="flex-1 flex justify-center items-center gap-1 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-[10px] font-mono font-bold cursor-pointer"
+                        >
+                          <Edit2 className="w-3.5 h-3.5" /> Edit
+                        </button>
+                        <button
+                          onClick={() => deleteItem("showcase", sc.id)}
+                          className="p-1.5 rounded-lg bg-rose-500/15 border border-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white transition-colors cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
