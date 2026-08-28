@@ -844,19 +844,80 @@ app.get('/api/videos', async (req, res) => {
     }
 
     if (data) {
+      const SEO_MAP: Record<string, { title: string; category: string; description: string }> = {
+        '3cd88781-6f0f-4598-ae80-222fb55c84ed.mp4': {
+          title: "Full Monoportal Endoscopic Spine Surgery (FESS) Overview",
+          category: "Monoportal Spine Surgery",
+          description: "Pioneering Endoscopic Spine Surgeon specializing in Monoportal & Minimally Invasive Spine Procedures."
+        },
+        '6dec41ca-3266-4f13-9b26-d0709bbfd938.mp4': {
+          title: "Same-Day Walking Milestone After Keyhole Discectomy",
+          category: "Single-Stitch Recovery",
+          description: "Expert in Single-Stitch Spine Surgery for faster recovery and minimal tissue trauma with same-day walking."
+        },
+        'd380a0a2-98d7-48c6-a93a-3424208cb39d.mp4': {
+          title: "Under-8mm Keyhole Surgical Instrumentation & Nerve Protection",
+          category: "Minimally Invasive Tech",
+          description: "High-definition 4K endoscopic decompression of compressed lumbar nerve roots with under 8mm keyhole entry."
+        },
+        '5796c6df-db9c-4b15-b385-1cd2a5d293eb.mp4': {
+          title: "First Cervical Monoportal Endoscopic Discectomy Milestone",
+          category: "Cervical Monoportal",
+          description: "Performed the first Cervical Monoportal Endoscopic Discectomy in Jaipur & Rajasthan."
+        },
+        '728f0363-2599-4c35-af8f-bdd86bce5774.mp4': {
+          title: "First Dorsal Monoportal Endoscopic Discectomy Case Log",
+          category: "Dorsal Monoportal",
+          description: "Performed the first Dorsal Monoportal Endoscopic Discectomy in Jaipur & Rajasthan."
+        },
+        '79ebc994-ac45-457e-a090-8828fb109c05.mp4': {
+          title: "Sciatica & Slipped Disc Pain Relief Endoscopic Release",
+          category: "Sciatica Treatment",
+          description: "Rapid nerve root decompression removing herniated disc fragments with single-stitch keyhole access."
+        },
+        '8fc843b6-3211-42b6-84fb-b94a1de217f5.mp4': {
+          title: "Youngest Cauda Equina Endoscopic Surgery — Asia Book of Records",
+          category: "Asia & India Book Records",
+          description: "Operated on the youngest Cauda Equina patient, recognized by the India Book of Records & Asia Book of Records."
+        },
+        'c2aa31cc-fa96-4072-8390-402c92025c67.mp4': {
+          title: "Lumbar Spinal Canal Stenosis Keyhole Decompression",
+          category: "Lumbar Stenosis",
+          description: "Achieved the first Monoportal Endoscopic Spine Surgery in the State of Rajasthan for spinal canal stenosis."
+        },
+        'dbb7730f-2163-491e-93e1-2217592cc97c.mp4': {
+          title: "Awake Spine Surgery Under Local Conscious Epidural Anesthesia",
+          category: "Awake Spine Surgery",
+          description: "Safe monoportal endoscopic spine surgery performed under conscious epidural anesthesia for real-time safety."
+        },
+        'eb53d874-f09e-4297-828b-474675034725.mp4': {
+          title: "First Monoportal Endoscopic Spine Surgery in Rajasthan Landmark",
+          category: "State Landmark Milestone",
+          description: "Achieved the first Monoportal Endoscopic Spine Surgery in the State of Rajasthan."
+        }
+      };
+
       const videos = data
         .filter(file => {
           const name = file.name.toLowerCase();
+          // Exclude background hero video Animate_image_with_motion
+          if (name.includes("animate_image") || name.includes("animate") || name.includes("motion_2026")) {
+            return false;
+          }
           return name.endsWith('.mp4') || name.endsWith('.mov') || name.endsWith('.webm') || name.endsWith('.m4v') || name.endsWith('.mkv');
         })
-        .map(file => ({
-          id: `supabase-vid-${file.name}`,
-          title: file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ").replace(/\b\w/g, c => c.toUpperCase()),
-          description: "High-Definition 4K Monoportal Endoscopic Spine Procedure & Patient Milestone Log",
-          poster: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=800",
-          videoUrl: `${supabaseUrl}/storage/v1/object/public/Video/${encodeURIComponent(file.name)}`,
-          category: "Endoscopic Spine Surgery"
-        }));
+        .map(file => {
+          const mapped = SEO_MAP[file.name];
+          const cleanName = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+          return {
+            id: `supabase-vid-${file.name}`,
+            title: mapped ? mapped.title : `${cleanName} — Monoportal Endoscopic Spine Care`,
+            description: mapped ? mapped.description : "High-Definition 4K Monoportal Endoscopic Spine Procedure & Patient Milestone Log by Dr. Dheeraj Vishwakarma.",
+            poster: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=800",
+            videoUrl: `${supabaseUrl}/storage/v1/object/public/Video/${encodeURIComponent(file.name)}`,
+            category: mapped ? mapped.category : "Endoscopic Spine Surgery"
+          };
+        });
       return res.json(videos);
     }
     res.json([]);

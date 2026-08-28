@@ -460,26 +460,26 @@ export const socialLinks = {
 export const videoData: VideoItem[] = [
   {
     id: "endoscopic-spine-introduction",
-    title: "Understanding Endoscopic Spine Surgery",
-    description: "Dr. Dheeraj Vishwakarma details the Full Monoportal Endoscopic Spine Surgery (FESS) procedure, keyhole instruments, and rapid discharge milestones.",
+    title: "Full Monoportal Endoscopic Spine Surgery (FESS) Overview",
+    description: "Pioneering Endoscopic Spine Surgeon specializing in Monoportal & Minimally Invasive Spine Procedures.",
     poster: "/endoscopic_spine_poster.jpg",
     videoUrl: "https://iplsqsfgnmomqqhnvydz.supabase.co/storage/v1/object/public/Video/3cd88781-6f0f-4598-ae80-222fb55c84ed.mp4",
-    category: "Educational"
+    category: "Monoportal Spine Surgery"
   },
   {
     id: "awake-discharge-milestones",
-    title: "Awake Same-Day Recovery Milestones",
-    description: "Witness real-time postoperative milestones as patients sit up, stand, and comfortably walk within hours of their endoscopic spine release.",
+    title: "Same-Day Walking Milestone After Keyhole Discectomy",
+    description: "Expert in Single-Stitch Spine Surgery for faster recovery and minimal tissue trauma with same-day walking.",
     poster: "/awards-records.jpg",
     videoUrl: "https://iplsqsfgnmomqqhnvydz.supabase.co/storage/v1/object/public/Video/6dec41ca-3266-4f13-9b26-d0709bbfd938.mp4",
-    category: "Recovery Timeline"
+    category: "Single-Stitch Recovery"
   },
   {
     id: "fess-instrumentation",
-    title: "FESS Keyhole Instrumentation & Safety Calibration",
-    description: "Explore the advanced 8mm optical lens decompressions, precision drills, and saline irrigation calibration protocols used in modern spine surgery.",
+    title: "Under-8mm Keyhole Surgical Instrumentation & Nerve Protection",
+    description: "High-definition 4K endoscopic decompression of compressed lumbar nerve roots with under 8mm keyhole entry.",
     poster: "/endoscopic_spine_poster.jpg",
     videoUrl: "https://iplsqsfgnmomqqhnvydz.supabase.co/storage/v1/object/public/Video/d380a0a2-98d7-48c6-a93a-3424208cb39d.mp4",
-    category: "Clinical Tech"
+    category: "Minimally Invasive Tech"
   }
 ];
