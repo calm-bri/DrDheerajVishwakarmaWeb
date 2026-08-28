@@ -342,6 +342,7 @@ export default function VideoDiscovery({
                   poster={activeVideo.poster}
                   controls
                   autoPlay
+                  muted
                   playsInline
                   className="w-full h-full object-contain"
                   style={{ display: "block" }}

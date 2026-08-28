@@ -15,16 +15,82 @@ import {
 } from "lucide-react";
 
 export default function AboutMe() {
-  const [isFlipped, setIsFlipped] = useState(false);
+  const [step, setStep] = useState(0);
+  const [delayedStep, setDelayedStep] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     if (isHovered) return;
     const interval = setInterval(() => {
-      setIsFlipped((prev) => !prev);
+      setStep((prev) => prev + 1);
     }, 3500); // smooth flip interval
     return () => clearInterval(interval);
   }, [isHovered]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDelayedStep(step);
+    }, 400); // Wait 400ms (half of 800ms transition) before updating the hidden side
+    return () => clearTimeout(timer);
+  }, [step]);
+
+  const isFlipped = step % 2 === 1;
+
+  // Track the actual face index to display on Front (even steps) and Back (odd steps)
+  // During flip, keep the hidden side constant (displaying delayedStep % 3) until it is completely out of view.
+  const frontFace = step % 2 === 0 
+    ? (step % 3) 
+    : (delayedStep === step ? ((step + 1) % 3) : (delayedStep % 3));
+
+  const backFace = step % 2 === 1 
+    ? (step % 3) 
+    : (delayedStep === step ? ((step + 1) % 3) : (delayedStep % 3));
+
+  const renderFaceContent = (faceIndex: number) => {
+    if (faceIndex === 0) {
+      return (
+        <div className="absolute inset-0 w-full h-full flex flex-col items-center justify-center p-6 bg-gradient-to-b from-sky-950/20 to-cosmic-card/90">
+          <Logo mode="full" className="scale-[0.75]" />
+        </div>
+      );
+    } else if (faceIndex === 1) {
+      return (
+        <div className="absolute inset-0 w-full h-full bg-zinc-950">
+          <img
+            src="/doctor_white_coat.png"
+            alt="Dr. Dheeraj Vishwakarma"
+            className="w-full h-full object-cover rounded-2xl scale-[1.35] origin-center"
+            loading="lazy"
+            referrerPolicy="no-referrer"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-transparent animate-fade-in" />
+          <div className="absolute bottom-0 left-0 right-0 p-5 text-left z-10">
+            <span className="font-mono text-[8px] text-gold-400 uppercase tracking-[0.25em] block mb-0.5 font-bold">SURGEON-IN-CHIEF</span>
+            <h4 className="font-display font-black text-sm tracking-wide text-white">Dr. Dheeraj Vishwakarma</h4>
+            <p className="font-sans text-[10px] text-gray-300">Monoportal Endoscopic Spine Specialist</p>
+          </div>
+        </div>
+      );
+    } else {
+      return (
+        <div className="absolute inset-0 w-full h-full bg-zinc-950">
+          <img
+            src="/doctor_scrubs_provided.jpg"
+            alt="Dr. Dheeraj Vishwakarma in Scrubs"
+            className="w-full h-full object-cover rounded-2xl scale-[1.35] origin-center"
+            loading="lazy"
+            referrerPolicy="no-referrer"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-transparent animate-fade-in" />
+          <div className="absolute bottom-0 left-0 right-0 p-5 text-left z-10">
+            <span className="font-mono text-[8px] text-gold-400 uppercase tracking-[0.25em] block mb-0.5 font-bold">CLINICAL EXCELLENCE</span>
+            <h4 className="font-display font-black text-sm tracking-wide text-white">Dr. Dheeraj Vishwakarma</h4>
+            <p className="font-sans text-[10px] text-gray-300">Minimally Invasive Spine Specialist</p>
+          </div>
+        </div>
+      );
+    }
+  };
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -192,42 +258,30 @@ export default function AboutMe() {
               {/* Interactive 3D Flip Card: Logo Front / Doctor Portrait Back */}
               <div className="flex justify-center border-b border-white/5 pb-6">
                 <div
-                  onMouseEnter={() => {
-                    setIsHovered(true);
-                    setIsFlipped(true);
-                  }}
-                  onMouseLeave={() => {
-                    setIsHovered(false);
-                    setIsFlipped(false);
-                  }}
-                  onClick={() => setIsFlipped(!isFlipped)}
+                  onMouseEnter={() => setIsHovered(true)}
+                  onMouseLeave={() => setIsHovered(false)}
+                  onClick={() => setStep((prev) => prev + 1)}
                   className="relative w-full max-w-[280px] aspect-[4/5] cursor-pointer perspective-1000"
                 >
-                  <div className={`relative w-full h-full duration-[800ms] transform-style-3d transition-transform ${isFlipped ? "rotate-y-180" : ""
+                  <div 
+                    className="relative w-full h-full transform-style-3d"
+                    style={{
+                      transform: `rotateY(${step * 180}deg)`,
+                      transition: "transform 800ms cubic-bezier(0.4, 0, 0.2, 1)"
+                    }}
+                  >
+                    {/* Front Side */}
+                    <div className={`absolute inset-0 w-full h-full backface-hidden rounded-2xl overflow-hidden shadow-2xl bg-zinc-950 ${
+                      frontFace === 0 ? "border border-white/10" : "border border-gold-400/20"
                     }`}>
-                    {/* Front: Logo Banner */}
-                    <div className="absolute inset-0 w-full h-full backface-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-sky-950/20 to-cosmic-card/90 flex flex-col items-center justify-center p-6 shadow-2xl">
-                      <Logo mode="full" className="scale-95" />
+                      {renderFaceContent(frontFace)}
                     </div>
 
-                    {/* Back: Doctor Portrait */}
-                    <div className="absolute inset-0 w-full h-full backface-hidden rounded-2xl border border-gold-400/20 overflow-hidden shadow-2xl rotate-y-180 bg-zinc-950">
-                      <img
-                        src="/doctor_white_coat.png"
-                        alt="Dr. Dheeraj Vishwakarma"
-                        className="w-full h-full object-cover rounded-2xl"
-                        loading="lazy"
-                        referrerPolicy="no-referrer"
-                      />
-                      {/* Dark overlay gradient */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-transparent" />
-
-                      {/* Surgeon detail overlays */}
-                      <div className="absolute bottom-0 left-0 right-0 p-5 text-left z-10">
-                        <span className="font-mono text-[8px] text-gold-400 uppercase tracking-[0.25em] block mb-0.5 font-bold">SURGEON-IN-CHIEF</span>
-                        <h4 className="font-display font-black text-sm tracking-wide text-white">Dr. Dheeraj Vishwakarma</h4>
-                        <p className="font-sans text-[10px] text-gray-300">Monoportal Endoscopic Spine Specialist</p>
-                      </div>
+                    {/* Back Side */}
+                    <div className={`absolute inset-0 w-full h-full backface-hidden rounded-2xl overflow-hidden shadow-2xl rotate-y-180 bg-zinc-950 ${
+                      backFace === 0 ? "border border-white/10" : "border border-gold-400/20"
+                    }`}>
+                      {renderFaceContent(backFace)}
                     </div>
                   </div>
                 </div>
@@ -388,7 +442,7 @@ export default function AboutMe() {
                 <span className="font-mono text-[8px] uppercase tracking-widest font-bold">Active Continuous Study</span>
               </div>
               <p className="text-[10px] text-gray-400 leading-relaxed font-sans">
-                Dr. Dheeraj routinely participates in cadaveric workshops, live spine training symposia, and global neuroendovascular assemblies to continually perfect keyhole medical science.
+                Dr. Dheeraj Vishwakarma routinely participates in cadaveric workshops, live spine training symposia, and global neuroendovascular assemblies to continually perfect keyhole medical science.
               </p>
             </div>
           </div>

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
 import Hero from "../components/Hero";
+import QuickAdvantages from "../components/QuickAdvantages";
 import IncisionComparison from "../components/IncisionComparison";
 import ParallaxCarousel from "../components/ParallaxCarousel";
 import VideoDiscovery from "../components/VideoDiscovery";
@@ -127,6 +128,9 @@ export default function Home({ onOpenBooking }: HomeProps) {
         onNavigateAbout={() => navigate("/about")}
         onPlayVideo={() => setIsVideoModalOpen(true)}
       />
+
+      {/* 1.1 Quick Advantages Micro-Metrics */}
+      <QuickAdvantages />
 
       {/* 1.2 In-depth Incision and Surgical Trauma Comparison Section */}
       <IncisionComparison />

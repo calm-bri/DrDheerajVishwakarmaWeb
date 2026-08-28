@@ -256,14 +256,14 @@ export default function Hero({ onOpenBooking, onExploreScience, onNavigateAbout,
                     loop
                     muted
                     playsInline
-                    className="absolute inset-0 w-full h-full object-cover"
+                    className="absolute inset-0 w-full h-full object-contain"
                   />
                 ) : (
                   <img
                     key={galleryItems[slideIndex]?.id + "-img"}
                     src={galleryItems[slideIndex]?.imageUrl}
                     alt=""
-                    className="absolute inset-0 w-full h-full object-cover"
+                    className="absolute inset-0 w-full h-full object-contain"
                   />
                 )}
               </motion.div>
