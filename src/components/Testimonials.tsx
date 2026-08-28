@@ -87,28 +87,7 @@ export default function Testimonials() {
                   </div>
                   <div>
                     <h3 className="font-display font-semibold text-white text-sm">
-                      {(() => {
-                        const name = current.name;
-                        if (name.includes("Colonel") || name.includes("Col.")) {
-                          return "Verified Patient (Retd. Army Colonel)";
-                        }
-                        if (name.includes("Dr. Sunil") || name.includes("Maheshwari")) {
-                          return "Verified Medical Colleague (Pediatrician)";
-                        }
-                        if (name.includes("Amara")) {
-                          return "Verified Patient (Overseas Resident)";
-                        }
-                        if (name.includes("Manoj Kumar")) {
-                          return "Verified Patient (M.K.S.)";
-                        }
-                        if (name.includes("Preeti")) {
-                          return "Verified Patient (P.V.)";
-                        }
-                        if (name.includes("Rajesh")) {
-                          return "Verified Patient (R.K.G.)";
-                        }
-                        return "Verified Patient";
-                      })()}
+                      {current.name}
                     </h3>
                     <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">{current.location}</p>
                   </div>
