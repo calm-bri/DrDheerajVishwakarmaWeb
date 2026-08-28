@@ -32,7 +32,8 @@ import {
   UploadCloud,
   Globe,
   Eye,
-  Download
+  Download,
+  Film
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { ShowcaseItem } from "./Gallery";
@@ -74,6 +75,12 @@ export default function AdminPanel() {
     deleteBlog,
     resetBlogs,
 
+    videos,
+    addVideo,
+    updateVideo,
+    deleteVideo,
+    resetVideos,
+
     adminPin,
     setAdminPin
   } = useData();
@@ -99,7 +106,7 @@ export default function AdminPanel() {
   }, []);
 
   // Tabs management
-  type ActiveTab = "appointments" | "showcases" | "blogs" | "faqs" | "testimonials" | "conditions" | "settings";
+  type ActiveTab = "appointments" | "showcases" | "videos" | "blogs" | "faqs" | "testimonials" | "conditions" | "settings";
   const [activeTab, setActiveTab] = useState<ActiveTab>("appointments");
 
   // Filter and search states
@@ -109,7 +116,7 @@ export default function AdminPanel() {
   // Create & Edit Modal states
   const [editingItem, setEditingItem] = useState<{ type: string; id: string; data: any } | null>(null);
   const [isOpenForm, setIsOpenForm] = useState(false);
-  const [formType, setFormType] = useState<"appointment" | "showcase" | "blogs" | "faq" | "testimonial" | "condition">("appointment");
+  const [formType, setFormType] = useState<"appointment" | "showcase" | "blogs" | "faq" | "testimonial" | "condition" | "video">("appointment");
   const [isUploading, setIsUploading] = useState(false);
 
   // Calendar view states
@@ -202,20 +209,21 @@ export default function AdminPanel() {
   };
 
   // CRUD operation triggers (Modal launcher)
-  const openEditModal = (type: "appointment" | "showcase" | "blogs" | "faq" | "testimonial" | "condition", id: string, data: any) => {
+  const openEditModal = (type: "appointment" | "showcase" | "blogs" | "faq" | "testimonial" | "condition" | "video", id: string, data: any) => {
     setEditingItem({ type, id, data: { ...data } });
     setFormType(type);
     setIsOpenForm(true);
   };
 
-  const openCreateModal = (type: "appointment" | "showcase" | "blogs" | "faq" | "testimonial" | "condition", prefillData?: any) => {
+  const openCreateModal = (type: "appointment" | "showcase" | "blogs" | "faq" | "testimonial" | "condition" | "video", prefillData?: any) => {
     const emptyModels = {
       appointment: { fullName: "", email: "", phone: "", selectedTreatment: "fess", symptoms: "", sessionType: "video", isInternational: false, status: "pending", bookingDate: "", bookingTime: "11:30 AM" },
       showcase: { id: `sc-${Date.now()}`, title: "", subtitle: "", description: "", category: "surgical", location: "Jaipur Clinic", date: "May 2026", imageUrl: "", sizeClass: "md:col-span-1 md:row-span-1", badge: "New Case", featuredInHero: false },
       blogs: { id: `blog-${Date.now()}`, title: "", summary: "", content: "", category: "Clinical Guide", date: "May 2026", readTime: "6 min read", author: "Dr. Dheeraj Vishwakarma" },
       faq: { id: `faq-${Date.now()}`, question: "", answer: "", category: "technology" },
       testimonial: { id: `test-${Date.now()}`, name: "", location: "Google Review", condition: "", quote: "", recoverySummary: "", rating: 5 },
-      condition: { id: `cond-${Date.now()}`, name: "", shortDescription: "", fullDescription: "", symptoms: [], treatmentMetric: "99% Precision", recoveryTime: "Walk Same Day", detailedKey: "", iconName: "Zap" }
+      condition: { id: `cond-${Date.now()}`, name: "", shortDescription: "", fullDescription: "", symptoms: [], treatmentMetric: "99% Precision", recoveryTime: "Walk Same Day", detailedKey: "", iconName: "Zap" },
+      video: { id: `vid-${Date.now()}`, title: "", description: "", poster: "/endoscopic_spine_poster.jpg", videoUrl: "", category: "Monoportal Spine Surgery" }
     };
 
     const mergedData = prefillData ? { ...emptyModels[type], ...prefillData } : emptyModels[type];
@@ -267,6 +275,12 @@ export default function AdminPanel() {
       } else {
         addBlog(data);
       }
+    } else if (type === "video") {
+      if (id) {
+        updateVideo(id, data);
+      } else {
+        addVideo(data);
+      }
     }
 
     setIsOpenForm(false);
@@ -282,6 +296,7 @@ export default function AdminPanel() {
     if (type === "faq") deleteFAQ(id);
     if (type === "testimonial") deleteTestimonial(id);
     if (type === "condition") deleteCondition(id);
+    if (type === "video") deleteVideo(id);
   };
 
   // Appointment statistics
@@ -441,6 +456,7 @@ export default function AdminPanel() {
         {[
           { id: "appointments", label: "Appointments Queue", icon: Calendar },
           { id: "showcases", label: "Photos & Videos Showcase", icon: Layers },
+          { id: "videos", label: "Homepage Video Showcase", icon: Film },
           { id: "blogs", label: "Publications Manager", icon: FileText },
           { id: "conditions", label: "Treatments", icon: TrendingUp },
           { id: "testimonials", label: "Testimonials", icon: Star },
@@ -922,6 +938,106 @@ export default function AdminPanel() {
                         <button
                           onClick={() => deleteItem("showcase", sc.id)}
                           className="p-1.5 rounded-lg bg-rose-500/15 border border-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white transition-colors cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 2.5 HOMEPAGE VIDEO SHOWCASE TAB */}
+        {activeTab === "videos" && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-cosmic-card/40 p-5 rounded-2xl border border-white/5">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <Film className="w-5 h-5 text-gold-400" />
+                  <h3 className="font-display font-medium text-lg text-white">Homepage Video Showcase Catalog</h3>
+                  <span className="bg-gold-400/20 text-gold-300 font-mono text-xs px-2.5 py-0.5 rounded-full border border-gold-400/30 font-bold">
+                    {videos.length} Videos Available
+                  </span>
+                </div>
+                <p className="text-xs text-stone-400 font-sans">
+                  Manage, add, edit, or remove videos displayed in the interactive Homepage Video Discovery section.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => resetVideos()}
+                  className="flex items-center gap-1.5 bg-white/5 hover:bg-white/10 text-stone-300 px-3.5 py-2 rounded-xl text-xs font-mono border border-white/10 transition-all cursor-pointer font-bold"
+                >
+                  <RotateCcw className="w-3.5 h-3.5 text-stone-400" /> Reset Catalog
+                </button>
+                <button
+                  onClick={() => openCreateModal("video")}
+                  className="flex items-center gap-1.5 bg-gold-400 hover:bg-gold-500 text-black px-4.5 py-2 rounded-xl text-xs font-bold transition-all shadow-lg cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" /> Add Video Showcase
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {videos.map((vid) => (
+                <div
+                  key={vid.id}
+                  className="bg-cosmic-card/60 rounded-2xl border border-white/10 overflow-hidden flex flex-col justify-between group hover:border-gold-400/30 transition-all duration-300"
+                >
+                  {/* Video Media Preview */}
+                  <div className="relative aspect-video w-full overflow-hidden bg-black border-b border-white/5">
+                    <video
+                      src={`${vid.videoUrl}#t=0.5`}
+                      preload="metadata"
+                      muted
+                      controlsList="noaudio"
+                      playsInline
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-2 left-2 bg-black/80 backdrop-blur-md border border-gold-400/30 text-gold-300 font-mono text-[9px] uppercase tracking-widest px-2.5 py-0.5 rounded-md font-bold">
+                      {vid.category || "Video Showcase"}
+                    </div>
+                  </div>
+
+                  {/* Body Content */}
+                  <div className="p-4 space-y-3 text-left flex-1 flex flex-col justify-between">
+                    <div className="space-y-1.5">
+                      <h4 className="font-display font-bold text-sm text-white line-clamp-1 group-hover:text-gold-300 transition-colors">
+                        {vid.title}
+                      </h4>
+                      <p className="text-xs text-stone-400 font-sans line-clamp-2 leading-relaxed">
+                        {vid.description}
+                      </p>
+                    </div>
+
+                    <div className="pt-3 border-t border-white/5 flex items-center justify-between gap-2">
+                      <a
+                        href={vid.videoUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-[10px] font-mono text-sky-400 hover:underline flex items-center gap-1 line-clamp-1 max-w-[60%]"
+                      >
+                        <Paperclip className="w-3 h-3 shrink-0" />
+                        <span className="truncate">{vid.videoUrl}</span>
+                      </a>
+
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <button
+                          onClick={() => openEditModal("video", vid.id, vid)}
+                          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-[10px] font-mono font-bold text-stone-300 hover:text-white transition-all cursor-pointer"
+                          title="Edit Video Showcase"
+                        >
+                          <Edit2 className="w-3 h-3" /> Edit
+                        </button>
+                        <button
+                          onClick={() => deleteItem("video", vid.id)}
+                          className="p-1.5 rounded-lg bg-rose-500/15 hover:bg-rose-500 border border-rose-500/20 text-rose-400 hover:text-white transition-all cursor-pointer"
+                          title="Delete Video Showcase"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -1652,6 +1768,12 @@ export default function AdminPanel() {
                                 src={editingItem.data.videoUrl}
                                 className="max-h-20 w-full object-cover rounded-lg border border-white/10"
                                 controls
+                                controlsList="noaudio"
+                                muted
+                                onVolumeChange={(e) => {
+                                  e.currentTarget.muted = true;
+                                  e.currentTarget.volume = 0;
+                                }}
                               />
                               <span className="text-[9px] font-mono text-emerald-400 flex items-center justify-center gap-1">
                                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -2011,6 +2133,151 @@ export default function AdminPanel() {
                         onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, content: e.target.value } })}
                         className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white focus:outline-none"
                       />
+                    </div>
+                  </div>
+                )}
+
+                {/* 7. Homepage Video Showcase editing fields */}
+                {formType === "video" && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1.5 col-span-2">
+                      <label className="text-stone-400 font-bold">Video Showcase Title *</label>
+                      <input
+                        type="text"
+                        required
+                        value={editingItem.data.title || ""}
+                        onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, title: e.target.value } })}
+                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold-400"
+                        placeholder="e.g. Full Monoportal Endoscopic Spine Surgery (FESS) Overview"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5 col-span-2 sm:col-span-1">
+                      <label className="text-stone-400 font-bold">Category Badge / Tag *</label>
+                      <input
+                        type="text"
+                        required
+                        value={editingItem.data.category || "Monoportal Spine Surgery"}
+                        onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, category: e.target.value } })}
+                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold-400"
+                        placeholder="e.g. Monoportal Spine Surgery"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5 col-span-2">
+                      <label className="text-stone-400 font-bold">Video Description *</label>
+                      <textarea
+                        rows={3}
+                        required
+                        value={editingItem.data.description || ""}
+                        onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, description: e.target.value } })}
+                        className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-gold-400"
+                        placeholder="Detailed clinical narrative describing the video surgical techniques or milestone..."
+                      />
+                    </div>
+
+                    <div className="space-y-1.5 col-span-2">
+                      <label className="text-stone-400 font-bold block mb-1">Upload Video File *</label>
+                      <div className="flex flex-col sm:flex-row items-stretch gap-4">
+                        <div className="flex-1 relative border border-dashed border-white/10 hover:border-gold-400/40 rounded-xl p-4 bg-black/30 transition-all flex flex-col items-center justify-center text-center min-h-[120px]">
+                          <input
+                            type="file"
+                            accept="video/*"
+                            id="admin-video-showcase-uploader"
+                            className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                            disabled={isUploading}
+                            onChange={async (e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                setIsUploading(true);
+                                try {
+                                  const signRes = await fetch('/api/upload/sign', {
+                                    method: 'POST',
+                                    headers: {
+                                      'Content-Type': 'application/json',
+                                      'x-admin-pin': adminPin
+                                    },
+                                    body: JSON.stringify({
+                                      fileName: file.name,
+                                      contentType: file.type,
+                                      bucket: 'Video'
+                                    })
+                                  });
+                                  if (!signRes.ok) throw new Error("Failed to generate upload signature");
+                                  const signData = await signRes.json();
+
+                                  const uploadRes = await fetch(signData.signedUrl, {
+                                    method: 'PUT',
+                                    headers: {
+                                      'Content-Type': file.type
+                                    },
+                                    body: file
+                                  });
+                                  if (!uploadRes.ok) throw new Error("Failed to upload file to storage");
+
+                                  setEditingItem({
+                                    ...editingItem,
+                                    data: { ...editingItem.data, videoUrl: signData.publicUrl }
+                                  });
+                                } catch (error: any) {
+                                  console.error("Video upload error:", error);
+                                  alert("Error uploading video: " + error.message);
+                                } finally {
+                                  setIsUploading(false);
+                                }
+                              }
+                            }}
+                          />
+                          <UploadCloud className="w-8 h-8 text-gold-400/80 mb-2" />
+                          <span className="text-xs font-semibold text-stone-200">
+                            {isUploading ? "Uploading video..." : "Click or drag video file here"}
+                          </span>
+                          <span className="text-[10px] text-stone-500 font-mono mt-1">
+                            Supports MP4, WEBM, OGG formats
+                          </span>
+                        </div>
+
+                        <div className="w-full sm:w-48 bg-black/40 border border-white/10 rounded-xl p-3 flex flex-col justify-between items-center text-center min-h-[120px]">
+                          {editingItem.data.videoUrl ? (
+                            <div className="w-full h-full flex flex-col items-center justify-center gap-2">
+                              <video
+                                src={editingItem.data.videoUrl}
+                                className="max-h-20 w-full object-cover rounded-lg border border-white/10"
+                                controls
+                                controlsList="noaudio"
+                                muted
+                                onVolumeChange={(e) => {
+                                  e.currentTarget.muted = true;
+                                  e.currentTarget.volume = 0;
+                                }}
+                              />
+                              <span className="text-[9px] font-mono text-emerald-400 flex items-center justify-center gap-1">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                Video Loaded
+                              </span>
+                            </div>
+                          ) : (
+                            <div className="text-stone-500 text-[11px] font-sans my-auto flex flex-col items-center gap-1">
+                              <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
+                                <Film className="w-4 h-4 text-stone-500" />
+                              </div>
+                              No video selected
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="mt-3">
+                        <span className="text-[10px] text-stone-500 font-mono block mb-1 font-bold">OR ENTER DIRECT VIDEO MP4 URL:</span>
+                        <input
+                          type="text"
+                          required
+                          placeholder="https://iplsqsfgnmomqqhnvydz.supabase.co/storage/v1/object/public/Video/..."
+                          value={editingItem.data.videoUrl || ""}
+                          onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, videoUrl: e.target.value } })}
+                          className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none placeholder-stone-600"
+                        />
+                      </div>
                     </div>
                   </div>
                 )}

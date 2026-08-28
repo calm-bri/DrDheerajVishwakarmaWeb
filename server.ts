@@ -485,6 +485,33 @@ const INITIAL_BLOGS = [
   }
 ];
 
+const INITIAL_VIDEOS = [
+  {
+    id: "endoscopic-spine-introduction",
+    title: "Full Monoportal Endoscopic Spine Surgery (FESS) Overview",
+    description: "Pioneering Endoscopic Spine Surgeon specializing in Monoportal & Minimally Invasive Spine Procedures.",
+    poster: "/endoscopic_spine_poster.jpg",
+    videoUrl: "https://iplsqsfgnmomqqhnvydz.supabase.co/storage/v1/object/public/Video/3cd88781-6f0f-4598-ae80-222fb55c84ed.mp4",
+    category: "Monoportal Spine Surgery"
+  },
+  {
+    id: "awake-discharge-milestones",
+    title: "Same-Day Walking Milestone After Keyhole Discectomy",
+    description: "Expert in Single-Stitch Spine Surgery for faster recovery and minimal tissue trauma with same-day walking.",
+    poster: "/awards-records.jpg",
+    videoUrl: "https://iplsqsfgnmomqqhnvydz.supabase.co/storage/v1/object/public/Video/6dec41ca-3266-4f13-9b26-d0709bbfd938.mp4",
+    category: "Single-Stitch Recovery"
+  },
+  {
+    id: "fess-instrumentation",
+    title: "Under-8mm Keyhole Surgical Instrumentation & Nerve Protection",
+    description: "High-definition 4K endoscopic decompression of compressed lumbar nerve roots with under 8mm keyhole entry.",
+    poster: "/endoscopic_spine_poster.jpg",
+    videoUrl: "https://iplsqsfgnmomqqhnvydz.supabase.co/storage/v1/object/public/Video/d380a0a2-98d7-48c6-a93a-3424208cb39d.mp4",
+    category: "4K Endoscopic Tech"
+  }
+];
+
 // Helper to get local fallback data
 const getLocalData = (resourceName: string, defaults: any[]): any[] => {
   const dataDir = path.join(__dirname, 'data');
@@ -692,6 +719,7 @@ registerCrudRoutes('testimonials', INITIAL_TESTIMONIALS);
 registerCrudRoutes('conditions', INITIAL_CONDITIONS);
 registerCrudRoutes('faqs', INITIAL_FAQS);
 registerCrudRoutes('blogs', INITIAL_BLOGS);
+registerCrudRoutes('videos', INITIAL_VIDEOS);
 
 // Generate signed upload URL endpoint
 app.post('/api/upload/sign', async (req, res) => {
@@ -702,7 +730,7 @@ app.post('/api/upload/sign', async (req, res) => {
   }
 
   // Validate bucket is one of the allowed types
-  const allowedBuckets = ['doctor-images', 'gallery', 'blog', 'profile', 'documents', 'scans'];
+  const allowedBuckets = ['doctor-images', 'gallery', 'blog', 'profile', 'documents', 'scans', 'Video', 'videos'];
   if (!allowedBuckets.includes(bucket)) {
     return res.status(400).json({ error: `Invalid bucket. Allowed buckets: ${allowedBuckets.join(', ')}` });
   }

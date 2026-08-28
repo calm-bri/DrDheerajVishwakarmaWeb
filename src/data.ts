@@ -453,7 +453,7 @@ export const blogsData: BlogArticle[] = [
 export const socialLinks = {
   whatsapp: "https://wa.me/918999898129",
   instagram: "https://www.instagram.com/drdheerajneurospine/",
-  facebook: "https://www.facebook.com/dheeraj.vishwakarma.39/",
+  facebook: "https://www.facebook.com/people/Dr-Dheeraj-Vishwakarma/61584240751204/",
   linkedin: "https://www.linkedin.com/in/drdheerajneurospine/"
 };
 

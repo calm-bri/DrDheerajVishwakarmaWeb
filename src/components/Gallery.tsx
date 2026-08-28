@@ -498,9 +498,14 @@ export default function Gallery() {
                   <video
                     src={activeItem.videoUrl}
                     controls
+                    controlsList="noaudio"
                     autoPlay
                     muted
                     playsInline
+                    onVolumeChange={(e) => {
+                      e.currentTarget.muted = true;
+                      e.currentTarget.volume = 0;
+                    }}
                     className="w-full h-full max-h-[60vh] md:max-h-full object-contain p-2"
                   />
                 ) : (

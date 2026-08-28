@@ -356,9 +356,14 @@ export default function VideoDiscovery({
                 <video
                   src={activeVideo.videoUrl}
                   controls
+                  controlsList="noaudio"
                   autoPlay
                   muted
                   playsInline
+                  onVolumeChange={(e) => {
+                    e.currentTarget.muted = true;
+                    e.currentTarget.volume = 0;
+                  }}
                   className="w-full h-full object-contain"
                   style={{ display: "block" }}
                 />

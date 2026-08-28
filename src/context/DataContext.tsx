@@ -74,6 +74,10 @@ interface DataContextType {
 
   // Video Showcases
   videos: VideoItem[];
+  addVideo: (video: VideoItem) => void;
+  updateVideo: (id: string, updated: Partial<VideoItem>) => void;
+  deleteVideo: (id: string) => void;
+  resetVideos: () => void;
 
   // Administrative Auth
   adminPin: string;
@@ -704,6 +708,87 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       .catch(err => console.error("Error resetting blogs on server:", err));
   };
 
+  // Video Showcase operations
+  const addVideo = (video: VideoItem) => {
+    setVideos(prev => [video, ...prev]);
+    const showcaseItem: ShowcaseItem = {
+      id: video.id,
+      title: video.title,
+      subtitle: video.category,
+      description: video.description,
+      category: "surgical",
+      location: "Jaipur Clinic",
+      date: "2026",
+      imageUrl: video.poster || "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=800",
+      videoUrl: video.videoUrl,
+      sizeClass: "md:col-span-1 md:row-span-1 aspect-square sm:aspect-auto",
+      badge: video.category || "4K Spine Video Log",
+      featuredInHero: false
+    };
+    setShowcases(prev => [showcaseItem, ...prev]);
+
+    fetch('/api/videos', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-admin-pin': adminPin
+      },
+      body: JSON.stringify(video)
+    }).catch(err => console.error("Error creating video on server:", err));
+  };
+
+  const updateVideo = (id: string, updated: Partial<VideoItem>) => {
+    setVideos(prev => prev.map(v => v.id === id ? { ...v, ...updated } : v));
+    setShowcases(prev => prev.map(s => {
+      if (s.id === id) {
+        return {
+          ...s,
+          title: updated.title !== undefined ? updated.title : s.title,
+          description: updated.description !== undefined ? updated.description : s.description,
+          videoUrl: updated.videoUrl !== undefined ? updated.videoUrl : s.videoUrl,
+          subtitle: updated.category !== undefined ? updated.category : s.subtitle,
+          badge: updated.category !== undefined ? updated.category : s.badge,
+          imageUrl: updated.poster !== undefined ? updated.poster : s.imageUrl
+        };
+      }
+      return s;
+    }));
+
+    fetch(`/api/videos/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-admin-pin': adminPin
+      },
+      body: JSON.stringify(updated)
+    }).catch(err => console.error(`Error updating video ${id} on server:`, err));
+  };
+
+  const deleteVideo = (id: string) => {
+    setVideos(prev => prev.filter(v => v.id !== id));
+    setShowcases(prev => prev.filter(s => s.id !== id));
+
+    fetch(`/api/videos/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'x-admin-pin': adminPin
+      }
+    }).catch(err => console.error(`Error deleting video ${id} on server:`, err));
+  };
+
+  const resetVideos = () => {
+    setVideos(videoData);
+    fetch('/api/videos/reset', {
+      method: 'POST',
+      headers: {
+        'x-admin-pin': adminPin
+      }
+    })
+      .then(res => res.json())
+      .then(data => setVideos(data))
+      .catch(err => console.error("Error resetting videos on server:", err));
+  };
+
   return (
     <DataContext.Provider value={{
       appointments,
@@ -740,7 +825,12 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       updateBlog,
       deleteBlog,
       resetBlogs,
+
       videos,
+      addVideo,
+      updateVideo,
+      deleteVideo,
+      resetVideos,
 
       adminPin,
       setAdminPin
