@@ -135,56 +135,173 @@ export const recoverySteps: RecoveryTimelineStep[] = [
 export const testimonialsData: Testimonial[] = [
   {
     id: "test-1",
-    name: "Manoj Kumar Sharma",
-    location: "Jaipur, Rajasthan (Google Verified Review)",
-    condition: "L4-L5 Slipped Disc with Severe Sciatica",
-    quote: "I suffered from unbearable back and leg pain due to L4-L5 herniation for 6 months. Dr. Dheeraj diagnosed it perfectly and performed an endoscopic keyhole surgery. I walked on the same day within 4-6 hours. He is truly the best monoportal endoscopic spine doctor in Jaipur! Thank you, doctor, for giving me my life back.",
-    recoverySummary: "Walked 4-6 hours post-op, discharged within 24h",
+    name: "Dinesh Bhaiya",
+    location: "Verified Review",
+    condition: "Severe Chronic Back Pain",
+    quote: "I had been suffering from severe back pain for a long time, and many doctors told me I would need a major, risky surgery. Dr. Dheeraj Vishwakarma performed a minimally invasive surgery, and I was standing and walking the very next day.",
+    recoverySummary: "Stood and walked the very next day after minimally invasive surgery",
     rating: 5
   },
   {
     id: "test-2",
-    name: "Preeti Vyas",
-    location: "Ajmer, Rajasthan (Google Verified Review)",
-    condition: "Severe Cervical Spondylosis & Hand Numbness",
-    quote: "Others suggested open spinal fusion which was scary. Dr. Dheeraj Vishwakarma treated my neck issue endoscopically with a tiny 8mm cut. The hand numbness and shooting pain disappeared instantly. No fusion, no implants. Highly recommended!",
-    recoverySummary: "Discharged next morning, back to work in 5 days",
+    name: "Kalpana Yadav",
+    location: "Verified Review",
+    condition: "Severe Back Pain",
+    quote: "I contacted Dr. Dheeraj for my back pain. After endoscopic surgery, I started walking within two days and got relief from pain within a week.",
+    recoverySummary: "Walking within 2 days, pain-free within 1 week",
     rating: 5
   },
   {
     id: "test-3",
-    name: "Col. Vikram Singh Chauhan (Retd.)",
-    location: "Jodhpur, Rajasthan (Google Verified Review)",
-    condition: "Severe Lumbar Spinal Canal Stenosis (LSSS)",
-    quote: "As a retired army officer, I was used to an active life, but stenosis restricted my walking to barely 50 meters. Dr. Dheeraj's monoportal endoscopic precision is incredible. I walked 2 km without any support on my third recovery day. Flawless expertise.",
-    recoverySummary: "2 km walk on Day 3 post-op without assistance",
+    name: "Seema Sharma",
+    location: "Verified Review",
+    condition: "Bulging Disc",
+    quote: "Dr. Dheeraj operated on my daughter's bulging disc through an endoscopic procedure with only an 8 mm stitch, and she was able to walk again after four long painful months.",
+    recoverySummary: "Able to walk again after 4 painful months following 8mm endoscopic procedure",
     rating: 5
   },
   {
     id: "test-4",
-    name: "Dr. Sunil Maheshwari",
-    location: "Udaipur, Rajasthan (Consultant Pediatrician)",
-    condition: "Acute L5-S1 Slip Disc with Neurological Deficit",
-    quote: "As a fellow medical professional, I scrutinized all modern options for my L5-S1 slip disc. Dr. Dheeraj's surgical precision in FESS (Full Monoportal Endoscopic Spine Surgery) is outstanding. The clean visibility and command kept my nerve roots safe. An excellent surgeon.",
-    recoverySummary: "Normal consulting practice resumed within a week",
+    name: "Indu Sharma",
+    location: "Verified Review",
+    condition: "Spine Condition & Standing Difficulty",
+    quote: "Dr. Dheeraj gave me the best possible treatment, which helped me stand on my feet again.",
+    recoverySummary: "Regained standing ability and return to daily activities",
     rating: 5
   },
   {
     id: "test-5",
-    name: "Rajesh K. Gahlot",
-    location: "Kota, Rajasthan (Google Verified Review)",
-    condition: "Extreme Sciatic Nerve Radiculopathy",
-    quote: "The agonizing 'electric shock' shooting pain down my leg was making it impossible to sit or sleep. Dr. Dheeraj operated on my compressed nerve root through a micro keyhole surgical pathway. I walked out of the hospital the next day pain-free.",
-    recoverySummary: "Instant relief from shooting sciatic nerve pain",
+    name: "Sanna Yadav",
+    location: "Verified Review",
+    condition: "Severe Spine Pain & Walking Difficulty",
+    quote: "Before surgery, my mother had difficulty walking. After the operation, she is able to walk comfortably and no longer has the pain she experienced earlier.",
+    recoverySummary: "Able to walk comfortably post-op, pain relieved",
     rating: 5
   },
   {
     id: "test-6",
-    name: "Amara Al-Jamil",
-    location: "Dubai, UAE (International Patient Review)",
-    condition: "Multi-level Lumbar Stenosis & Disk Herniation",
-    quote: "Flew from Dubai to Rajasthan specifically for Dr. Dheeraj's specialized monoportal endoscopic spine treatment. The clinical care, hospitality, and overall experience were remarkable. I am now back to my daily gym routine without any restrictions.",
-    recoverySummary: "Resumed daily gym routines after 4 weeks",
+    name: "Ramraj Ramraj Bairwa",
+    location: "Verified Review",
+    condition: "Spine Condition & Impaired Mobility",
+    quote: "After my mother's operation, she got complete relief and now walks on her own.",
+    recoverySummary: "Mother recovered completely, walking independently",
+    rating: 5
+  },
+  {
+    id: "test-7",
+    name: "Sachin Tyagi",
+    location: "Verified Review",
+    condition: "Walking Difficulty & Leg Numbness",
+    quote: "My brother had severe difficulty walking and both his legs had become numb. After surgery, he is now walking much better and has received significant relief.",
+    recoverySummary: "Significant walking improvement & leg numbness relief",
+    rating: 5
+  },
+  {
+    id: "test-8",
+    name: "GOPESH PANDEY",
+    location: "Jaipur, Rajasthan (Verified Review)",
+    condition: "Spine Condition",
+    quote: "We had my mother's spine surgery done in Jaipur. The small-incision endoscopic surgery was very successful, and today she is doing well and able to walk.",
+    recoverySummary: "Successful small-incision endoscopic surgery, mother walking well",
+    rating: 5
+  },
+  {
+    id: "test-9",
+    name: "Vijay Shree",
+    location: "Jaipur, Rajasthan (Verified Review)",
+    condition: "Spine Condition",
+    quote: "I consulted Dr. Dheeraj for my mother, and now she is doing very well. Thank you, Doctor.",
+    recoverySummary: "Mother doing very well after treatment",
+    rating: 5
+  },
+  {
+    id: "test-10",
+    name: "Surendar Singh",
+    location: "Jaipur, Rajasthan (Verified Review)",
+    condition: "Spine Condition Requiring Surgery",
+    quote: "Dr. Dheeraj Vishwakarma is the best spine surgeon in Jaipur. I have had two patients undergo surgery, and both had very good outcomes.",
+    recoverySummary: "Two spine surgeries with very positive outcomes",
+    rating: 5
+  },
+  {
+    id: "test-11",
+    name: "Kuldeep Singh",
+    location: "Bharatpur, Rajasthan (Verified Review)",
+    condition: "Spine Condition Requiring Surgery",
+    quote: "My father underwent spine surgery performed by Dr. Dheeraj Vishwakarma, and the outcome was very good. I am very thankful to him.",
+    recoverySummary: "Father's spine surgery successful with very good outcome",
+    rating: 5
+  },
+  {
+    id: "test-12",
+    name: "Santosh Sharma",
+    location: "Jaipur, Rajasthan (Verified Review)",
+    condition: "Endoscopic Spine Surgery",
+    quote: "Dr. Dheeraj Vishwakarma successfully performed spine surgery on my sister-in-law. He is an excellent endoscopic surgeon.",
+    recoverySummary: "Sister-in-law recovered well after endoscopic spine surgery",
+    rating: 5
+  },
+  {
+    id: "test-13",
+    name: "Yogesh Parmar",
+    location: "Verified Review",
+    condition: "Complex Spine Condition (Surgery Refused Elsewhere)",
+    quote: "Other doctors had refused surgery and said I would not recover, but after meeting Dr. Dheeraj and undergoing treatment, I am now completely fine. Thank you for giving me a new life.",
+    recoverySummary: "Completely well after surgery refused elsewhere",
+    rating: 5
+  },
+  {
+    id: "test-14",
+    name: "Bharti Sharma",
+    location: "Verified Review",
+    condition: "Spine Surgery",
+    quote: "My mother is feeling much better and has experienced a lot of relief after the operation.",
+    recoverySummary: "Mother experienced significant relief after surgery",
+    rating: 5
+  },
+  {
+    id: "test-15",
+    name: "Rajendra Singh",
+    location: "Jaipur, Rajasthan (Verified Review)",
+    condition: "Spine Surgery",
+    quote: "I am truly thankful to Dr. Dheeraj Vishwakarma for the successful spine surgery of my brother.",
+    recoverySummary: "Successful brother's spine surgery & positive care",
+    rating: 5
+  },
+  {
+    id: "test-16",
+    name: "Rafeek Khan",
+    location: "Verified Review",
+    condition: "Lumbar Spinal Condition",
+    quote: "I recently underwent an endoscopic lumbar decompression surgery and am extremely grateful to Dr. Dheeraj Vishwakarma for his exceptional care and expertise.",
+    recoverySummary: "Successfully underwent endoscopic lumbar decompression surgery",
+    rating: 5
+  },
+  {
+    id: "test-17",
+    name: "Dr. Aditya Dorkar",
+    location: "Medical Professional Review",
+    condition: "Severe Back Pain",
+    quote: "Dr. Dheeraj is an excellent spine surgeon. He explained my back pain condition clearly, answered all my questions, and provided outstanding care throughout treatment.",
+    recoverySummary: "Positive treatment experience with clear diagnosis and care",
+    rating: 5
+  },
+  {
+    id: "test-18",
+    name: "Mohammad Aarif",
+    location: "Verified Review",
+    condition: "Endoscopic Spine Surgery",
+    quote: "My father's endoscopic spine surgery was done, and now he is doing well.",
+    recoverySummary: "Father reported doing well after endoscopic spine surgery",
+    rating: 5
+  },
+  {
+    id: "test-19",
+    name: "Mahendar Kumar Dhobi",
+    location: "Verified Review",
+    condition: "Serious Spine Condition",
+    quote: "We had consulted elsewhere without getting effective treatment. After finding Dr. Dheeraj, we came to him for treatment and had a positive outcome.",
+    recoverySummary: "Received successful treatment after unsuccessful consultations elsewhere",
     rating: 5
   }
 ];
