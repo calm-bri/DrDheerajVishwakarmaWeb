@@ -440,7 +440,7 @@ export default function AdminPanel() {
       <div className="flex flex-wrap items-center gap-1.5 p-1 bg-cosmic-card/40 rounded-2xl border border-white/5 mb-8 backdrop-blur-md">
         {[
           { id: "appointments", label: "Appointments Queue", icon: Calendar },
-          { id: "showcases", label: "Photo Gallery", icon: Layers },
+          { id: "showcases", label: "Photos & Videos Showcase", icon: Layers },
           { id: "blogs", label: "Publications Manager", icon: FileText },
           { id: "conditions", label: "Treatments", icon: TrendingUp },
           { id: "testimonials", label: "Testimonials", icon: Star },
@@ -859,16 +859,16 @@ export default function AdminPanel() {
           </div>
         )}
 
-        {/* 2. PHOTO GALLERY TAB */}
+        {/* 2. PHOTOS & VIDEOS SHOWCASE TAB */}
         {activeTab === "showcases" && (
           <div className="space-y-6">
             <div className="flex justify-between items-center">
-              <h3 className="font-display font-medium text-lg text-white">Curate Grid Gallery Files</h3>
+              <h3 className="font-display font-medium text-lg text-white">Curate Photos & Videos Gallery</h3>
               <button
                 onClick={() => openCreateModal("showcase")}
                 className="flex items-center gap-1 bg-gold-400 hover:bg-gold-500 text-black px-4.5 py-2 rounded-xl text-xs font-bold cursor-pointer"
               >
-                <Plus className="w-4 h-4" /> Add Photo
+                <Plus className="w-4 h-4" /> Add Photo / Video
               </button>
             </div>
 

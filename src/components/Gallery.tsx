@@ -188,7 +188,7 @@ export default function Gallery() {
   const { showcases, addShowcase, resetShowcases } = useData();
   const items = showcases;
 
-  const [activeCategory, setActiveCategory] = useState<"all" | "surgical" | "news" | "workshop">("all");
+  const [activeCategory, setActiveCategory] = useState<"all" | "surgical" | "news" | "workshop" | "video">("all");
   const [searchQuery, setSearchQuery] = useState("");
 
   // Lightbox view state
@@ -197,7 +197,9 @@ export default function Gallery() {
 
   // Filtering showcase items
   const filteredItems = items.filter(item => {
-    const catMatches = activeCategory === "all" || item.category === activeCategory;
+    const isVideo = !!item.videoUrl;
+    const catMatches = activeCategory === "all" || 
+                       (activeCategory === "video" ? isVideo : item.category === activeCategory);
     const searchLower = searchQuery.toLowerCase();
     const queryMatches = item.title.toLowerCase().includes(searchLower) ||
                          item.subtitle.toLowerCase().includes(searchLower) ||
@@ -261,19 +263,19 @@ export default function Gallery() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
             <span className="font-mono text-xs tracking-[0.3em] text-gold-400 font-bold uppercase inline-block mb-4 text-glow-gold bg-gold-400/10 px-3 py-1 rounded-full border border-gold-400/20">
-              Surgical & Press Portfolio
+              Surgical & Video Portfolio
             </span>
             <h1 className="font-display font-medium text-4xl sm:text-6xl tracking-tight leading-none text-white mb-2">
-              Photo Gallery
+              Clinical Gallery & 4K Logs
             </h1>
             <p className="font-sans text-xs sm:text-sm text-gray-500 max-w-md font-medium tracking-wide">
-              Medical breakthrough records, high-definition surgical theatres, award milestones, and active workshop symposium snapshots.
+              Medical breakthrough records, high-definition surgical theatres, 4K endoscopy video logs, and active workshop symposium snapshots.
             </p>
           </div>
 
           <div className="md:text-right max-w-xs">
             <p className="font-sans text-xs text-stone-400 leading-relaxed font-normal">
-              Captured moments regarding the transition of <strong>Awake Monoportal Endoscopic Spine Surgery</strong>. Click any card to launch the widescreen presentation stage.
+              Captured moments regarding <strong>Awake Monoportal Endoscopic Spine Surgery</strong>. Click any card to launch the video player or widescreen image presentation stage.
             </p>
           </div>
         </div>
@@ -282,14 +284,15 @@ export default function Gallery() {
       {/* Filter and Command Hub */}
       <div className="mb-10 flex flex-col sm:flex-row gap-4 items-center justify-between bg-cosmic-card/50 p-4 rounded-3xl border border-white/5 backdrop-blur-md">
         
-        {/* Dynamic Category Filtering (Pills matching the light-desert vibe in dark modes) */}
+        {/* Dynamic Category Filtering */}
         <div className="flex flex-wrap items-center gap-1.5 p-1 bg-cosmic-bg/40 rounded-2xl border border-white/5 w-full sm:w-auto">
-          {(["all", "surgical", "news", "workshop"] as const).map((cat) => {
+          {(["all", "surgical", "video", "news", "workshop"] as const).map((cat) => {
             const labelMap = {
-              all: "All Curates",
+              all: "All Gallery",
               surgical: "Surgical Action",
+              video: "4K Video Logs",
               news: "News & Media",
-              workshop: "Clinics & Travel"
+              workshop: "Clinics & Workshops"
             };
             const isSelected = activeCategory === cat;
 
@@ -317,7 +320,7 @@ export default function Gallery() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-500" />
             <input
               type="text"
-              placeholder="Search images..."
+              placeholder="Search gallery & videos..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-cosmic-bg/85 border border-white/10 rounded-full pl-9 pr-8 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-gold-400/40 focus:ring-1 focus:ring-gold-400/20 transition-all font-sans"
@@ -336,7 +339,7 @@ export default function Gallery() {
         </div>
       </div>
 
-      {/* Main Grid: Asymmetrical Bento Layout mimicking the desert-scenics uploaded references! */}
+      {/* Main Grid */}
       {filteredItems.length === 0 ? (
         <div className="text-center py-20 bg-cosmic-card/30 border border-white/5 rounded-3xl backdrop-blur-md">
           <BookOpen className="w-10 h-10 text-gray-600 mx-auto mb-3" />
@@ -362,32 +365,47 @@ export default function Gallery() {
                 className={`group relative overflow-hidden rounded-[1.8rem] bg-cosmic-card border border-white/5 cursor-pointer flex flex-col justify-end shadow-lg hover:shadow-2xl transition-all duration-500 ${item.sizeClass}`}
                 whileHover={{ y: -4 }}
               >
-                {/* Image element with elegant slow-zoom transition on hover */}
+                {/* Media frame: HTML Video thumbnail if videoUrl exists, else Image */}
                 <div className="absolute inset-0 z-0 overflow-hidden bg-zinc-950">
-                  <img
-                    src={item.imageUrl}
-                    alt={item.title}
-                    width="600"
-                    height="400"
-                    loading="lazy"
-                    className="w-full h-full object-cover transition-transform duration-[800ms] ease-out group-hover:scale-110"
-                    referrerPolicy="no-referrer"
-                  />
+                  {item.videoUrl ? (
+                    <video
+                      src={`${item.videoUrl}#t=0.5`}
+                      preload="metadata"
+                      muted
+                      playsInline
+                      className="w-full h-full object-cover transition-transform duration-[800ms] ease-out group-hover:scale-110 pointer-events-none"
+                    />
+                  ) : (
+                    <img
+                      src={item.imageUrl}
+                      alt={item.title}
+                      width="600"
+                      height="400"
+                      loading="lazy"
+                      className="w-full h-full object-cover transition-transform duration-[800ms] ease-out group-hover:scale-110"
+                      referrerPolicy="no-referrer"
+                    />
+                  )}
                   {/* Subtle vignette gradient overlays */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/10 group-hover:via-black/45 transition-all duration-300" />
                 </div>
 
                 {/* Accent Top-Left Badge */}
                 <div className="absolute top-4 left-4 z-10">
-                  <span className="font-mono text-[9px] font-extrabold tracking-widest uppercase bg-black/60 backdrop-blur-md text-gold-300 px-3 py-1.5 rounded-full border border-white/10">
+                  <span className="font-mono text-[9px] font-extrabold tracking-widest uppercase bg-black/60 backdrop-blur-md text-gold-300 px-3 py-1.5 rounded-full border border-white/10 flex items-center gap-1">
+                    {item.videoUrl && <Play className="w-3 h-3 fill-gold-400 text-gold-400" />}
                     {item.badge}
                   </span>
                 </div>
 
-                {/* Top Right Zoom Icon Indicator */}
-                <div className="absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="p-2 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-white/90">
-                    <Maximize2 className="w-3.5 h-3.5" />
+                {/* Top Right Play / Zoom Icon Indicator */}
+                <div className="absolute top-4 right-4 z-10">
+                  <div className="p-2 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-white/90 group-hover:scale-110 transition-transform">
+                    {item.videoUrl ? (
+                      <Play className="w-3.5 h-3.5 fill-gold-400 text-gold-400" />
+                    ) : (
+                      <Maximize2 className="w-3.5 h-3.5" />
+                    )}
                   </div>
                 </div>
 
@@ -474,17 +492,28 @@ export default function Gallery() {
               layoutId={`card-container-${activeItem.id}`}
               className="w-full max-w-5xl max-h-[90vh] bg-cosmic-card border border-white/10 rounded-3xl overflow-y-auto flex flex-col md:grid md:grid-cols-5 md:overflow-hidden shadow-2xl relative"
             >
-              {/* Left Screen Area - High-Resolution Image (3 Cols) */}
+              {/* Left Screen Area - High-Resolution Image or Video Player (3 Cols) */}
               <div className="col-span-3 bg-[#070708] relative flex items-center justify-center min-h-[250px] xs:min-h-[350px] md:min-h-0 md:h-full overflow-hidden">
-                <img
-                  src={activeItem.imageUrl}
-                  alt={activeItem.title}
-                  width="800"
-                  height="600"
-                  loading="lazy"
-                  className="max-w-full max-h-[50vh] md:max-h-full object-contain p-2"
-                  referrerPolicy="no-referrer"
-                />
+                {activeItem.videoUrl ? (
+                  <video
+                    src={activeItem.videoUrl}
+                    controls
+                    autoPlay
+                    muted
+                    playsInline
+                    className="w-full h-full max-h-[60vh] md:max-h-full object-contain p-2"
+                  />
+                ) : (
+                  <img
+                    src={activeItem.imageUrl}
+                    alt={activeItem.title}
+                    width="800"
+                    height="600"
+                    loading="lazy"
+                    className="max-w-full max-h-[50vh] md:max-h-full object-contain p-2"
+                    referrerPolicy="no-referrer"
+                  />
+                )}
 
                 {/* Embedded Video Showcase Player if supplied */}
                 {activeItem.videoUrl && (

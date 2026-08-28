@@ -272,6 +272,32 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
               }
             });
             setVideos(merged);
+
+            // Merge videos into showcases for full Gallery integration
+            const videoShowcaseItems: ShowcaseItem[] = merged.map(vid => ({
+              id: vid.id,
+              title: vid.title,
+              subtitle: vid.category,
+              description: vid.description,
+              category: "surgical",
+              location: "Jaipur Clinic",
+              date: "2026",
+              imageUrl: vid.poster || "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=800",
+              videoUrl: vid.videoUrl,
+              sizeClass: "md:col-span-1 md:row-span-1 aspect-square sm:aspect-auto",
+              badge: vid.category || "4K Spine Video Log",
+              featuredInHero: false
+            }));
+
+            setShowcases(prev => {
+              const combined = [...prev];
+              videoShowcaseItems.forEach(vItem => {
+                if (!combined.some(c => c.videoUrl === vItem.videoUrl || c.id === vItem.id)) {
+                  combined.push(vItem);
+                }
+              });
+              return combined;
+            });
           }
         }
       } catch (error) {
@@ -362,6 +388,19 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Showcase operations
   const addShowcase = (showcase: ShowcaseItem) => {
     setShowcases(prev => [showcase, ...prev]);
+    if (showcase.videoUrl) {
+      setVideos(prev => [
+        {
+          id: showcase.id,
+          title: showcase.title,
+          description: showcase.description,
+          poster: showcase.imageUrl,
+          videoUrl: showcase.videoUrl!,
+          category: showcase.badge || "Surgical Video"
+        },
+        ...prev
+      ]);
+    }
     setDbShowcaseIds(prev => {
       const next = new Set(prev);
       next.add(showcase.id);
@@ -387,6 +426,19 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setShowcases(prev => 
       prev.map(sc => sc.id === id ? fullUpdatedItem : sc)
     );
+
+    if (fullUpdatedItem.videoUrl) {
+      setVideos(prev => 
+        prev.map(v => v.id === id ? {
+          id: fullUpdatedItem.id,
+          title: fullUpdatedItem.title,
+          description: fullUpdatedItem.description,
+          poster: fullUpdatedItem.imageUrl,
+          videoUrl: fullUpdatedItem.videoUrl!,
+          category: fullUpdatedItem.badge || "Surgical Video"
+        } : v)
+      );
+    }
 
     // If this item was loaded from storage bucket but not yet saved in the DB,
     // we must insert (POST) it so it becomes a DB-backed record with all fields.
@@ -422,6 +474,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const deleteShowcase = (id: string) => {
     setShowcases(prev => prev.filter(sc => sc.id !== id));
+    setVideos(prev => prev.filter(v => v.id !== id));
 
     fetch(`/api/showcases/${id}`, {
       method: 'DELETE',
