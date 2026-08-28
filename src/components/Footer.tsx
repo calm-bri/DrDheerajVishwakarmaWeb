@@ -21,10 +21,10 @@ export default function Footer() {
       <div className="absolute bottom-0 right-0 w-[400px] h-[300px] bg-radial-glow opacity-15 blur-3xl rounded-full pointer-events-none" />
 
       <div className="w-full max-w-6xl mx-auto relative z-10 space-y-16">
-        
+
         {/* Main Columns Grid */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 items-start">
-          
+
           {/* Col 1: Bio Authoritative Brand Box */}
           <div className="md:col-span-4 space-y-5 text-left">
             <Link to="/" className="flex items-center hover:opacity-90 transition-opacity w-fit block" aria-label="Go to home page">
@@ -34,12 +34,6 @@ export default function Footer() {
             <p className="text-xs text-gray-400 leading-relaxed font-sans max-w-xs">
               Pioneering Monoportal Endoscopic Spine Surgeon & Board-certified Spinal Neurosurgeon specializing in high-definition keyhole Monoportal and Full Monoportal Endoscopic Spine surgery techniques, offering rapid recoveries with same-day walking milestones.
             </p>
-
-            {/* Quick trust metrics */}
-            <div className="flex items-center gap-2 text-[9px] font-mono tracking-widest uppercase bg-white/2 border border-white/5 py-1 px-3 rounded-lg w-fit">
-              <Sparkles className="w-3.5 h-3.5 text-gold-400 animate-pulse" />
-              <span className="text-gray-300 font-bold">100+ Monoportal Spine Release Operations</span>
-            </div>
           </div>
 
           {/* Col 2: Clinical Care Director Index */}
@@ -96,17 +90,17 @@ export default function Footer() {
               <div className="flex gap-2.5">
                 <MapPin className="w-4 h-4 text-gold-400 shrink-0 mt-0.5" />
                 <div className="leading-snug text-gray-300 space-y-1">
-                  <a 
-                    href="https://www.google.com/maps/search/?api=1&query=Aarogya+Multispeciality+Center+Patrakar+Colony+Jaipur" 
-                    target="_blank" 
+                  <a
+                    href="https://www.google.com/maps/search/?api=1&query=Aarogya+Multispeciality+Center+Patrakar+Colony+Jaipur"
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="hover:text-gold-400 transition-colors block cursor-pointer"
                   >
                     • Aarogya Multispeciality Center, Mansarovar, Jaipur
                   </a>
-                  <a 
-                    href="https://www.google.com/maps/search/?api=1&query=Geetanjali+Hospital+Bhakrota+Jaipur" 
-                    target="_blank" 
+                  <a
+                    href="https://www.google.com/maps/search/?api=1&query=Geetanjali+Hospital+Bhakrota+Jaipur"
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="hover:text-gold-400 transition-colors block cursor-pointer"
                   >
@@ -149,7 +143,7 @@ export default function Footer() {
           <div className="flex flex-col sm:flex-row sm:justify-between items-center gap-4 text-[9px] uppercase font-mono">
             <p>© {currentYear} Dr. Dheeraj Vishwakarma. Built with futuristic clinical technology standards.</p>
             <div className="flex gap-4">
-              <button 
+              <button
                 onClick={() => {
                   const btn = document.getElementById("hero-cta-consult") || document.getElementById("intl-book-consult-btn") || document.querySelector("[id*='booking']");
                   if (btn) (btn as HTMLElement).click();
@@ -159,7 +153,7 @@ export default function Footer() {
                 HIPAA Secure
               </button>
               <span>|</span>
-              <button 
+              <button
                 onClick={() => {
                   const btn = document.getElementById("hero-cta-consult") || document.getElementById("intl-book-consult-btn") || document.querySelector("[id*='booking']");
                   if (btn) (btn as HTMLElement).click();
@@ -169,7 +163,7 @@ export default function Footer() {
                 GDPR Compliant
               </button>
               <span>|</span>
-              <button 
+              <button
                 onClick={() => {
                   window.location.reload();
                 }}

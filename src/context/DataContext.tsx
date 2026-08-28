@@ -3,13 +3,15 @@ import {
   SpineCondition, 
   Testimonial, 
   FAQItem,
-  BlogArticle
+  BlogArticle,
+  VideoItem
 } from "../types";
 import { 
   conditionsData, 
   testimonialsData, 
   faqData,
-  blogsData
+  blogsData,
+  videoData
 } from "../data";
 import { ShowcaseItem, INITIAL_SHOWCASES } from "../components/Gallery";
 
@@ -69,6 +71,9 @@ interface DataContextType {
   updateBlog: (id: string, updated: Partial<BlogArticle>) => void;
   deleteBlog: (id: string) => void;
   resetBlogs: () => void;
+
+  // Video Showcases
+  videos: VideoItem[];
 
   // Administrative Auth
   adminPin: string;
@@ -165,6 +170,9 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Conditions state initialized with defaults
   const [conditions, setConditions] = useState<SpineCondition[]>(conditionsData);
 
+  // Video Showcases state initialized with defaults
+  const [videos, setVideos] = useState<VideoItem[]>(videoData);
+
   // Blogs state initialized with defaults
   const [blogs, setBlogs] = useState<BlogArticle[]>(blogsData);
 
@@ -172,13 +180,14 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const loadPublicData = async () => {
       try {
-        const [scsRes, faqsRes, testsRes, condsRes, blogsRes, galleryRes] = await Promise.all([
+        const [scsRes, faqsRes, testsRes, condsRes, blogsRes, galleryRes, vidsRes] = await Promise.all([
           fetch('/api/showcases'),
           fetch('/api/faqs'),
           fetch('/api/testimonials'),
           fetch('/api/conditions'),
           fetch('/api/blogs'),
-          fetch('/api/gallery-images')
+          fetch('/api/gallery-images'),
+          fetch('/api/videos')
         ]);
 
         let dbData: ShowcaseItem[] = [];
@@ -252,6 +261,18 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (blogsRes.ok) {
           const resJson = await blogsRes.json();
           if (Array.isArray(resJson)) setBlogs(resJson);
+        }
+        if (vidsRes.ok) {
+          const resJson = await vidsRes.json();
+          if (Array.isArray(resJson) && resJson.length > 0) {
+            const merged = [...resJson];
+            videoData.forEach(v => {
+              if (!merged.some(mv => mv.videoUrl === v.videoUrl || mv.id === v.id)) {
+                merged.push(v);
+              }
+            });
+            setVideos(merged);
+          }
         }
       } catch (error) {
         console.warn("Failed to fetch initial public data from backend server. Using local presets.", error);
@@ -666,6 +687,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       updateBlog,
       deleteBlog,
       resetBlogs,
+      videos,
 
       adminPin,
       setAdminPin

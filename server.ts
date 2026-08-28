@@ -815,6 +815,57 @@ app.get('/api/gallery-images', async (req, res) => {
   }
 });
 
+// API endpoint to retrieve all public video files inside the Supabase 'Video' storage bucket
+app.get('/api/videos', async (req, res) => {
+  try {
+    if (!supabase) {
+      return res.json([]);
+    }
+    // Fetch list of files from 'Video' bucket
+    let { data, error } = await supabase.storage.from('Video').list('', {
+      limit: 100,
+      offset: 0,
+      sortBy: { column: 'created_at', order: 'desc' }
+    });
+
+    if (error || !data || data.length === 0) {
+      const fallback = await supabase.storage.from('videos').list('', {
+        limit: 100,
+        offset: 0,
+        sortBy: { column: 'created_at', order: 'desc' }
+      });
+      data = fallback.data;
+      error = fallback.error;
+    }
+
+    if (error) {
+      console.warn("Failed to fetch Video bucket list from Supabase:", error.message);
+      return res.json([]);
+    }
+
+    if (data) {
+      const videos = data
+        .filter(file => {
+          const name = file.name.toLowerCase();
+          return name.endsWith('.mp4') || name.endsWith('.mov') || name.endsWith('.webm') || name.endsWith('.m4v') || name.endsWith('.mkv');
+        })
+        .map(file => ({
+          id: `supabase-vid-${file.name}`,
+          title: file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ").replace(/\b\w/g, c => c.toUpperCase()),
+          description: "High-Definition 4K Monoportal Endoscopic Spine Procedure & Patient Milestone Log",
+          poster: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=800",
+          videoUrl: `${supabaseUrl}/storage/v1/object/public/Video/${encodeURIComponent(file.name)}`,
+          category: "Endoscopic Spine Surgery"
+        }));
+      return res.json(videos);
+    }
+    res.json([]);
+  } catch (err: any) {
+    console.error("Exception loading videos from Supabase:", err);
+    res.json([]);
+  }
+});
+
 // Legacy uploads redirect router
 app.get('/uploads/:fileName', (req, res) => {
   const { fileName } = req.params;

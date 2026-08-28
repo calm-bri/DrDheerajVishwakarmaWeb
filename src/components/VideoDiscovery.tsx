@@ -4,6 +4,8 @@ import { Play, X, Film, ChevronLeft, ChevronRight } from "lucide-react";
 import { videoData } from "../data";
 import { VideoItem } from "../types";
 
+import { useData } from "../context/DataContext";
+
 interface VideoDiscoveryProps {
   isModalOpen: boolean;
   setIsModalOpen: (open: boolean) => void;
@@ -17,23 +19,25 @@ export default function VideoDiscovery({
   activeVideo,
   setActiveVideo
 }: VideoDiscoveryProps) {
+  const { videos } = useData();
+  const videoList = videos && videos.length > 0 ? videos : videoData;
   const shouldReduceMotion = useReducedMotion();
   const modalCloseRef = useRef<HTMLButtonElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
   // Sync activeIndex if activeVideo is modified externally
   useEffect(() => {
-    const idx = videoData.findIndex((v) => v.id === activeVideo.id);
+    const idx = videoList.findIndex((v) => v.id === activeVideo.id);
     if (idx !== -1 && idx !== activeIndex) {
       setActiveIndex(idx);
     }
-  }, [activeVideo]);
+  }, [activeVideo, videoList]);
 
   const handleNext = () => {
-    if (activeIndex < videoData.length - 1) {
+    if (activeIndex < videoList.length - 1) {
       const nextIndex = activeIndex + 1;
       setActiveIndex(nextIndex);
-      setActiveVideo(videoData[nextIndex]);
+      setActiveVideo(videoList[nextIndex]);
     }
   };
 
@@ -41,7 +45,7 @@ export default function VideoDiscovery({
     if (activeIndex > 0) {
       const prevIndex = activeIndex - 1;
       setActiveIndex(prevIndex);
-      setActiveVideo(videoData[prevIndex]);
+      setActiveVideo(videoList[prevIndex]);
     }
   };
 
@@ -54,13 +58,13 @@ export default function VideoDiscovery({
         if (activeIndex > 0) {
           const prevIdx = activeIndex - 1;
           setActiveIndex(prevIdx);
-          setActiveVideo(videoData[prevIdx]);
+          setActiveVideo(videoList[prevIdx]);
         }
       } else if (e.key === "ArrowRight") {
-        if (activeIndex < videoData.length - 1) {
+        if (activeIndex < videoList.length - 1) {
           const nextIdx = activeIndex + 1;
           setActiveIndex(nextIdx);
-          setActiveVideo(videoData[nextIdx]);
+          setActiveVideo(videoList[nextIdx]);
         }
       }
     };
@@ -79,7 +83,7 @@ export default function VideoDiscovery({
       document.body.style.overflow = "";
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isModalOpen, activeIndex, setActiveVideo]);
+  }, [isModalOpen, activeIndex, setActiveVideo, videoList]);
 
   const containerVariants = {
     hidden: {
@@ -97,7 +101,7 @@ export default function VideoDiscovery({
   };
 
   // Triplicate the video items to ensure a seamless infinite marquee wrap
-  const duplicatedVideos = [...videoData, ...videoData, ...videoData];
+  const duplicatedVideos = [...videoList, ...videoList, ...videoList];
 
   return (
     <section className="relative py-20 px-4 sm:px-6 md:px-8 border-t border-white/5 overflow-hidden bg-cosmic-bg">
