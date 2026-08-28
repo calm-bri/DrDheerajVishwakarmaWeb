@@ -127,10 +127,10 @@ export default function VideoDiscovery({
           height: var(--height);
           position: absolute;
           left: 100%;
-          animation: videoAutoRun 20s linear infinite;
+          animation: videoAutoRun 55s linear infinite;
           transition: filter 0.5s, transform 0.5s, border-color 0.5s;
           animation-delay: calc(
-            (20s / var(--quantity)) * (var(--position) - 1) - 20s
+            (55s / var(--quantity)) * (var(--position) - 1) - 55s
           ) !important;
         }
         @keyframes videoAutoRun {
@@ -259,84 +259,97 @@ export default function VideoDiscovery({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-cosmic-bg/95 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 md:p-10"
+            className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl flex flex-col items-center justify-center p-4 sm:p-6 md:p-10 overflow-y-auto"
             role="dialog"
             aria-modal="true"
             aria-label={`Watching: ${activeVideo.title}`}
           >
+            {/* Prominent High-Contrast Floating Close Button at Top Right of Screen */}
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="fixed top-4 right-4 sm:top-6 sm:right-8 z-[110] flex items-center gap-2 px-4 py-2 rounded-full bg-red-600 hover:bg-red-500 text-white font-mono text-xs font-bold uppercase tracking-wider shadow-2xl transition-all hover:scale-105 cursor-pointer border border-white/20"
+              aria-label="Close video player"
+            >
+              <X className="w-4 h-4 stroke-[3]" />
+              <span>Close Video (ESC)</span>
+            </button>
+
             {/* Close Overlay */}
             <div
               className="absolute inset-0 cursor-default"
               onClick={() => setIsModalOpen(false)}
             />
 
-            {/* Desktop Left Flanking Button */}
-            <button
-              onClick={handlePrev}
-              disabled={activeIndex === 0}
-              className={`hidden sm:flex w-12 h-12 rounded-full border items-center justify-center shrink-0 transition-all cursor-pointer z-20 mr-4 ${activeIndex === 0
-                ? "border-white/5 text-gray-700 bg-white/[0.01] cursor-not-allowed"
-                : "border-white/10 glassmorphism text-gold-400 hover:text-white hover:border-gold-400/40 hover:scale-105"
-                }`}
-              aria-label="Previous video case"
-            >
-              <ChevronLeft className="w-6 h-6" />
-            </button>
+            {/* Main Modal Card Container */}
+            <div className="relative w-full max-w-4xl my-auto flex items-center justify-center">
+              {/* Desktop Left Flanking Button */}
+              <button
+                onClick={handlePrev}
+                disabled={activeIndex === 0}
+                className={`hidden sm:flex w-12 h-12 rounded-full border items-center justify-center shrink-0 transition-all cursor-pointer z-20 mr-4 ${activeIndex === 0
+                  ? "border-white/5 text-gray-700 bg-white/[0.01] cursor-not-allowed"
+                  : "border-white/10 glassmorphism text-gold-400 hover:text-white hover:border-gold-400/40 hover:scale-105"
+                  }`}
+                aria-label="Previous video case"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
 
-            <motion.div
-              initial={{ scale: 0.95, y: 15 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.95, y: 15 }}
-              transition={{ type: "spring", damping: 28, stiffness: 220 }}
-              className="relative w-full max-w-4xl glassmorphism rounded-3xl overflow-hidden shadow-2xl border border-white/10 bg-cosmic-card/90 z-10 flex flex-col"
-            >
+              <motion.div
+                initial={{ scale: 0.95, y: 15 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.95, y: 15 }}
+                transition={{ type: "spring", damping: 28, stiffness: 220 }}
+                className="relative w-full max-w-4xl glassmorphism rounded-3xl overflow-hidden shadow-2xl border border-white/10 bg-cosmic-card/90 z-10 flex flex-col"
+              >
 
-              {/* Modal Top Bar */}
-              <div className="flex items-center justify-between p-4 sm:p-5 border-b border-white/5 select-none bg-black/20">
-                <div className="flex items-center gap-2">
-                  <Film className="w-4 h-4 text-gold-400" />
-                  <span className="text-[10px] font-mono uppercase tracking-widest text-gray-400">
-                    Dr. Dheeraj Vishwakarma Spine Care
-                  </span>
-                </div>
-
-                {/* Navigation and Close triggers */}
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1.5 sm:hidden">
-                    <button
-                      onClick={handlePrev}
-                      disabled={activeIndex === 0}
-                      className={`p-1.5 rounded-full border transition-all ${activeIndex === 0
-                        ? "border-white/5 text-gray-700 cursor-not-allowed"
-                        : "border-white/10 text-gold-400 bg-white/5"
-                        }`}
-                      aria-label="Previous video"
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={handleNext}
-                      disabled={activeIndex === videoList.length - 1}
-                      className={`p-1.5 rounded-full border transition-all ${activeIndex === videoList.length - 1
-                        ? "border-white/5 text-gray-700 cursor-not-allowed"
-                        : "border-white/10 text-gold-400 bg-white/5"
-                        }`}
-                      aria-label="Next video"
-                    >
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
+                {/* Modal Top Bar */}
+                <div className="flex items-center justify-between p-4 sm:p-5 border-b border-white/5 select-none bg-black/40">
+                  <div className="flex items-center gap-2">
+                    <Film className="w-4 h-4 text-gold-400" />
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-gray-300 font-bold">
+                      Dr. Dheeraj Vishwakarma Spine Care
+                    </span>
                   </div>
 
-                  <button
-                    ref={modalCloseRef}
-                    onClick={() => setIsModalOpen(false)}
-                    className="p-1.5 rounded-full hover:bg-white/5 text-gray-400 hover:text-white transition-colors cursor-pointer"
-                    aria-label="Close video player modal"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
+                  {/* Navigation and Close triggers */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1.5 sm:hidden">
+                      <button
+                        onClick={handlePrev}
+                        disabled={activeIndex === 0}
+                        className={`p-1.5 rounded-full border transition-all ${activeIndex === 0
+                          ? "border-white/5 text-gray-700 cursor-not-allowed"
+                          : "border-white/10 text-gold-400 bg-white/5"
+                          }`}
+                        aria-label="Previous video"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={handleNext}
+                        disabled={activeIndex === videoList.length - 1}
+                        className={`p-1.5 rounded-full border transition-all ${activeIndex === videoList.length - 1
+                          ? "border-white/5 text-gray-700 cursor-not-allowed"
+                          : "border-white/10 text-gold-400 bg-white/5"
+                          }`}
+                        aria-label="Next video"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    <button
+                      ref={modalCloseRef}
+                      onClick={() => setIsModalOpen(false)}
+                      className="px-3 py-1 rounded-full bg-red-600/20 hover:bg-red-600 border border-red-500/30 text-red-300 hover:text-white transition-all font-mono text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 cursor-pointer"
+                      aria-label="Close video player modal"
+                    >
+                      <span>Close</span>
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
-              </div>
 
               {/* Dynamic Lazy-loaded Video Frame */}
               <div className="w-full aspect-video bg-black relative flex items-center justify-center">
@@ -378,8 +391,9 @@ export default function VideoDiscovery({
             >
               <ChevronRight className="w-6 h-6" />
             </button>
+          </div>
 
-          </motion.div>
+        </motion.div>
         )}
       </AnimatePresence>
     </section>
