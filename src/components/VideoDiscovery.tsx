@@ -216,12 +216,14 @@ export default function VideoDiscovery({
                 }}
               >
                 {/* Aspect video poster with overlay play button */}
+                {/* Aspect video frame thumbnail with overlay play button */}
                 <div className="relative aspect-video w-full overflow-hidden border-b border-white/5 bg-zinc-950">
-                  <img
-                    src={video.poster}
-                    alt={video.title}
-                    loading="lazy"
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  <video
+                    src={`${video.videoUrl}#t=0.5`}
+                    preload="metadata"
+                    muted
+                    playsInline
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 pointer-events-none"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/30" />
                   <div className="absolute inset-0 flex items-center justify-center">
@@ -314,8 +316,8 @@ export default function VideoDiscovery({
                     </button>
                     <button
                       onClick={handleNext}
-                      disabled={activeIndex === videoData.length - 1}
-                      className={`p-1.5 rounded-full border transition-all ${activeIndex === videoData.length - 1
+                      disabled={activeIndex === videoList.length - 1}
+                      className={`p-1.5 rounded-full border transition-all ${activeIndex === videoList.length - 1
                         ? "border-white/5 text-gray-700 cursor-not-allowed"
                         : "border-white/10 text-gold-400 bg-white/5"
                         }`}
@@ -340,7 +342,6 @@ export default function VideoDiscovery({
               <div className="w-full aspect-video bg-black relative flex items-center justify-center">
                 <video
                   src={activeVideo.videoUrl}
-                  poster={activeVideo.poster}
                   controls
                   autoPlay
                   muted
@@ -368,8 +369,8 @@ export default function VideoDiscovery({
             {/* Desktop Right Flanking Button */}
             <button
               onClick={handleNext}
-              disabled={activeIndex === videoData.length - 1}
-              className={`hidden sm:flex w-12 h-12 rounded-full border items-center justify-center shrink-0 transition-all cursor-pointer z-20 ml-4 ${activeIndex === videoData.length - 1
+              disabled={activeIndex === videoList.length - 1}
+              className={`hidden sm:flex w-12 h-12 rounded-full border items-center justify-center shrink-0 transition-all cursor-pointer z-20 ml-4 ${activeIndex === videoList.length - 1
                 ? "border-white/5 text-gray-700 bg-white/[0.01] cursor-not-allowed"
                 : "border-white/10 glassmorphism text-gold-400 hover:text-white hover:border-gold-400/40 hover:scale-105"
                 }`}
