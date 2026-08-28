@@ -38,12 +38,12 @@ export default function AboutMe() {
 
   // Track the actual face index to display on Front (even steps) and Back (odd steps)
   // During flip, keep the hidden side constant (displaying delayedStep % 3) until it is completely out of view.
-  const frontFace = step % 2 === 0 
-    ? (step % 3) 
+  const frontFace = step % 2 === 0
+    ? (step % 3)
     : (delayedStep === step ? ((step + 1) % 3) : (delayedStep % 3));
 
-  const backFace = step % 2 === 1 
-    ? (step % 3) 
+  const backFace = step % 2 === 1
+    ? (step % 3)
     : (delayedStep === step ? ((step + 1) % 3) : (delayedStep % 3));
 
   const renderFaceContent = (faceIndex: number) => {
@@ -124,7 +124,7 @@ export default function AboutMe() {
       institution: "Asian Spine Hospital, Hyderabad",
       period: "2024",
       location: "Hyderabad, India",
-      details: "Completed clinical fellowship under the guidance of Dr. Sukumar Sura, one of India's leading experts and pioneers in monoportal endoscopic spine surgery."
+      details: "Trained under Dr. Sukumar Sura, a leading authority in endoscopic spine surgery."
     },
     {
       degree: "Magister Chirurgiae (M.Ch) in Neurosurgery",
@@ -168,39 +168,37 @@ export default function AboutMe() {
     {
       type: "Asia & India Book of Records",
       title: "Youngest Pediatric Endoscopic Discectomy",
-      event: "Recorded for treating the youngest patient (11-year-old) for Cauda Equina Syndrome using a single-stitch 8mm monoportal discectomy."
+      event: "Operated on the youngest Cauda Equina patient, recognized by the India Book of Records & Asia Book of Records."
     },
     {
-      type: "India Book of Records",
-      title: "Global Spine Endoscopy Pioneer",
-      event: "Pioneered complex cervical and dorsal monoportal endoscopic spine surgeries, completing a landmark milestone of 50+ multi-level cases."
+      type: "State Landmark Milestone",
+      title: "First Monoportal Surgery in Rajasthan",
+      event: "Achieved the first Monoportal Endoscopic Spine Surgery in the State of Rajasthan."
+    },
+    {
+      type: "Cervical Spine Milestone",
+      title: "First Cervical Monoportal Discectomy",
+      event: "Performed the first Cervical Monoportal Endoscopic Discectomy in Jaipur & Rajasthan."
+    },
+    {
+      type: "Dorsal Spine Milestone",
+      title: "First Dorsal Monoportal Discectomy",
+      event: "Performed the first Dorsal Monoportal Endoscopic Discectomy in Jaipur & Rajasthan."
+    },
+    {
+      type: "Minimally Invasive Expertise",
+      title: "Single-Stitch Spine Surgery",
+      event: "Expert in Single-Stitch Spine Surgery for faster recovery and minimal tissue trauma."
     },
     {
       type: "Academic Book Chapter",
       title: "Lumbar Canal Stenosis",
       event: "Contributed a key instructional chapter to 'A Practical Manual on Full Monoportal Endoscopic Spine Surgery', sharing clinical principles with peers."
-    },
-    {
-      type: "TYSA Orator Champion",
-      title: "Best Orator - Torrent Young Scholar Award",
-      event: "Conferred at the prestigious national TYSA 2023, Ahmedabad, testifying to excellent pediatric and neurological analytical delivery."
-    },
-    {
-      type: "DNACON First Prize",
-      title: "Best Award Paper & 1st Position in Neuro Quiz",
-      event: "Won dual highest-honours at DNACON-2023, New Delhi, validating experimental paper accuracy and deep neurosurgical diagnostic speed."
-    },
-    {
-      type: "Neurovascon Best Poster",
-      title: "Best Poster Award, Neurovascon-2023",
-      event: "Presented breakthrough findings on key cerebral and spinal endovascular stenting approaches in New Delhi."
     }
   ];
 
   const memberships = [
-    "Association of Spine Surgeons of India (ASSI)",
-    "Minimally Invasive Spine Surgeons Association of India (MISSA)",
-    "World Endoscopic Spine Society (WESS)",
+    "Bharat Academy of Spine Endoscopy (BASE)",
     "Neurosurgical Society of India (NSI)",
     "Neurological Surgeons Society of India (NSSI)",
     "Cerebrovascular Society of India (CVSI)",
@@ -263,7 +261,7 @@ export default function AboutMe() {
                   onClick={() => setStep((prev) => prev + 1)}
                   className="relative w-full max-w-[280px] aspect-[4/5] cursor-pointer perspective-1000"
                 >
-                  <div 
+                  <div
                     className="relative w-full h-full transform-style-3d"
                     style={{
                       transform: `rotateY(${step * 180}deg)`,
@@ -271,16 +269,14 @@ export default function AboutMe() {
                     }}
                   >
                     {/* Front Side */}
-                    <div className={`absolute inset-0 w-full h-full backface-hidden rounded-2xl overflow-hidden shadow-2xl bg-zinc-950 ${
-                      frontFace === 0 ? "border border-white/10" : "border border-gold-400/20"
-                    }`}>
+                    <div className={`absolute inset-0 w-full h-full backface-hidden rounded-2xl overflow-hidden shadow-2xl bg-zinc-950 ${frontFace === 0 ? "border border-white/10" : "border border-gold-400/20"
+                      }`}>
                       {renderFaceContent(frontFace)}
                     </div>
 
                     {/* Back Side */}
-                    <div className={`absolute inset-0 w-full h-full backface-hidden rounded-2xl overflow-hidden shadow-2xl rotate-y-180 bg-zinc-950 ${
-                      backFace === 0 ? "border border-white/10" : "border border-gold-400/20"
-                    }`}>
+                    <div className={`absolute inset-0 w-full h-full backface-hidden rounded-2xl overflow-hidden shadow-2xl rotate-y-180 bg-zinc-950 ${backFace === 0 ? "border border-white/10" : "border border-gold-400/20"
+                      }`}>
                       {renderFaceContent(backFace)}
                     </div>
                   </div>
@@ -298,7 +294,7 @@ export default function AboutMe() {
               </div>
 
               <p className="text-gray-300 text-xs sm:text-sm leading-relaxed font-sans">
-                Dr. Dheeraj Vishwakarma is a pioneering monoportal endoscopic spine surgeon and board-certified neurosurgeon who completed his prestigious Magister Chirurgiae (M.Ch) residency at GIPMER, New Delhi.
+                Dr. Dheeraj Vishwakarma is a Pioneering Endoscopic Spine Surgeon specializing in Monoportal & Minimally Invasive Spine Procedures. He completed his prestigious Magister Chirurgiae (M.Ch) residency at GIPMER, New Delhi.
               </p>
 
               <p className="text-gray-400 text-xs leading-relaxed font-sans">

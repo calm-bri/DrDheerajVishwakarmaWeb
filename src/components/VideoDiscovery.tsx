@@ -82,12 +82,12 @@ export default function VideoDiscovery({
   }, [isModalOpen, activeIndex, setActiveVideo]);
 
   const containerVariants = {
-    hidden: { 
-      opacity: 0, 
-      y: shouldReduceMotion ? 0 : 30 
+    hidden: {
+      opacity: 0,
+      y: shouldReduceMotion ? 0 : 30
     },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
       transition: {
         duration: 0.75,
@@ -166,11 +166,11 @@ export default function VideoDiscovery({
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-sky-400/20 bg-sky-400/5 text-sky-300">
               <Film className="w-3.5 h-3.5 text-sky-400" />
               <span className="text-[10px] font-mono uppercase tracking-[0.2em] font-medium">
-                Surgical Knowledge Platform
+                Surgical Knowledge , News , Procedures
               </span>
             </div>
             <h2 className="font-display text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
-              Cinematic Procedure Discovery
+              Advanced Endoscopic Spine Surgery Precision in Motion
             </h2>
             <p className="text-gray-400 text-xs sm:text-sm max-w-xl font-sans leading-relaxed">
               Delve into clinical operations and endoscopic spine science. Hover over cards to pause and inspect individual surgical cases.
@@ -185,8 +185,8 @@ export default function VideoDiscovery({
         </div>
 
         {/* Cinematic Infinite CSS Marquee Slider */}
-        <div 
-          className="video-slider w-full select-none" 
+        <div
+          className="video-slider w-full select-none"
           style={{
             "--width": "290px",
             "--height": "250px",
@@ -195,7 +195,7 @@ export default function VideoDiscovery({
         >
           <div className="video-list">
             {duplicatedVideos.map((video, idx) => (
-              <div 
+              <div
                 key={`${video.id}-${idx}`}
                 className="video-item cursor-pointer border border-white/5 bg-cosmic-card/90 rounded-2xl overflow-hidden flex flex-col justify-between group"
                 style={{
@@ -259,20 +259,19 @@ export default function VideoDiscovery({
             aria-label={`Watching: ${activeVideo.title}`}
           >
             {/* Close Overlay */}
-            <div 
-              className="absolute inset-0 cursor-default" 
-              onClick={() => setIsModalOpen(false)} 
+            <div
+              className="absolute inset-0 cursor-default"
+              onClick={() => setIsModalOpen(false)}
             />
 
             {/* Desktop Left Flanking Button */}
             <button
               onClick={handlePrev}
               disabled={activeIndex === 0}
-              className={`hidden sm:flex w-12 h-12 rounded-full border items-center justify-center shrink-0 transition-all cursor-pointer z-20 mr-4 ${
-                activeIndex === 0
-                  ? "border-white/5 text-gray-700 bg-white/[0.01] cursor-not-allowed"
-                  : "border-white/10 glassmorphism text-gold-400 hover:text-white hover:border-gold-400/40 hover:scale-105"
-              }`}
+              className={`hidden sm:flex w-12 h-12 rounded-full border items-center justify-center shrink-0 transition-all cursor-pointer z-20 mr-4 ${activeIndex === 0
+                ? "border-white/5 text-gray-700 bg-white/[0.01] cursor-not-allowed"
+                : "border-white/10 glassmorphism text-gold-400 hover:text-white hover:border-gold-400/40 hover:scale-105"
+                }`}
               aria-label="Previous video case"
             >
               <ChevronLeft className="w-6 h-6" />
@@ -285,7 +284,7 @@ export default function VideoDiscovery({
               transition={{ type: "spring", damping: 28, stiffness: 220 }}
               className="relative w-full max-w-4xl glassmorphism rounded-3xl overflow-hidden shadow-2xl border border-white/10 bg-cosmic-card/90 z-10 flex flex-col"
             >
-              
+
               {/* Modal Top Bar */}
               <div className="flex items-center justify-between p-4 sm:p-5 border-b border-white/5 select-none bg-black/20">
                 <div className="flex items-center gap-2">
@@ -294,18 +293,17 @@ export default function VideoDiscovery({
                     Dr. Dheeraj Vishwakarma Spine Care
                   </span>
                 </div>
-                
+
                 {/* Navigation and Close triggers */}
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-1.5 sm:hidden">
                     <button
                       onClick={handlePrev}
                       disabled={activeIndex === 0}
-                      className={`p-1.5 rounded-full border transition-all ${
-                        activeIndex === 0
-                          ? "border-white/5 text-gray-700 cursor-not-allowed"
-                          : "border-white/10 text-gold-400 bg-white/5"
-                      }`}
+                      className={`p-1.5 rounded-full border transition-all ${activeIndex === 0
+                        ? "border-white/5 text-gray-700 cursor-not-allowed"
+                        : "border-white/10 text-gold-400 bg-white/5"
+                        }`}
                       aria-label="Previous video"
                     >
                       <ChevronLeft className="w-4 h-4" />
@@ -313,11 +311,10 @@ export default function VideoDiscovery({
                     <button
                       onClick={handleNext}
                       disabled={activeIndex === videoData.length - 1}
-                      className={`p-1.5 rounded-full border transition-all ${
-                        activeIndex === videoData.length - 1
-                          ? "border-white/5 text-gray-700 cursor-not-allowed"
-                          : "border-white/10 text-gold-400 bg-white/5"
-                      }`}
+                      className={`p-1.5 rounded-full border transition-all ${activeIndex === videoData.length - 1
+                        ? "border-white/5 text-gray-700 cursor-not-allowed"
+                        : "border-white/10 text-gold-400 bg-white/5"
+                        }`}
                       aria-label="Next video"
                     >
                       <ChevronRight className="w-4 h-4" />
@@ -368,11 +365,10 @@ export default function VideoDiscovery({
             <button
               onClick={handleNext}
               disabled={activeIndex === videoData.length - 1}
-              className={`hidden sm:flex w-12 h-12 rounded-full border items-center justify-center shrink-0 transition-all cursor-pointer z-20 ml-4 ${
-                activeIndex === videoData.length - 1
-                  ? "border-white/5 text-gray-700 bg-white/[0.01] cursor-not-allowed"
-                  : "border-white/10 glassmorphism text-gold-400 hover:text-white hover:border-gold-400/40 hover:scale-105"
-              }`}
+              className={`hidden sm:flex w-12 h-12 rounded-full border items-center justify-center shrink-0 transition-all cursor-pointer z-20 ml-4 ${activeIndex === videoData.length - 1
+                ? "border-white/5 text-gray-700 bg-white/[0.01] cursor-not-allowed"
+                : "border-white/10 glassmorphism text-gold-400 hover:text-white hover:border-gold-400/40 hover:scale-105"
+                }`}
               aria-label="Next video case"
             >
               <ChevronRight className="w-6 h-6" />

@@ -164,13 +164,12 @@ export default function ParallaxCarousel() {
             </div>
 
             <h2 className="font-display text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
-              Parallax Case Gallery
+              Leading Endoscopic Spine Surgery Showcase
             </h2>
 
             <p className="text-gray-400 text-xs sm:text-sm max-w-xl font-sans leading-relaxed">
-              Explore awards, medical workshops, and fellowship milestones
-              through an immersive interactive gallery. Drag to navigate and
-              experience smooth depth and parallax motion.
+              Explore Dr. Dheeraj Vishwakarma's awards, medical workshops, and fellowship milestones
+              through an immersive interactive gallery.
             </p>
           </div>
 
@@ -261,10 +260,6 @@ export default function ParallaxCarousel() {
                         : "transform 700ms cubic-bezier(0.22, 1, 0.36, 1)",
                     }}
                   />
-
-                  {/* Gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent pointer-events-none" />
-
 
                   {/* Active border glow */}
                   {distance === 0 && (

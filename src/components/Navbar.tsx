@@ -25,9 +25,7 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
     { label: "About", to: "/about" },
     { label: "Treatments", to: "/treatments" },
     { label: "Blogs", to: "/blogs" },
-    { label: "Gallery", to: "/gallery" },
-    { label: "Recovery Timeline", to: "/#recovery-section" },
-    { label: "FAQ", to: "/#faq-section" }
+    { label: "Gallery", to: "/gallery" }
   ];
 
   const handleItemClick = () => {
