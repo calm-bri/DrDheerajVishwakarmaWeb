@@ -719,7 +719,114 @@ registerCrudRoutes('testimonials', INITIAL_TESTIMONIALS);
 registerCrudRoutes('conditions', INITIAL_CONDITIONS);
 registerCrudRoutes('faqs', INITIAL_FAQS);
 registerCrudRoutes('blogs', INITIAL_BLOGS);
-registerCrudRoutes('videos', INITIAL_VIDEOS);
+// Custom Supabase handler for Videos endpoint
+app.get('/api/videos', async (req, res) => {
+  try {
+    if (!supabase) {
+      return res.json(getLocalData('videos', INITIAL_VIDEOS));
+    }
+    // 1. Try fetching from videos table in Supabase
+    const { data: vidData, error: vidErr } = await supabase.from('videos').select('*');
+    if (!vidErr && vidData && vidData.length > 0) {
+      return res.json(vidData);
+    }
+    // 2. If videos table empty/missing, query Supabase showcases table for items with videoUrl
+    const { data: scData, error: scErr } = await supabase.from('showcases').select('*').not('videoUrl', 'is', null);
+    if (!scErr && scData && scData.length > 0) {
+      const mapped = scData.map((s: any) => ({
+        id: s.id,
+        title: s.title,
+        description: s.description,
+        poster: s.imageUrl || '/endoscopic_spine_poster.jpg',
+        videoUrl: s.videoUrl,
+        category: s.badge || s.subtitle || 'Monoportal Spine Surgery'
+      }));
+      return res.json(mapped);
+    }
+    return res.json(getLocalData('videos', INITIAL_VIDEOS));
+  } catch (err: any) {
+    console.warn("Error fetching videos from Supabase:", err.message);
+    res.json(getLocalData('videos', INITIAL_VIDEOS));
+  }
+});
+
+app.post('/api/videos', verifyAdmin, async (req, res) => {
+  const newVid = { ...req.body };
+  if (!newVid.id) newVid.id = `vid-${Date.now()}`;
+
+  try {
+    if (supabase) {
+      const showcaseEntry = {
+        id: newVid.id,
+        title: newVid.title,
+        subtitle: newVid.category || 'Monoportal Spine Surgery',
+        description: newVid.description,
+        category: 'surgical',
+        location: 'Jaipur Clinic',
+        date: '2026',
+        imageUrl: newVid.poster || '/endoscopic_spine_poster.jpg',
+        videoUrl: newVid.videoUrl,
+        sizeClass: 'md:col-span-1 md:row-span-1',
+        badge: newVid.category || '4K Spine Video Log',
+        featuredInHero: false
+      };
+      await supabase.from('showcases').upsert(showcaseEntry);
+      await supabase.from('videos').upsert(newVid).catch(() => {});
+    }
+    const local = getLocalData('videos', INITIAL_VIDEOS);
+    local.unshift(newVid);
+    saveLocalData('videos', local);
+    res.status(201).json(newVid);
+  } catch (err: any) {
+    res.status(201).json(newVid);
+  }
+});
+
+app.put('/api/videos/:id', verifyAdmin, async (req, res) => {
+  const updatedFields = req.body;
+  const id = req.params.id;
+
+  try {
+    if (supabase) {
+      const scUpdate: any = {};
+      if (updatedFields.title !== undefined) scUpdate.title = updatedFields.title;
+      if (updatedFields.description !== undefined) scUpdate.description = updatedFields.description;
+      if (updatedFields.videoUrl !== undefined) scUpdate.videoUrl = updatedFields.videoUrl;
+      if (updatedFields.poster !== undefined) scUpdate.imageUrl = updatedFields.poster;
+      if (updatedFields.category !== undefined) {
+        scUpdate.badge = updatedFields.category;
+        scUpdate.subtitle = updatedFields.category;
+      }
+      await supabase.from('showcases').update(scUpdate).eq('id', id);
+      await supabase.from('videos').update(updatedFields).eq('id', id).catch(() => {});
+    }
+    const local = getLocalData('videos', INITIAL_VIDEOS);
+    const idx = local.findIndex((v: any) => v.id === id);
+    if (idx !== -1) {
+      local[idx] = { ...local[idx], ...updatedFields };
+      saveLocalData('videos', local);
+    }
+    res.json({ id, ...updatedFields });
+  } catch (err: any) {
+    res.json({ id, ...updatedFields });
+  }
+});
+
+app.delete('/api/videos/:id', verifyAdmin, async (req, res) => {
+  const id = req.params.id;
+  try {
+    if (supabase) {
+      await supabase.from('showcases').delete().eq('id', id);
+      await supabase.from('videos').delete().eq('id', id).catch(() => {});
+    }
+    const local = getLocalData('videos', INITIAL_VIDEOS);
+    const filtered = local.filter((v: any) => v.id !== id);
+    saveLocalData('videos', filtered);
+    res.json({ success: true, id });
+  } catch (err: any) {
+    res.json({ success: true, id });
+  }
+});
 
 // Generate signed upload URL endpoint
 app.post('/api/upload/sign', async (req, res) => {

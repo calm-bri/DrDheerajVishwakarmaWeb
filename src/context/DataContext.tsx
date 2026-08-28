@@ -269,16 +269,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (vidsRes.ok) {
           const resJson = await vidsRes.json();
           if (Array.isArray(resJson) && resJson.length > 0) {
-            const merged = [...resJson];
-            videoData.forEach(v => {
-              if (!merged.some(mv => mv.videoUrl === v.videoUrl || mv.id === v.id)) {
-                merged.push(v);
-              }
-            });
-            setVideos(merged);
+            setVideos(resJson);
 
-            // Merge videos into showcases for full Gallery integration
-            const videoShowcaseItems: ShowcaseItem[] = merged.map(vid => ({
+            // Merge videos into showcases for full Gallery integration if missing
+            const videoShowcaseItems: ShowcaseItem[] = resJson.map((vid: any) => ({
               id: vid.id,
               title: vid.title,
               subtitle: vid.category,
