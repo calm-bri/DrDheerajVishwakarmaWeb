@@ -452,6 +452,9 @@ export const blogsData: BlogArticle[] = [
 
 export const socialLinks = {
   whatsapp: "https://wa.me/918999898129",
+  whatsappAlt: "https://wa.me/919672144129",
+  phone1: "+91 89998 98129",
+  phone2: "+91 96721 44129",
   instagram: "https://www.instagram.com/drdheerajneurospine/",
   facebook: "https://www.facebook.com/people/Dr-Dheeraj-Vishwakarma/61584240751204/",
   linkedin: "https://www.linkedin.com/in/drdheerajneurospine/"

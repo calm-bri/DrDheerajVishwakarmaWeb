@@ -352,7 +352,7 @@ export default function BookingModal({ isOpen, onClose, preferredTreatmentId = "
                   </div>
                   <div className="flex items-center gap-2">
                     <PhoneCall className="w-4 h-4 text-gold-400" />
-                    <span>Clinical desk contact: <strong className="text-white">+91 89998 98129</strong></span>
+                    <span>Clinical desk contact: <strong className="text-white">+91 89998 98129 / +91 96721 44129</strong></span>
                   </div>
                   <p className="text-[10px] text-gray-500 mt-2 leading-relaxed border-t border-white/5 pt-2">
                     Our international concierge desk will reach out on <strong className="text-gray-300">{phone}</strong> within 2 hours to confirm your video schedule and coordinate any live MRI translations.

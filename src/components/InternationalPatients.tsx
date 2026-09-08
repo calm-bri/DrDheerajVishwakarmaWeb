@@ -40,7 +40,11 @@ export default function InternationalPatients({ onOpenBooking }: InternationalPa
             <div className="w-[1px] h-8 bg-white/10" />
             <div>
               <span className="text-gray-500 block font-bold">TELEHEALTH WHATSAPP</span>
-              <a href="tel:+918999898129" className="text-white hover:underline">+91 89998 98129</a>
+              <div className="flex items-center gap-2">
+                <a href="tel:+918999898129" className="text-white hover:underline">+91 89998 98129</a>
+                <span className="text-gray-600">/</span>
+                <a href="tel:+919672144129" className="text-white hover:underline">+91 96721 44129</a>
+              </div>
             </div>
           </div>
         </div>

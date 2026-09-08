@@ -98,13 +98,22 @@ export default function FAQ() {
             <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-gray-500">
               OR TALK LIVE ON CLINICAL WHATSAPP:
             </span>
-            <a
-              href="tel:+918999898129"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/15 text-[10px] font-mono text-emerald-400 font-bold uppercase hover:bg-emerald-500/20 transition-colors"
-            >
-              <PhoneCall className="w-3.5 h-3.5" />
-              <span>+91 89998 98129</span>
-            </a>
+            <div className="flex flex-wrap gap-2 justify-center">
+              <a
+                href="tel:+918999898129"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/15 text-[10px] font-mono text-emerald-400 font-bold uppercase hover:bg-emerald-500/20 transition-colors"
+              >
+                <PhoneCall className="w-3.5 h-3.5" />
+                <span>+91 89998 98129</span>
+              </a>
+              <a
+                href="tel:+919672144129"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/15 text-[10px] font-mono text-emerald-400 font-bold uppercase hover:bg-emerald-500/20 transition-colors"
+              >
+                <PhoneCall className="w-3.5 h-3.5" />
+                <span>+91 96721 44129</span>
+              </a>
+            </div>
           </div>
         </div>
 

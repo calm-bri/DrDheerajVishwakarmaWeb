@@ -29,7 +29,7 @@ export default function Home({ onOpenBooking }: HomeProps) {
       "@type": "Physician",
       "name": "Dr. Dheeraj Vishwakarma",
       "image": "https://www.endoscopicspinecare.com/logo.png",
-      "telephone": "+91-99993-45892",
+      "telephone": ["+91-89998-98129", "+91-96721-44129"],
       "priceRange": "$$",
       "medicalSpecialty": "Monoportal Endoscopic Spine Surgery, Spine Surgery, Neurosurgery",
       "description": "Pioneering Endoscopic Spine Surgeon specializing in Monoportal & Minimally Invasive Spine Procedures. Trained under Dr. Sukumar Sura, a leading authority in endoscopic spine surgery. Performed the first Cervical Monoportal Endoscopic Discectomy in Jaipur & Rajasthan. Performed the first Dorsal Monoportal Endoscopic Discectomy in Jaipur & Rajasthan. Achieved the first Monoportal Endoscopic Spine Surgery in the State of Rajasthan. Expert in Single-Stitch Spine Surgery for faster recovery and minimal tissue trauma. Operated on the youngest Cauda Equina patient, recognized by the India Book of Records & Asia Book of Records.",
@@ -56,7 +56,7 @@ export default function Home({ onOpenBooking }: HomeProps) {
       "@type": "MedicalBusiness",
       "name": "Dr. Dheeraj Vishwakarma Spine Care",
       "image": "https://www.endoscopicspinecare.com/logo.png",
-      "telephone": "+91-99993-45892",
+      "telephone": ["+91-89998-98129", "+91-96721-44129"],
       "priceRange": "$$",
       "address": {
         "@type": "PostalAddress",

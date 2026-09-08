@@ -116,11 +116,16 @@ export default function Footer() {
                 </a>
               </div>
 
-              <div className="flex items-center gap-2.5">
-                <Phone className="w-4 h-4 text-emerald-400 shrink-0" />
-                <a href="tel:+918999898129" className="hover:text-gold-400">
-                  +91 89998 98129 (Priority desk)
-                </a>
+              <div className="flex items-start gap-2.5">
+                <Phone className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                <div className="flex flex-col space-y-1">
+                  <a href="tel:+918999898129" className="hover:text-gold-400 transition-colors">
+                    +91 89998 98129 (Priority desk)
+                  </a>
+                  <a href="tel:+919672144129" className="hover:text-gold-400 transition-colors">
+                    +91 96721 44129 (Priority desk)
+                  </a>
+                </div>
               </div>
 
               <div className="flex items-center gap-2.5">

@@ -13,7 +13,7 @@ export default function ContactPage({ onOpenBooking }: ContactPageProps) {
       "@type": "MedicalClinic",
       "name": "Dr. Dheeraj Vishwakarma Spine Consultation Desk",
       "image": "https://www.endoscopicspinecare.com/logo.png",
-      "telephone": "+91-99993-45892",
+      "telephone": ["+91-89998-98129", "+91-96721-44129"],
       "priceRange": "$$",
       "address": {
         "@type": "PostalAddress",
@@ -37,7 +37,7 @@ export default function ContactPage({ onOpenBooking }: ContactPageProps) {
     >
       <SEOComponent
         title="Contact Dr. Dheeraj Vishwakarma | Spine Clinic Bookings"
-        description="Contact our clinical consultation desk at +91 89998 98129 or submit MRI scans online to schedule keyhole endoscopic spine surgery with Dr. Vishwakarma."
+        description="Contact our clinical consultation desk at +91 89998 98129 / +91 96721 44129 or submit MRI scans online to schedule keyhole endoscopic spine surgery with Dr. Vishwakarma."
         path="/contact"
         schemas={contactSchemas}
       />
@@ -73,9 +73,15 @@ export default function ContactPage({ onOpenBooking }: ContactPageProps) {
                 </div>
                 <div>
                   <p className="font-mono text-[9px] uppercase tracking-wider text-gray-500">Priority Booking Hotline</p>
-                  <a href="tel:+918999898129" className="hover:text-gold-300 transition-colors text-white font-medium block mt-0.5">
-                    +91 89998 98129
-                  </a>
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-0.5">
+                    <a href="tel:+918999898129" className="hover:text-gold-300 transition-colors text-white font-medium block">
+                      +91 89998 98129
+                    </a>
+                    <span className="text-gray-600">|</span>
+                    <a href="tel:+919672144129" className="hover:text-gold-300 transition-colors text-white font-medium block">
+                      +91 96721 44129
+                    </a>
+                  </div>
                   <p className="text-[10px] text-gray-500 mt-0.5">Available for urgent triage & scheduler questions (9 AM - 7 PM IST)</p>
                 </div>
               </div>

@@ -11,7 +11,7 @@ export default function AboutPage() {
       "@type": "Physician",
       "name": "Dr. Dheeraj Vishwakarma",
       "image": "https://www.endoscopicspinecare.com/logo.png",
-      "telephone": "+91-99993-45892",
+      "telephone": ["+91-89998-98129", "+91-96721-44129"],
       "priceRange": "$$",
       "medicalSpecialty": "Monoportal Endoscopic Spine Surgery, Spine Surgery, Neurosurgery",
       "jobTitle": "Monoportal Endoscopic Spine Surgeon & Neurosurgeon",
