@@ -8,13 +8,13 @@ import Footer from "./components/Footer";
 import BookingModal from "./components/BookingModal";
 import Breadcrumbs from "./components/Breadcrumbs";
 import SocialActionCard from "./components/SocialActionCard";
+import MobileStickyBar from "./components/MobileStickyBar";
 
 // Lazy load pages
 const Home = lazy(() => import("./pages/Home"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
-const ServicesPage = lazy(() => import("./pages/ServicesPage"));
 const TreatmentsPage = lazy(() => import("./pages/TreatmentsPage"));
-const ConditionsPage = lazy(() => import("./pages/ConditionsPage"));
+const TreatmentDetailPage = lazy(() => import("./pages/TreatmentDetailPage"));
 const BlogsPage = lazy(() => import("./pages/BlogsPage"));
 const GalleryPage = lazy(() => import("./pages/GalleryPage"));
 const ContactPage = lazy(() => import("./pages/ContactPage"));
@@ -64,10 +64,10 @@ export default function App() {
       ) : (
         <div className="flex flex-col min-h-screen relative z-10">
           
-          {/* Futuristic Cinematic Backplane */}
+          {/* Deep Navy Futuristic Backplane */}
           <BioBackground />
 
-          {/* Floating Pill Header */}
+          {/* Sticky Precision Header */}
           <Navbar 
             onOpenBooking={() => handleOpenBooking()} 
           />
@@ -75,8 +75,8 @@ export default function App() {
           {/* Breadcrumbs Path Indicator */}
           <Breadcrumbs />
 
-          {/* Core Content Layers Floating above the Canvas */}
-          <main className="flex-1 pb-10">
+          {/* Core Content Layers */}
+          <main className="flex-1 pb-20 md:pb-10 relative z-10">
             <Suspense fallback={
               <div className="min-h-[50vh] flex items-center justify-center">
                 <div className="w-8 h-8 rounded-full border-2 border-gold-400 border-t-transparent animate-spin"></div>
@@ -86,10 +86,14 @@ export default function App() {
                 {/* @ts-expect-error key is a standard React prop but not declared in RoutesProps */}
                 <Routes location={location} key={pathname}>
                   <Route path="/" element={<Home onOpenBooking={handleOpenBooking} />} />
-                  <Route path="/about" element={<AboutPage />} />
-                  <Route path="/services" element={<ServicesPage onOpenBooking={handleOpenBooking} />} />
+                  <Route path="/about" element={<AboutPage onOpenBooking={handleOpenBooking} />} />
                   <Route path="/treatments" element={<TreatmentsPage onOpenBooking={handleOpenBooking} />} />
-                  <Route path="/conditions" element={<ConditionsPage onOpenBooking={handleOpenBooking} />} />
+                  <Route path="/treatments/:slug" element={<TreatmentDetailPage onOpenBooking={handleOpenBooking} />} />
+                  
+                  {/* Clean 301-style redirects for legacy/duplicate routes to avoid duplicate content penalties */}
+                  <Route path="/services" element={<Navigate to="/treatments" replace />} />
+                  <Route path="/conditions" element={<Navigate to="/treatments" replace />} />
+
                   <Route path="/blogs" element={<BlogsPage />} />
                   <Route path="/gallery" element={<GalleryPage />} />
                   <Route path="/contact" element={<ContactPage onOpenBooking={() => handleOpenBooking()} />} />
@@ -102,7 +106,7 @@ export default function App() {
             </Suspense>
           </main>
 
-          {/* Luxury Editorial Footer with Doctor & Local Business JSON Schema */}
+          {/* Editorial Footer */}
           <Footer />
 
           {/* Central booking dialogue scheduler */}
@@ -112,8 +116,11 @@ export default function App() {
             preferredTreatmentId={preferredTreatment}
           />
 
-          {/* Floating Social Connections widget */}
+          {/* Floating Social Connections widget (Desktop) */}
           <SocialActionCard />
+
+          {/* Mobile-Friendly Sticky Bottom Bar with Call, WhatsApp, and Booking */}
+          <MobileStickyBar onOpenBooking={() => handleOpenBooking()} />
 
         </div>
       )}

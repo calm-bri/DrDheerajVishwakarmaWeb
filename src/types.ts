@@ -10,6 +10,40 @@ export interface SpineCondition {
   iconName: string;
 }
 
+export interface DetailedTreatment {
+  slug: string;
+  id: string;
+  name: string;
+  badge: string;
+  shortDescription: string;
+  heroImage: string;
+  heroImageAlt: string;
+  category: string;
+  overview: string[];
+  symptoms: Array<{ title: string; description: string }>;
+  causes: string[];
+  diagnosis: Array<{ title: string; description: string }>;
+  treatmentOptions: {
+    conservative: string[];
+    whenSurgeryConsidered: string[];
+  };
+  procedureExplanation: {
+    summary: string;
+    steps: Array<{ stepNumber: number; title: string; description: string }>;
+  };
+  benefits: string[];
+  risksAndLimitations: string[];
+  recoveryTimeline: Array<{ timeframe: string; title: string; description: string }>;
+  faqs: Array<{ question: string; answer: string }>;
+  relatedSlugs: string[];
+  metrics: {
+    incisionSize: string;
+    anesthesia: string;
+    hospitalStay: string;
+    recoveryTime: string;
+  };
+}
+
 export interface RecoveryTimelineStep {
   day: string;
   title: string;

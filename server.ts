@@ -866,8 +866,9 @@ app.post('/api/videos', verifyAdmin, async (req, res) => {
         badge: newVid.category || '4K Spine Video Log',
         featuredInHero: false
       };
-      await supabase.from('showcases').upsert(showcaseEntry);
-      await supabase.from('videos').upsert(newVid).catch(() => {});
+      try {
+        await supabase.from('videos').upsert(newVid);
+      } catch {}
     }
     const local = getLocalData('videos', INITIAL_VIDEOS);
     local.unshift(newVid);
@@ -894,7 +895,9 @@ app.put('/api/videos/:id', verifyAdmin, async (req, res) => {
         scUpdate.subtitle = updatedFields.category;
       }
       await supabase.from('showcases').update(scUpdate).eq('id', id);
-      await supabase.from('videos').update(updatedFields).eq('id', id).catch(() => {});
+      try {
+        await supabase.from('videos').update(updatedFields).eq('id', id);
+      } catch {}
     }
     const local = getLocalData('videos', INITIAL_VIDEOS);
     const idx = local.findIndex((v: any) => v.id === id);
@@ -913,7 +916,9 @@ app.delete('/api/videos/:id', verifyAdmin, async (req, res) => {
   try {
     if (supabase) {
       await supabase.from('showcases').delete().eq('id', id);
-      await supabase.from('videos').delete().eq('id', id).catch(() => {});
+      try {
+        await supabase.from('videos').delete().eq('id', id);
+      } catch {}
     }
     const local = getLocalData('videos', INITIAL_VIDEOS);
     const filtered = local.filter((v: any) => v.id !== id);

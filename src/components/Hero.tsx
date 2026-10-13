@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
-import { Star, ShieldCheck, Play, ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { Star, ShieldCheck, Play, ArrowUpRight, ChevronLeft, ChevronRight, PhoneCall } from "lucide-react";
 import BilingualText from "./BilingualText";
 import { useData } from "../context/DataContext";
 import { INITIAL_SHOWCASES } from "./Gallery";
@@ -536,23 +536,32 @@ export default function Hero({ onOpenBooking, onExploreScience, onNavigateAbout,
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.5 }}
-            className="flex flex-wrap items-center gap-4 pt-2 w-full justify-start"
+            className="flex flex-wrap items-center gap-3.5 pt-2 w-full justify-start"
           >
             {/* Primary Booking Consult */}
             <button
               id="hero-cta-consult"
               onClick={onOpenBooking}
-              className="bg-gradient-to-r from-gold-400 via-gold-500 to-gold-600 hover:from-gold-300 hover:to-gold-500 text-black px-8 py-4 rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-300 shadow-[0_0_30px_rgba(193,161,113,0.3)] hover:scale-105 cursor-pointer flex items-center justify-start gap-2"
+              className="bg-gradient-to-r from-gold-400 via-gold-500 to-gold-600 hover:from-gold-300 hover:to-gold-500 text-black px-7 py-3.5 rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-300 shadow-[0_0_30px_rgba(193,161,113,0.3)] hover:scale-105 cursor-pointer flex items-center justify-start gap-2"
             >
               <span>Book Appointment</span>
               <ArrowUpRight className="w-4 h-4 text-black" />
             </button>
 
+            {/* Direct Phone Helpline CTA */}
+            <a
+              href="tel:+918999898129"
+              className="bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-300 px-6 py-3.5 rounded-full text-xs font-semibold tracking-wider uppercase transition-all hover:scale-105 flex items-center justify-start gap-2 cursor-pointer shadow-sm"
+            >
+              <PhoneCall className="w-4 h-4 text-emerald-400" />
+              <span>Call +91 89998 98129</span>
+            </a>
+
             {/* Secondary Watching Procedure anchor */}
             <button
               id="hero-cta-explore"
               onClick={onExploreScience}
-              className="glassmorphism hover:bg-white/5 text-white px-7 py-4 rounded-full text-xs font-bold tracking-widest uppercase transition-all hover:scale-105 cursor-pointer flex items-center justify-start gap-2"
+              className="glassmorphism hover:bg-white/10 text-white px-6 py-3.5 rounded-full text-xs font-bold tracking-widest uppercase transition-all hover:scale-105 cursor-pointer flex items-center justify-start gap-2"
             >
               <Play className="w-3.5 h-3.5 text-sky-400 fill-sky-400/20" />
               <span>Explore Treatments</span>
@@ -561,10 +570,10 @@ export default function Hero({ onOpenBooking, onExploreScience, onNavigateAbout,
             {/* Play Cinematic Procedure Video button */}
             <button
               onClick={onPlayVideo}
-              className="border border-gold-400/30 bg-gold-400/5 hover:bg-gold-400/15 text-gold-400 hover:text-white hover:border-gold-300 px-7 py-4 rounded-full text-xs font-bold tracking-widest uppercase transition-all hover:scale-105 shadow-[0_0_20px_rgba(193,161,113,0.1)] cursor-pointer flex items-center justify-start gap-2"
+              className="border border-gold-400/30 bg-gold-400/5 hover:bg-gold-400/15 text-gold-400 hover:text-white hover:border-gold-300 px-6 py-3.5 rounded-full text-xs font-bold tracking-widest uppercase transition-all hover:scale-105 cursor-pointer flex items-center justify-start gap-2"
             >
               <Play className="w-3.5 h-3.5 fill-gold-400/10" />
-              <span>Play Cinematic Video</span>
+              <span>Watch Video</span>
             </button>
           </motion.div>
 

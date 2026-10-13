@@ -18,10 +18,17 @@
   --color-gold-900: #513725;
   --color-gold-950: #2d1d13;
 
-  --color-cosmic-bg: #041c1e;
-  --color-cosmic-card: #0b2d30;
+  --color-cosmic-bg: #070e1b;
+  --color-cosmic-card: #0e1a32;
   --color-cosmic-border: rgb(255 255 255 / 0.08);
   --color-cosmic-blue: #0ea5e9;
+
+  --color-navy-950: #040914;
+  --color-navy-900: #070e1b;
+  --color-navy-850: #0b1528;
+  --color-navy-800: #0e1a32;
+  --color-navy-700: #142445;
+  --color-navy-600: #1c325f;
 }
 
 @layer utilities {
@@ -94,11 +101,15 @@
 html {
   scroll-behavior: smooth;
   background-color: #030509;
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 body {
   color: #f3f4f6;
   font-family: var(--font-sans);
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 /* Hide volume & audio controls from native video players */

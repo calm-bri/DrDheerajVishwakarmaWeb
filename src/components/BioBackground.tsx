@@ -192,7 +192,7 @@ export default function BioBackground() {
   }, []);
 
   return (
-    <div className="absolute inset-0 z-0 h-full w-full overflow-hidden">
+    <div className="fixed inset-0 -z-10 pointer-events-none h-full w-full overflow-hidden">
       <canvas ref={canvasRef} className="block h-full w-full" />
       {/* Soft noise layer & vignette overlay */}
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-cosmic-bg via-transparent to-cosmic-bg/40 opacity-80" />

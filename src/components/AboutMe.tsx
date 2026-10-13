@@ -59,7 +59,7 @@ export default function AboutMe() {
           <img
             src="/doctor_white_coat.png"
             alt="Dr. Dheeraj Vishwakarma"
-            className="w-full h-full object-cover rounded-2xl scale-[1.35] origin-center"
+            className="w-full h-full object-cover object-top rounded-2xl"
             loading="lazy"
             referrerPolicy="no-referrer"
           />
@@ -77,7 +77,7 @@ export default function AboutMe() {
           <img
             src="/doctor_scrubs_provided.jpg"
             alt="Dr. Dheeraj Vishwakarma in Scrubs"
-            className="w-full h-full object-cover rounded-2xl scale-[1.35] origin-center"
+            className="w-full h-full object-cover object-top rounded-2xl"
             loading="lazy"
             referrerPolicy="no-referrer"
           />

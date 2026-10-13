@@ -21,15 +21,16 @@ export default function Logo({ className = "", mode = "full", lightBg = false }:
   if (mode === "icon") {
     if (!imageError) {
       return (
-        <div className={`${className} overflow-hidden rounded-full aspect-square relative flex items-center justify-center bg-transparent`}>
+        <div className={`relative flex items-center justify-center shrink-0 rounded-full overflow-hidden ${className}`}>
           <img
             src="/logo.png"
-            alt="Brain and Spine Endoscopic Surgeon"
+            alt="Dr. Dheeraj Vishwakarma - Endoscopic Spine Care Logo"
             width="176"
             height="176"
-            loading="lazy"
+            loading="eager"
             onError={() => setImageError(true)}
-            className="w-full h-full object-cover rounded-full scale-[1.15] transition-all duration-300"
+            className="w-full h-full object-contain rounded-full transition-all duration-300"
+            style={{ width: "auto", height: "auto", objectFit: "contain" }}
             referrerPolicy="no-referrer"
           />
         </div>
@@ -41,11 +42,12 @@ export default function Logo({ className = "", mode = "full", lightBg = false }:
         viewBox="0 0 400 400"
         className={`${className} transition-all duration-300`}
         xmlns="http://www.w3.org/2000/svg"
+        style={{ width: "auto", height: "auto", maxHeight: "100%", maxWidth: "100%" }}
       >
         {/* Soft Background Circle */}
         <circle cx="200" cy="200" r="175" fill={lightBg ? "#D5E3EA" : "rgba(213, 227, 234, 0.13)"} />
 
-        {/* Outer Orange/Gold Crescent Arc - matching top semi-circle of the uploaded logo */}
+        {/* Outer Orange/Gold Crescent Arc */}
         <path
           d="M 85,270 A 135,135 0 1,1 315,270 A 118,124 0 1,0 85,270"
           fill="#DE8C44"
@@ -60,20 +62,16 @@ export default function Logo({ className = "", mode = "full", lightBg = false }:
           strokeLinecap="round"
         />
 
-        {/* Brain Leaf Lobes - Green and Orange */}
+        {/* Brain Leaf Lobes */}
         <g id="brain-lobes">
-          {/* Left/Green Half */}
           <path
             d="M 200,175 C 175,170 170,140 185,125 C 192,118 200,122 200,140 Z"
             fill="#5FA682"
           />
-          {/* Right/Orange-Gold Half */}
           <path
             d="M 200,175 C 225,170 230,140 215,125 C 208,118 200,122 200,140 Z"
             fill="#DE8C44"
           />
-
-          {/* Slicing vein channels to create the leaf structure */}
           <line
             x1="200"
             y1="125"
@@ -83,25 +81,9 @@ export default function Logo({ className = "", mode = "full", lightBg = false }:
             strokeWidth="3.2"
             strokeLinecap="round"
           />
-          {/* Left veins */}
-          <path
-            d="M 200,135 Q 185,130 178,134 M 200,148 Q 182,145 174,150 M 200,161 Q 185,158 179,165"
-            fill="none"
-            stroke={lightBg ? "#D5E3EA" : "#111827"}
-            strokeWidth="2.5"
-            strokeLinecap="round"
-          />
-          {/* Right veins */}
-          <path
-            d="M 200,135 Q 215,130 222,134 M 200,148 Q 218,145 226,150 M 200,161 Q 215,158 221,165"
-            fill="none"
-            stroke={lightBg ? "#D5E3EA" : "#111827"}
-            strokeWidth="2.5"
-            strokeLinecap="round"
-          />
         </g>
 
-        {/* Spinal Back Curve - Dark Blue */}
+        {/* Spinal Back Curve */}
         <path
           d="M 198,245 C 205,275 208,310 200,345"
           fill="none"
@@ -110,7 +92,7 @@ export default function Logo({ className = "", mode = "full", lightBg = false }:
           strokeLinecap="round"
         />
 
-        {/* Back Shoulder Curve - Dark Blue */}
+        {/* Back Shoulder Curve */}
         <path
           d="M 195,245 C 185,260 175,280 120,305"
           fill="none"
@@ -119,26 +101,7 @@ export default function Logo({ className = "", mode = "full", lightBg = false }:
           strokeLinecap="round"
         />
 
-        {/* Front Shoulder Curve - Green */}
-        <path
-          d="M 225,235 C 235,248 255,260 295,265 C 310,267 322,305 322,305"
-          fill="none"
-          stroke="#5FA682"
-          strokeWidth="6"
-          strokeLinecap="round"
-          opacity="0.85"
-        />
-
-        {/* Right parallel green line matching original logo */}
-        <path
-          d="M 220,248 C 228,278 230,312 225,350"
-          fill="none"
-          stroke="#5FA682"
-          strokeWidth="7"
-          strokeLinecap="round"
-        />
-
-        {/* Spine Vertebrae: vertical series of orange/gold blocks curving with the spine path */}
+        {/* Vertebrae Blocks */}
         <g fill="#FF9D42">
           <rect x="203" y="240" width="11" height="6" rx="1.5" transform="rotate(-15, 208, 243)" />
           <rect x="206" y="251" width="11" height="6.5" rx="1.5" transform="rotate(-10, 211, 254)" />
@@ -147,57 +110,6 @@ export default function Logo({ className = "", mode = "full", lightBg = false }:
           <rect x="209" y="285" width="12" height="7" rx="1.5" transform="rotate(5, 215, 288)" />
           <rect x="208" y="297" width="12" height="7" rx="1.5" transform="rotate(10, 214, 300)" />
           <rect x="206" y="309" width="11" height="7" rx="1.5" transform="rotate(15, 211, 312)" />
-          <rect x="203" y="321" width="11" height="6.5" rx="1.5" transform="rotate(18, 208, 324)" />
-          <rect x="199" y="332" width="10" height="6.5" rx="1.5" transform="rotate(20, 204, 335)" />
-          <rect x="195" y="343" width="9" height="6" rx="1.5" transform="rotate(22, 199, 346)" />
-        </g>
-
-        {/* Endoscopic surgical instrument tool */}
-        <g id="endoscopic-probe-tool">
-          {/* Loop wire/cable */}
-          <path
-            d="M 295,278 C 325,273 330,305 310,312 C 295,317 285,302 298,290"
-            fill="none"
-            stroke="#7F8C8D"
-            strokeWidth="2.8"
-            strokeLinecap="round"
-          />
-          {/* Shaft of the instrument */}
-          <line
-            x1="295"
-            y1="280"
-            x2="228"
-            y2="295"
-            stroke={lightBg ? "#132D3E" : "#BDC3C7"}
-            strokeWidth="3.6"
-            strokeLinecap="round"
-          />
-          {/* Collar of probe */}
-          <line
-            x1="233"
-            y1="294"
-            x2="228"
-            y2="295"
-            stroke="#DE8C44"
-            strokeWidth="5"
-          />
-          {/* Laser targeting beam pointing directly to spinal segment */}
-          <line
-            x1="228"
-            y1="295"
-            x2="214"
-            y2="298"
-            stroke="#DE8C44"
-            strokeWidth="2"
-            strokeDasharray="2,1.5"
-          />
-          {/* Blue Connector */}
-          <polygon
-            points="289,275 299,273 302,281 292,283"
-            fill="#4FA3DF"
-          />
-          {/* Small selector dial */}
-          <circle cx="294" cy="274" r="2" fill="#DE8C44" />
         </g>
       </svg>
     );
@@ -205,17 +117,19 @@ export default function Logo({ className = "", mode = "full", lightBg = false }:
 
   if (mode === "horizontal") {
     return (
-      <div className={`flex items-center gap-1.5 sm:gap-2.5 ${className}`}>
-        <Logo mode="icon" className="w-8 h-8 sm:w-11 sm:h-11 shrink-0 animate-pulse-slow" lightBg={lightBg} />
-        <div className="flex flex-col text-left">
-          <span className="font-display font-black text-[9px] sm:text-[13px] tracking-[0.1em] sm:tracking-[0.14em] uppercase text-white leading-tight">
-            MONOPORTAL ENDOSCOPIC
+      <div className={`flex items-center gap-2 sm:gap-3 min-w-0 ${className}`}>
+        <div className="w-9 h-9 sm:w-11 sm:h-11 flex items-center justify-center shrink-0 rounded-full overflow-hidden">
+          <Logo mode="icon" className="w-full h-full max-h-11" lightBg={lightBg} />
+        </div>
+        <div className="flex flex-col text-left justify-center min-w-0">
+          <span className="font-display font-bold text-xs sm:text-sm tracking-wide text-white leading-tight truncate">
+            Dr. Dheeraj Vishwakarma
           </span>
-          <span className="font-sans text-[6.5px] sm:text-[9px] font-bold text-gold-400 tracking-[0.1em] sm:tracking-[0.18em] uppercase leading-none mt-0.5 whitespace-nowrap">
-            SPINE NEUROSURGEON
+          <span className="font-sans text-[8.5px] sm:text-[10px] font-bold text-gold-400 tracking-[0.14em] uppercase leading-tight mt-0.5 truncate">
+            Endoscopic Spine Care
           </span>
-          <span className="font-display text-[7.5px] sm:text-[11px] font-semibold text-gray-200 tracking-wider mt-0.5 whitespace-nowrap hidden min-[360px]:block">
-            DR. DHEERAJ VISHWAKARMA
+          <span className="font-mono text-[7.5px] sm:text-[8.5px] text-gray-400 tracking-wider hidden sm:block uppercase mt-0.5">
+            M.Ch Neurosurgery • FESS Specialist
           </span>
         </div>
       </div>
@@ -224,30 +138,26 @@ export default function Logo({ className = "", mode = "full", lightBg = false }:
 
   return (
     <div className={`flex flex-col items-center text-center ${className}`}>
-      {/* Full Emblem circle matching screenshot */}
-      <div className="relative w-44 h-44 sm:w-56 sm:h-56 mx-auto select-none">
+      <div className="relative w-36 h-36 sm:w-44 sm:h-44 mx-auto select-none flex items-center justify-center p-2">
         <Logo mode="icon" className="w-full h-full" lightBg={lightBg} />
       </div>
 
-      {/* Banner mimicking the exact layout of the uploaded logo */}
-      <div className="mt-4 px-5 py-4 rounded-2xl bg-gradient-to-b from-sky-950/45 to-cosmic-card/90 border border-gold-400/20 shadow-[0_4px_30px_rgba(0,0,0,0.4)] max-w-sm sm:max-w-md">
-        <h4 className="font-serif font-black text-lg sm:text-2xl tracking-[0.1em] text-white">
-          MONOPORTAL ENDOSCOPIC
+      <div className="mt-3 px-5 py-3.5 rounded-2xl bg-gradient-to-b from-navy-800/80 to-navy-900/90 border border-gold-400/25 shadow-xl max-w-sm sm:max-w-md">
+        <h4 className="font-display font-bold text-base sm:text-xl tracking-wide text-white">
+          Dr. Dheeraj Vishwakarma
         </h4>
         
-        <div className="flex items-center justify-center gap-3 my-1.5">
-          <div className="h-[1px] w-8 bg-gold-400/30" />
-          <span className="font-sans text-[10px] sm:text-xs font-bold text-[#DE8C44] tracking-[0.2em] uppercase shrink-0 leading-none">
-            SPINE NEUROSURGEON
+        <div className="flex items-center justify-center gap-2.5 my-1.5">
+          <div className="h-[1px] w-6 bg-gold-400/30" />
+          <span className="font-sans text-[10px] sm:text-xs font-bold text-gold-400 tracking-[0.18em] uppercase shrink-0">
+            Endoscopic Spine Surgeon
           </span>
-          <div className="h-[1px] w-8 bg-gold-400/30" />
+          <div className="h-[1px] w-6 bg-gold-400/30" />
         </div>
 
-        <div className="h-[1px] w-24 bg-white/10 mx-auto my-2" />
-
-        <h3 className="font-sans font-extrabold text-sm sm:text-base tracking-wider text-white uppercase pt-0.5">
-          DR. DHEERAJ VISHWAKARMA
-        </h3>
+        <p className="font-mono text-[9px] text-gray-400 tracking-wider uppercase">
+          M.Ch Neurosurgery • Full Monoportal Spine Surgery
+        </p>
       </div>
     </div>
   );
