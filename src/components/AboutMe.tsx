@@ -115,14 +115,14 @@ export default function AboutMe() {
     {
       degree: "International Fellowship in Endoscopic Spine Surgery & Neurosurgery",
       institution: "AIN Hospital, South Korea",
-      period: "2024 - 2025",
+      period: "2026",
       location: "South Korea",
       details: "Completed the International Fellowship in Endoscopic Spine Surgery and Neurosurgery at AIN Hospital, South Korea, under the mentorship of Dr. Kang-Taek Lim, gaining valuable insights into advanced endoscopic spine surgery and minimally invasive spinal techniques."
     },
     {
       degree: "Advanced Clinical Training in Full Monoportal Endoscopic Spine Surgery (FESS)",
       institution: "St. Anna Hospital, Germany",
-      period: "2024",
+      period: "2026",
       location: "Herne, Germany",
       details: "Advanced clinical training in Full Monoportal Endoscopic Spine Surgery under the mentorship of Professor Dr. Sebastian Rutten and Professor Dr. Martin Komp, internationally renowned pioneers."
     },

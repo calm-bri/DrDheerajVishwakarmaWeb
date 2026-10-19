@@ -91,7 +91,7 @@ export const INITIAL_SHOWCASES: ShowcaseItem[] = [
     description: "Dr. Dheeraj Vishwakarma completed the International Fellowship in Endoscopic Spine Surgery and Neurosurgery at AIN Hospital, South Korea, under the mentorship of Dr. Kang-Taek Lim, gaining valuable insights into advanced endoscopic spine surgery and minimally invasive spinal techniques.",
     category: "surgical",
     location: "AIN Hospital, South Korea",
-    date: "2024 - 2025",
+    date: "2026",
     imageUrl: "/germany_fess_scrubs.jpg",
     sizeClass: "md:col-span-2 md:row-span-1 aspect-[16/10] sm:aspect-auto",
     badge: "South Korea Fellowship"
@@ -103,7 +103,7 @@ export const INITIAL_SHOWCASES: ShowcaseItem[] = [
     description: "Dr. Dheeraj Vishwakarma during his advanced international fellowship training in Full Endoscopic Spine Surgery (FESS) at the pioneering center in Germany.",
     category: "surgical",
     location: "St. Anna Hospital, Germany",
-    date: "May 2025",
+    date: "May 2026",
     imageUrl: "/germany_st_anna_hospital.jpg",
     sizeClass: "md:col-span-2 md:row-span-1 aspect-[16/10] sm:aspect-auto",
     badge: "Germany Fellowship"
@@ -127,7 +127,7 @@ export const INITIAL_SHOWCASES: ShowcaseItem[] = [
     description: "Dr. Vishwakarma in surgical scrubs at the international training theater during live patient endoscopic decompressions.",
     category: "surgical",
     location: "International Spine Center",
-    date: "March 2025",
+    date: "March 2026",
     imageUrl: "/germany_fess_scrubs.jpg",
     sizeClass: "md:col-span-1 md:row-span-2 aspect-[3/4] sm:aspect-auto",
     badge: "Surgical Training"
