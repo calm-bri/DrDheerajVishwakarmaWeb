@@ -85,6 +85,18 @@ export const INITIAL_SHOWCASES: ShowcaseItem[] = [
     badge: "Press Coverage"
   },
   {
+    id: "sc-korea-fellowship",
+    title: "International Fellowship in Endoscopic Spine Surgery – South Korea",
+    subtitle: "AIN Hospital, South Korea — Mentorship under Dr. Kang-Taek Lim.",
+    description: "Dr. Dheeraj Vishwakarma completed the International Fellowship in Endoscopic Spine Surgery and Neurosurgery at AIN Hospital, South Korea, under the mentorship of Dr. Kang-Taek Lim, gaining valuable insights into advanced endoscopic spine surgery and minimally invasive spinal techniques.",
+    category: "surgical",
+    location: "AIN Hospital, South Korea",
+    date: "2024 - 2025",
+    imageUrl: "/germany_fess_scrubs.jpg",
+    sizeClass: "md:col-span-2 md:row-span-1 aspect-[16/10] sm:aspect-auto",
+    badge: "South Korea Fellowship"
+  },
+  {
     id: "sc-1",
     title: "International Advanced FESS Training - Germany",
     subtitle: "Center for Spine Surgery & Pain Therapy, St. Anna Hospital Herne, Germany.",

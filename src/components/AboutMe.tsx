@@ -113,6 +113,13 @@ export default function AboutMe() {
 
   const educationalMilestones = [
     {
+      degree: "International Fellowship in Endoscopic Spine Surgery & Neurosurgery",
+      institution: "AIN Hospital, South Korea",
+      period: "2024 - 2025",
+      location: "South Korea",
+      details: "Completed the International Fellowship in Endoscopic Spine Surgery and Neurosurgery at AIN Hospital, South Korea, under the mentorship of Dr. Kang-Taek Lim, gaining valuable insights into advanced endoscopic spine surgery and minimally invasive spinal techniques."
+    },
+    {
       degree: "Advanced Clinical Training in Full Monoportal Endoscopic Spine Surgery (FESS)",
       institution: "St. Anna Hospital, Germany",
       period: "2024",
@@ -165,6 +172,11 @@ export default function AboutMe() {
   ];
 
   const majorAchievementsList = [
+    {
+      type: "International Fellowship",
+      title: "Endoscopic Spine Surgery – South Korea",
+      event: "Completed International Fellowship in Endoscopic Spine Surgery and Neurosurgery at AIN Hospital, South Korea, under the mentorship of Dr. Kang-Taek Lim, gaining valuable insights into advanced endoscopic spine surgery and minimally invasive spinal techniques."
+    },
     {
       type: "Asia & India Book of Records",
       title: "Youngest Pediatric Endoscopic Discectomy",
@@ -294,7 +306,7 @@ export default function AboutMe() {
               </div>
 
               <p className="text-gray-300 text-xs sm:text-sm leading-relaxed font-sans">
-                Dr. Dheeraj Vishwakarma is a Pioneering Endoscopic Spine Surgeon specializing in Monoportal & Minimally Invasive Spine Procedures. He completed his prestigious Magister Chirurgiae (M.Ch) residency at GIPMER, New Delhi.
+                Dr. Dheeraj Vishwakarma is a Pioneering Endoscopic Spine Surgeon specializing in Monoportal & Minimally Invasive Spine Procedures. He completed his prestigious Magister Chirurgiae (M.Ch) residency at GIPMER, New Delhi, followed by advanced International Fellowships in Endoscopic Spine Surgery at AIN Hospital, South Korea, and St. Anna Hospital, Germany.
               </p>
 
               <p className="text-gray-400 text-xs leading-relaxed font-sans">
@@ -305,8 +317,8 @@ export default function AboutMe() {
                 <div className="flex items-center gap-3">
                   <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0" />
                   <div>
-                    <p className="text-xs text-white font-medium">Top-tier Training</p>
-                    <p className="text-[10px] text-gray-500">M.Ch residency completed from elite GIPMER, Delhi</p>
+                    <p className="text-xs text-white font-medium">Top-tier Global Training</p>
+                    <p className="text-[10px] text-gray-500">M.Ch GIPMER Delhi • Fellowships in South Korea & Germany</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">

@@ -6,6 +6,7 @@ import BioBackground from "./components/BioBackground";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import BookingModal from "./components/BookingModal";
+import ImageNoticeModal from "./components/ImageNoticeModal";
 import Breadcrumbs from "./components/Breadcrumbs";
 import SocialActionCard from "./components/SocialActionCard";
 import MobileStickyBar from "./components/MobileStickyBar";
@@ -24,6 +25,7 @@ const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
+  const [isNoticeOpen, setIsNoticeOpen] = useState(false);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [preferredTreatment, setPreferredTreatment] = useState("");
 
@@ -60,7 +62,10 @@ export default function App() {
     <div className="relative min-h-screen overflow-hidden bg-cosmic-bg text-white font-sans selection:bg-gold-400 selection:text-black">
       {/* Precision Loader overlay */}
       {isLoading ? (
-        <Loader onComplete={() => setIsLoading(false)} />
+        <Loader onComplete={() => {
+          setIsLoading(false);
+          setIsNoticeOpen(true);
+        }} />
       ) : (
         <div className="flex flex-col min-h-screen relative z-10">
           
@@ -114,6 +119,13 @@ export default function App() {
             isOpen={isBookingOpen}
             onClose={handleCloseBooking}
             preferredTreatmentId={preferredTreatment}
+          />
+
+          {/* Keyhole Spine Surgery Poster Announcement Modal */}
+          <ImageNoticeModal
+            isOpen={isNoticeOpen}
+            onClose={() => setIsNoticeOpen(false)}
+            onOpenBooking={() => handleOpenBooking("fess")}
           />
 
           {/* Floating Social Connections widget (Desktop) */}

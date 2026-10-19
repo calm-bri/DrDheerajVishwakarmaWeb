@@ -176,6 +176,20 @@ export default function InternationalPatients({ onOpenBooking }: InternationalPa
               </div>
             </div>
 
+            {/* International Fellowships Highlight */}
+            <div className="p-4 rounded-xl bg-white/[0.03] border border-gold-400/20 text-left space-y-1.5 mt-4">
+              <div className="flex items-center gap-2 text-gold-300 font-medium text-xs">
+                <Globe className="w-3.5 h-3.5 text-gold-400" />
+                <span className="font-mono text-[10px] uppercase tracking-wider font-semibold">International Fellowships</span>
+              </div>
+              <p className="text-[11px] text-gray-300 leading-relaxed font-sans">
+                <strong className="text-white">South Korea:</strong> Fellowship in Endoscopic Spine Surgery & Neurosurgery at AIN Hospital under Dr. Kang-Taek Lim.
+              </p>
+              <p className="text-[11px] text-gray-400 leading-relaxed font-sans">
+                <strong className="text-white">Germany:</strong> Advanced Monoportal Endoscopic Spine Training at St. Anna Hospital.
+              </p>
+            </div>
+
             <div className="pt-6 border-t border-white/5 flex items-center gap-3 mt-6">
               <Heart className="w-8 h-8 text-gold-400 shrink-0 fill-gold-400/15" />
               <div>

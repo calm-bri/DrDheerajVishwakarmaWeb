@@ -87,6 +87,24 @@ const PREMIUM_AWARDS: SpecialAward[] = [
     imageUrl: "/awards-records.jpg"
   },
   {
+    id: "award-korea-fellowship",
+    category: "International Fellowships",
+    title: "International Fellowship in Endoscopic Spine Surgery – South Korea",
+    by: "AIN Hospital, South Korea (under Dr. Kang-Taek Lim)",
+    year: "2024 - 2025",
+    location: "South Korea",
+    achievementLevel: "Fellowship Certified",
+    summary: "Dr. Dheeraj Vishwakarma completed the International Fellowship in Endoscopic Spine Surgery and Neurosurgery at AIN Hospital, South Korea, under the mentorship of Dr. Kang-Taek Lim, gaining valuable insights into advanced endoscopic spine surgery and minimally invasive spinal techniques.",
+    clinicalImpact: "Integrates world-leading South Korean endoscopic spine mastery and advanced minimally invasive techniques into gold-standard patient care.",
+    colorTheme: "sky",
+    metric: "South Korea Fellowship",
+    imageUrl: "/germany_fess_scrubs.jpg",
+    imageUrls: [
+      "/germany_fess_scrubs.jpg"
+    ],
+    imageAspects: ["portrait"]
+  },
+  {
     id: "award-germany-fellowship",
     category: "International & National Fellowships",
     title: "Germany FESS Clinical Training & Asian Spine Fellowship",
@@ -264,6 +282,8 @@ export default function AwardsSection() {
         return <Award className={`w-7 h-7 ${themeClass}`} />;
       case "award-book":
         return <BookOpen className={`w-7 h-7 ${themeClass}`} />;
+      case "award-korea-fellowship":
+      case "award-germany-fellowship":
       case "award-gipmer":
         return <GraduationCap className={`w-7 h-7 ${themeClass}`} />;
       default:

@@ -20,12 +20,24 @@ export default function AboutPage({ onOpenBooking }: AboutPageProps) {
       "priceRange": "$$",
       "medicalSpecialty": "Monoportal Endoscopic Spine Surgery, Spine Surgery, Neurosurgery",
       "jobTitle": "Monoportal Endoscopic Spine Surgeon & Neurosurgeon",
-      "description": "Pioneering Endoscopic Spine Surgeon specializing in Monoportal & Minimally Invasive Spine Procedures. Trained under Dr. Sukumar Sura, a leading authority in endoscopic spine surgery. Performed the first Cervical Monoportal Endoscopic Discectomy in Jaipur & Rajasthan. Performed the first Dorsal Monoportal Endoscopic Discectomy in Jaipur & Rajasthan. Achieved the first Monoportal Endoscopic Spine Surgery in the State of Rajasthan. Expert in Single-Stitch Spine Surgery for faster recovery and minimal tissue trauma. Operated on the youngest Cauda Equina patient, recognized by the India Book of Records & Asia Book of Records.",
-      "alumniOf": {
-        "@type": "EducationalOrganization",
-        "name": "Govind Ballabh Pant Institute of Post Graduate Medical Education and Research (GIPMER)"
-      },
+      "description": "Pioneering Endoscopic Spine Surgeon specializing in Monoportal & Minimally Invasive Spine Procedures. Dr. Dheeraj Vishwakarma completed the International Fellowship in Endoscopic Spine Surgery and Neurosurgery at AIN Hospital, South Korea, under the mentorship of Dr. Kang-Taek Lim, gaining valuable insights into advanced endoscopic spine surgery and minimally invasive spinal techniques. Trained under Dr. Sukumar Sura, a leading authority in endoscopic spine surgery. Performed the first Cervical Monoportal Endoscopic Discectomy in Jaipur & Rajasthan. Performed the first Dorsal Monoportal Endoscopic Discectomy in Jaipur & Rajasthan. Achieved the first Monoportal Endoscopic Spine Surgery in the State of Rajasthan. Expert in Single-Stitch Spine Surgery for faster recovery and minimal tissue trauma. Operated on the youngest Cauda Equina patient, recognized by the India Book of Records & Asia Book of Records.",
+      "alumniOf": [
+        {
+          "@type": "EducationalOrganization",
+          "name": "Govind Ballabh Pant Institute of Post Graduate Medical Education and Research (GIPMER)"
+        },
+        {
+          "@type": "EducationalOrganization",
+          "name": "AIN Hospital, South Korea"
+        },
+        {
+          "@type": "EducationalOrganization",
+          "name": "St. Anna Hospital, Germany"
+        }
+      ],
       "knowsAbout": [
+        "International Fellowship in Endoscopic Spine Surgery – South Korea (AIN Hospital, Dr. Kang-Taek Lim)",
+        "Advanced Endoscopic Spine Surgery & Minimally Invasive Spinal Techniques",
         "Pioneering Endoscopic Spine Surgeon specializing in Monoportal & Minimally Invasive Spine Procedures",
         "Trained under Dr. Sukumar Sura, a leading authority in endoscopic spine surgery",
         "Performed the first Cervical Monoportal Endoscopic Discectomy in Jaipur & Rajasthan",
@@ -48,7 +60,7 @@ export default function AboutPage({ onOpenBooking }: AboutPageProps) {
     >
       <SEOComponent
         title="About Dr. Dheeraj Vishwakarma | Pioneering Endoscopic Spine Surgeon"
-        description="Pioneering Endoscopic Spine Surgeon specializing in Monoportal & Minimally Invasive Spine Procedures. Trained under Dr. Sukumar Sura. Performed the first Cervical & Dorsal Monoportal Endoscopic Discectomy in Jaipur & Rajasthan."
+        description="Pioneering Endoscopic Spine Surgeon. International Fellowship in Endoscopic Spine Surgery at AIN Hospital, South Korea under Dr. Kang-Taek Lim. Performed first Cervical & Dorsal Monoportal Endoscopic Discectomy in Rajasthan."
         path="/about"
         schemas={aboutSchemas}
       />
