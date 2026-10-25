@@ -17,6 +17,8 @@ import { useData } from "../context/DataContext";
 import { socialLinks } from "../data";
 import { detailedTreatments } from "../treatmentsData";
 
+import { generateLocalBusinessSchema, generateBreadcrumbSchema } from "../utils/schemaGenerator";
+
 interface ContactPageProps {
   onOpenBooking: () => void;
 }
@@ -37,38 +39,11 @@ export default function ContactPage({ onOpenBooking }: ContactPageProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const contactSchemas = [
-    {
-      "@context": "https://schema.org",
-      "@type": "MedicalClinic",
-      "name": "Dr. Dheeraj Vishwakarma Spine Consultation Desk",
-      "image": "https://www.endoscopicspinecare.com/logo.png",
-      "telephone": ["+91-89998-98129", "+91-96721-44129"],
-      "priceRange": "$$",
-      "address": [
-        {
-          "@type": "PostalAddress",
-          "streetAddress": "S-5, Bhaskar Enclave, Above YES Bank, Patrakar Colony, Mansarovar",
-          "addressLocality": "Jaipur",
-          "addressRegion": "Rajasthan",
-          "postalCode": "302020",
-          "addressCountry": "IN"
-        },
-        {
-          "@type": "PostalAddress",
-          "streetAddress": "Jaat Colony, Bhakrota, Ajmer Road",
-          "addressLocality": "Jaipur",
-          "addressRegion": "Rajasthan",
-          "postalCode": "302026",
-          "addressCountry": "IN"
-        }
-      ],
-      "openingHoursSpecification": {
-        "@type": "OpeningHoursSpecification",
-        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-        "opens": "10:00",
-        "closes": "16:00"
-      }
-    }
+    generateLocalBusinessSchema(),
+    generateBreadcrumbSchema([
+      { name: "Home", url: "/" },
+      { name: "Contact & Appointments", url: "/contact" }
+    ])
   ];
 
   const validate = () => {
@@ -116,7 +91,9 @@ export default function ContactPage({ onOpenBooking }: ContactPageProps) {
       <SEOComponent
         title="Contact Dr. Dheeraj Vishwakarma | Spine Clinic Jaipur & Appointments"
         description="Schedule a consultation with Dr. Dheeraj Vishwakarma at Mansarovar or Bhakrota clinic in Jaipur, or book an online MRI review. Call +91 89998 98129."
+        keywords="Spine Clinic Jaipur, Book Spine Consultation, Dr Dheeraj Vishwakarma Contact, Mansarovar Spine Clinic, Bhakrota Spine Clinic, Second Opinion Spine MRI"
         path="/contact"
+        image="/logo.png"
         schemas={contactSchemas}
       />
 

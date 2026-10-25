@@ -4,7 +4,8 @@ import {
   Testimonial, 
   FAQItem,
   BlogArticle,
-  VideoItem
+  VideoItem,
+  DetailedTreatment
 } from "../types";
 import { 
   conditionsData, 
@@ -13,6 +14,7 @@ import {
   blogsData,
   videoData
 } from "../data";
+import { detailedTreatments, getTreatmentBySlug as lookupTreatmentBySlug } from "../treatmentsData";
 import { ShowcaseItem, INITIAL_SHOWCASES } from "../components/Gallery";
 
 export interface Appointment {
@@ -78,6 +80,15 @@ interface DataContextType {
   updateVideo: (id: string, updated: Partial<VideoItem>) => void;
   deleteVideo: (id: string) => void;
   resetVideos: () => void;
+
+  // Detailed Treatments (full admin control)
+  treatments: DetailedTreatment[];
+  isTreatmentsLoading: boolean;
+  getTreatmentBySlug: (slug: string) => DetailedTreatment | undefined;
+  addTreatment: (treatment: DetailedTreatment) => void;
+  updateTreatment: (id: string, updated: Partial<DetailedTreatment>) => void;
+  deleteTreatment: (id: string) => void;
+  resetTreatments: () => void;
 
   // Administrative Auth
   adminPin: string;
@@ -180,18 +191,28 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Blogs state initialized with defaults
   const [blogs, setBlogs] = useState<BlogArticle[]>(blogsData);
 
+  // Detailed Treatments state — seeded immediately from static data, overridden by API on load
+  const [treatments, setTreatments] = useState<DetailedTreatment[]>(detailedTreatments);
+  const [isTreatmentsLoading, setIsTreatmentsLoading] = useState(true);
+
+  // Lookup function that always searches the live context treatments array
+  const contextGetTreatmentBySlug = (slug: string): DetailedTreatment | undefined =>
+    lookupTreatmentBySlug(slug, treatments);
+
   // Fetch initial public data from backend API
   useEffect(() => {
+
     const loadPublicData = async () => {
       try {
-        const [scsRes, faqsRes, testsRes, condsRes, blogsRes, galleryRes, vidsRes] = await Promise.all([
+        const [scsRes, faqsRes, testsRes, condsRes, blogsRes, galleryRes, vidsRes, treatsRes] = await Promise.all([
           fetch('/api/showcases'),
           fetch('/api/faqs'),
           fetch('/api/testimonials'),
           fetch('/api/conditions'),
           fetch('/api/blogs'),
           fetch('/api/gallery-images'),
-          fetch('/api/videos')
+          fetch('/api/videos'),
+          fetch('/api/treatments')
         ]);
 
         let dbData: ShowcaseItem[] = [];
@@ -266,6 +287,12 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
           const resJson = await blogsRes.json();
           if (Array.isArray(resJson)) setBlogs(resJson);
         }
+        if (treatsRes.ok) {
+          const resJson = await treatsRes.json();
+          if (Array.isArray(resJson) && resJson.length > 0) setTreatments(resJson);
+          // Signal treatments data is authoritative and loaded
+          setIsTreatmentsLoading(false);
+        }
         if (vidsRes.ok) {
           const resJson = await vidsRes.json();
           if (Array.isArray(resJson) && resJson.length > 0) {
@@ -300,6 +327,9 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       } catch (error) {
         console.warn("Failed to fetch initial public data from backend server. Using local presets.", error);
+      } finally {
+        // Always clear loading — static data is already seeded as fallback
+        setIsTreatmentsLoading(false);
       }
     };
     loadPublicData();
@@ -783,6 +813,41 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       .catch(err => console.error("Error resetting videos on server:", err));
   };
 
+  // Treatment operations
+  const addTreatment = (treatment: DetailedTreatment) => {
+    setTreatments(prev => [...prev, treatment]);
+    fetch('/api/treatments', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-pin': adminPin },
+      body: JSON.stringify(treatment)
+    }).catch(err => console.error('Error creating treatment on server:', err));
+  };
+
+  const updateTreatment = (id: string, updated: Partial<DetailedTreatment>) => {
+    setTreatments(prev => prev.map(t => t.id === id ? { ...t, ...updated } : t));
+    fetch(`/api/treatments/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'x-admin-pin': adminPin },
+      body: JSON.stringify(updated)
+    }).catch(err => console.error(`Error updating treatment ${id} on server:`, err));
+  };
+
+  const deleteTreatment = (id: string) => {
+    setTreatments(prev => prev.filter(t => t.id !== id));
+    fetch(`/api/treatments/${id}`, {
+      method: 'DELETE',
+      headers: { 'x-admin-pin': adminPin }
+    }).catch(err => console.error(`Error deleting treatment ${id} on server:`, err));
+  };
+
+  const resetTreatments = () => {
+    import('../treatmentsData').then(m => setTreatments(m.detailedTreatments)).catch(() => {});
+    fetch('/api/treatments/reset', { method: 'POST', headers: { 'x-admin-pin': adminPin } })
+      .then(res => res.json())
+      .then(data => { if (Array.isArray(data) && data.length > 0) setTreatments(data); })
+      .catch(err => console.error('Error resetting treatments on server:', err));
+  };
+
   return (
     <DataContext.Provider value={{
       appointments,
@@ -825,6 +890,14 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       updateVideo,
       deleteVideo,
       resetVideos,
+
+      treatments,
+      isTreatmentsLoading,
+      getTreatmentBySlug: contextGetTreatmentBySlug,
+      addTreatment,
+      updateTreatment,
+      deleteTreatment,
+      resetTreatments,
 
       adminPin,
       setAdminPin

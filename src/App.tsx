@@ -1,6 +1,6 @@
 import { useState, useEffect, lazy, Suspense } from "react";
 import { AnimatePresence } from "motion/react";
-import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate, useParams } from "react-router-dom";
 import Loader from "./components/Loader";
 import BioBackground from "./components/BioBackground";
 import Navbar from "./components/Navbar";
@@ -10,6 +10,7 @@ import ImageNoticeModal from "./components/ImageNoticeModal";
 import Breadcrumbs from "./components/Breadcrumbs";
 import SocialActionCard from "./components/SocialActionCard";
 import MobileStickyBar from "./components/MobileStickyBar";
+import { useData } from "./context/DataContext";
 
 // Lazy load pages
 const Home = lazy(() => import("./pages/Home"));
@@ -22,6 +23,28 @@ const ContactPage = lazy(() => import("./pages/ContactPage"));
 const InternationalPage = lazy(() => import("./pages/InternationalPage"));
 const AdminPage = lazy(() => import("./pages/AdminPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
+
+// Redirect /treatments/:slug → /:slug (301-style for SEO)
+function TreatmentsLegacyRedirect() {
+  const { slug } = useParams<{ slug: string }>();
+  return <Navigate to={`/${slug}`} replace />;
+}
+
+// Smart slug resolver: treatment page OR 404.
+// Uses context-aware lookup so admin slug edits are reflected immediately
+// and persisted slugs work after a page refresh.
+function SlugRouter({ onOpenBooking }: { onOpenBooking: (id?: string) => void }) {
+  const { slug } = useParams<{ slug: string }>();
+  const { getTreatmentBySlug, isTreatmentsLoading } = useData();
+
+  // While the API fetch is in flight, show nothing (Suspense loader above already shows)
+  // rather than a false 404.
+  if (isTreatmentsLoading) return null;
+
+  const treatment = slug ? getTreatmentBySlug(slug) : undefined;
+  if (!treatment) return <NotFoundPage />;
+  return <TreatmentDetailPage onOpenBooking={onOpenBooking} />;
+}
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -90,21 +113,27 @@ export default function App() {
               <AnimatePresence mode="wait">
                 {/* @ts-expect-error key is a standard React prop but not declared in RoutesProps */}
                 <Routes location={location} key={pathname}>
+                  {/* ── Static named routes first (before wildcard /:slug) ── */}
                   <Route path="/" element={<Home onOpenBooking={handleOpenBooking} />} />
                   <Route path="/about" element={<AboutPage onOpenBooking={handleOpenBooking} />} />
                   <Route path="/treatments" element={<TreatmentsPage onOpenBooking={handleOpenBooking} />} />
-                  <Route path="/treatments/:slug" element={<TreatmentDetailPage onOpenBooking={handleOpenBooking} />} />
-                  
-                  {/* Clean 301-style redirects for legacy/duplicate routes to avoid duplicate content penalties */}
-                  <Route path="/services" element={<Navigate to="/treatments" replace />} />
-                  <Route path="/conditions" element={<Navigate to="/treatments" replace />} />
-
                   <Route path="/blogs" element={<BlogsPage />} />
                   <Route path="/gallery" element={<GalleryPage />} />
                   <Route path="/contact" element={<ContactPage onOpenBooking={() => handleOpenBooking()} />} />
-                  <Route path="/international" element={<Navigate to="/international-patients" replace />} />
                   <Route path="/international-patients" element={<InternationalPage onOpenBooking={() => handleOpenBooking("fess")} />} />
                   <Route path="/admin" element={<AdminPage />} />
+
+                  {/* ── 301-style redirects for legacy/duplicate URLs ── */}
+                  <Route path="/services" element={<Navigate to="/treatments" replace />} />
+                  <Route path="/conditions" element={<Navigate to="/treatments" replace />} />
+                  <Route path="/international" element={<Navigate to="/international-patients" replace />} />
+                  {/* Legacy: /treatments/:slug → /:slug */}
+                  <Route path="/treatments/:slug" element={<TreatmentsLegacyRedirect />} />
+
+                  {/* ── Clean top-level treatment slug URLs (LAST before *) ── */}
+                  <Route path="/:slug" element={<SlugRouter onOpenBooking={handleOpenBooking} />} />
+
+                  {/* 404 Catch-all */}
                   <Route path="*" element={<NotFoundPage />} />
                 </Routes>
               </AnimatePresence>

@@ -1028,6 +1028,21 @@ export const detailedTreatments: DetailedTreatment[] = [
   }
 ];
 
-export function getTreatmentBySlug(slug: string): DetailedTreatment | undefined {
-  return detailedTreatments.find(t => t.slug === slug);
+export function normalizeSlug(slug: string): string {
+  if (!slug) return "";
+  try {
+    return decodeURIComponent(slug).trim().toLowerCase().replace(/^\/+|\/+$/g, "");
+  } catch {
+    return slug.trim().toLowerCase().replace(/^\/+|\/+$/g, "");
+  }
+}
+
+export function getTreatmentBySlug(
+  slug: string,
+  source: DetailedTreatment[] = detailedTreatments
+): DetailedTreatment | undefined {
+  if (!slug) return undefined;
+  const target = normalizeSlug(slug);
+  if (!target) return undefined;
+  return source.find((t) => t.slug && normalizeSlug(t.slug) === target);
 }

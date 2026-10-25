@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import {
   CalendarCheck2,
   PhoneCall,
@@ -9,15 +9,23 @@ import {
   ShieldCheck,
   CheckCircle2,
   Activity,
-  Layers,
   HelpCircle,
   Stethoscope,
   Clock,
-  Compass
+  ChevronDown,
+  Filter
 } from "lucide-react";
 import SEOComponent from "../components/SEOComponent";
 import { detailedTreatments } from "../treatmentsData";
-import { socialLinks } from "../data";
+import { generateBreadcrumbSchema, generateDoctorSchema, BASE_URL } from "../utils/schemaGenerator";
+
+const FILTER_OPTIONS = [
+  { id: "all", label: "All Treatments", count: 0 },
+  { id: "endoscopic", label: "Full Endoscopic" },
+  { id: "disc", label: "Slip Disc & Sciatica" },
+  { id: "stenosis", label: "Canal Stenosis" },
+  { id: "miss", label: "Minimally Invasive" }
+];
 
 interface TreatmentsPageProps {
   onOpenBooking: (preferredTreatmentId?: string) => void;
@@ -25,6 +33,19 @@ interface TreatmentsPageProps {
 
 export default function TreatmentsPage({ onOpenBooking }: TreatmentsPageProps) {
   const [selectedFilter, setSelectedFilter] = useState<string>("all");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const pageSchemas = [
     {
@@ -32,43 +53,33 @@ export default function TreatmentsPage({ onOpenBooking }: TreatmentsPageProps) {
       "@type": "MedicalWebPage",
       "name": "Endoscopic Spine Treatments & Keyhole Procedures - Dr. Dheeraj Vishwakarma",
       "description": "Comprehensive guide to Full Monoportal Endoscopic Spine Surgery (FESS), discectomy, sciatica treatment, slip disc care, and spinal stenosis decompression.",
-      "url": "https://www.endoscopicspinecare.com/treatments",
+      "url": `${BASE_URL}/treatments`,
       "author": {
         "@type": "Physician",
         "name": "Dr. Dheeraj Vishwakarma",
         "medicalSpecialty": "Endoscopic Spine Surgery, Neurosurgery",
         "telephone": ["+91-89998-98129", "+91-96721-44129"],
-        "url": "https://www.endoscopicspinecare.com"
+        "url": BASE_URL
       }
     },
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Home",
-          "item": "https://www.endoscopicspinecare.com/"
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "Treatments",
-          "item": "https://www.endoscopicspinecare.com/treatments"
-        }
-      ]
-    }
+    generateBreadcrumbSchema([
+      { name: "Home", url: "/" },
+      { name: "Treatments", url: "/treatments" }
+    ]),
+    generateDoctorSchema()
   ];
 
-  const filteredTreatments = detailedTreatments.filter((item) => {
+  const filterTreatment = (item: typeof detailedTreatments[0]) => {
     if (selectedFilter === "all") return true;
     if (selectedFilter === "endoscopic") return item.slug.includes("endoscopic");
     if (selectedFilter === "disc") return item.slug.includes("disc") || item.slug.includes("sciatica");
     if (selectedFilter === "stenosis") return item.slug.includes("stenosis");
     if (selectedFilter === "miss") return item.slug.includes("minimally-invasive");
     return true;
-  });
+  };
+
+  const filteredTreatments = detailedTreatments.filter(filterTreatment);
+  const activeFilterLabel = FILTER_OPTIONS.find(f => f.id === selectedFilter)?.label || "All Treatments";
 
   return (
     <motion.div
@@ -82,6 +93,7 @@ export default function TreatmentsPage({ onOpenBooking }: TreatmentsPageProps) {
       <SEOComponent
         title="Spine Treatments Directory | Endoscopic Spine Surgery Jaipur"
         description="Explore advanced keyhole spine treatments under Dr. Dheeraj Vishwakarma: FESS monoportal endoscopy, discectomy, sciatica release, slip disc care, and stenosis decompression."
+        keywords="spine treatments Jaipur, endoscopic spine surgery India, FESS treatment, slip disc treatment Jaipur, sciatica treatment India, spinal stenosis decompression, minimally invasive spine surgery, Dr. Dheeraj Vishwakarma treatments"
         path="/treatments"
         schemas={pageSchemas}
       />
@@ -145,9 +157,9 @@ export default function TreatmentsPage({ onOpenBooking }: TreatmentsPageProps) {
         </div>
       </section>
 
-      {/* Filter Tabs */}
-      <section className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Filter & Directory */}
+      <section className="space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
             <span className="font-mono text-[10px] text-gold-400 uppercase tracking-widest font-bold">
               CLINICAL DIRECTORY
@@ -155,28 +167,75 @@ export default function TreatmentsPage({ onOpenBooking }: TreatmentsPageProps) {
             <h2 className="font-display font-bold text-2xl sm:text-3xl text-white">
               Specialized Treatment Directory
             </h2>
+            <p className="text-xs text-gray-400 mt-1 font-sans">
+              {filteredTreatments.length} treatment{filteredTreatments.length !== 1 ? "s" : ""} available
+            </p>
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            {[
-              { id: "all", label: "All Treatments" },
-              { id: "endoscopic", label: "Full Endoscopic" },
-              { id: "disc", label: "Slip Disc & Sciatica" },
-              { id: "stenosis", label: "Canal Stenosis" },
-              { id: "miss", label: "Minimally Invasive" }
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setSelectedFilter(tab.id)}
-                className={`px-4 py-2 rounded-full text-xs font-mono tracking-wider transition-all cursor-pointer ${
-                  selectedFilter === tab.id
-                    ? "bg-gold-400 text-black font-bold shadow-md"
-                    : "bg-navy-900/80 hover:bg-navy-850 text-gray-300 border border-white/10"
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
+          {/* ── Premium Dropdown Filter ── */}
+          <div className="relative shrink-0" ref={dropdownRef}>
+            <button
+              id="treatment-filter-dropdown"
+              onClick={() => setIsDropdownOpen(v => !v)}
+              className="flex items-center gap-2.5 bg-navy-900/90 hover:bg-navy-850 border border-white/15 hover:border-gold-400/40 text-white px-4 py-2.5 rounded-xl text-xs font-mono font-bold tracking-wider transition-all cursor-pointer min-w-[200px] justify-between group"
+              aria-haspopup="listbox"
+              aria-expanded={isDropdownOpen}
+            >
+              <span className="flex items-center gap-2">
+                <Filter className="w-3.5 h-3.5 text-gold-400" />
+                <span className="text-gold-300">{activeFilterLabel}</span>
+              </span>
+              <ChevronDown
+                className={`w-3.5 h-3.5 text-gray-400 transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`}
+              />
+            </button>
+
+            <AnimatePresence>
+              {isDropdownOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8, scale: 0.97 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -8, scale: 0.97 }}
+                  transition={{ duration: 0.15, ease: "easeOut" }}
+                  className="absolute right-0 top-full mt-2 w-64 bg-navy-900/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.5)] overflow-hidden z-50"
+                  role="listbox"
+                >
+                  {FILTER_OPTIONS.map((option) => {
+                    const count = option.id === "all"
+                      ? detailedTreatments.length
+                      : detailedTreatments.filter(t => {
+                          if (option.id === "endoscopic") return t.slug.includes("endoscopic");
+                          if (option.id === "disc") return t.slug.includes("disc") || t.slug.includes("sciatica");
+                          if (option.id === "stenosis") return t.slug.includes("stenosis");
+                          if (option.id === "miss") return t.slug.includes("minimally-invasive");
+                          return true;
+                        }).length;
+                    const isActive = selectedFilter === option.id;
+                    return (
+                      <button
+                        key={option.id}
+                        role="option"
+                        aria-selected={isActive}
+                        onClick={() => {
+                          setSelectedFilter(option.id);
+                          setIsDropdownOpen(false);
+                        }}
+                        className={`w-full flex items-center justify-between px-4 py-3 text-xs font-mono tracking-wider cursor-pointer transition-all border-b border-white/5 last:border-b-0 ${
+                          isActive
+                            ? "bg-gold-400/15 text-gold-300 font-bold"
+                            : "text-gray-300 hover:bg-white/5 hover:text-white"
+                        }`}
+                      >
+                        <span>{option.label}</span>
+                        <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${isActive ? "bg-gold-400 text-black" : "bg-white/10 text-gray-400"}`}>
+                          {count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 
@@ -239,7 +298,7 @@ export default function TreatmentsPage({ onOpenBooking }: TreatmentsPageProps) {
               {/* Card Footer CTAs */}
               <div className="p-6 pt-0 border-t border-white/5 flex items-center justify-between gap-3 mt-4">
                 <Link
-                  to={`/treatments/${treatment.slug}`}
+                  to={`/${treatment.slug}`}
                   className="inline-flex items-center gap-1.5 text-xs font-bold text-gold-400 hover:text-white uppercase tracking-wider group/link transition-colors cursor-pointer"
                 >
                   <span>Learn More</span>
@@ -265,7 +324,7 @@ export default function TreatmentsPage({ onOpenBooking }: TreatmentsPageProps) {
             SURGICAL PHILOSOPHY
           </span>
           <h2 className="font-display font-bold text-3xl text-white">
-            Dr. Dheeraj Vishwakarma’s Clinical Approach to Patient Care
+            Dr. Dheeraj Vishwakarma's Clinical Approach to Patient Care
           </h2>
           <p className="text-xs sm:text-sm text-gray-300 font-sans leading-relaxed">
             Our treatment philosophy is built on precision diagnostics, conservative therapy first, and reserving keyhole surgery exclusively for patients who truly need it.

@@ -5,18 +5,51 @@ interface SEOProps {
   description: string;
   path: string;
   keywords?: string;
+  image?: string;
+  type?: "website" | "article";
+  author?: string;
+  publishedTime?: string;
   schemas?: any[];
 }
 
-export default function SEOComponent({ title, description, path, keywords, schemas = [] }: SEOProps) {
+export default function SEOComponent({
+  title,
+  description,
+  path,
+  keywords,
+  image,
+  type = "website",
+  author = "Dr. Dheeraj Vishwakarma",
+  publishedTime,
+  schemas = []
+}: SEOProps) {
   const baseUrl = "https://www.endoscopicspinecare.com";
-  const canonicalUrl = `${baseUrl}${path}`;
-  const defaultKeywords = "Dr. Dheeraj Vishwakarma, spine surgeon India, monoportal endoscopic spine surgery Jaipur, best spine surgeon Jaipur, FESS spine surgery, single stitch spine surgery India, awake spine surgery, slipped disc treatment India, sciatica doctor Jaipur, spine doctor Rajasthan, endo spine surgeon";
+  const canonicalUrl = path.startsWith("http")
+    ? path
+    : `${baseUrl}${path.startsWith("/") ? "" : "/"}${path}`;
 
-  // Generate automated BreadcrumbList schema if it's an inner page
+  // Default SEO Keywords
+  const defaultKeywords =
+    "Dr. Dheeraj Vishwakarma, endoscopic spine surgery Jaipur, best spine surgeon Jaipur, FESS spine surgery India, single stitch spine surgery, awake spine surgery, slipped disc treatment Jaipur, sciatica specialist Jaipur, spine doctor Rajasthan, monoportal endoscopic discectomy, minimally invasive spine surgery India";
+
+  // Build absolute image URL
+  const resolvedImageUrl = image
+    ? image.startsWith("http")
+      ? image
+      : `${baseUrl}${image.startsWith("/") ? "" : "/"}${image}`
+    : `${baseUrl}/logo.png`;
+
+  // Check if a BreadcrumbList was already supplied in schemas
+  const hasBreadcrumbs = schemas.some(
+    (s) => s && (s["@type"] === "BreadcrumbList" || s["@type"]?.includes?.("BreadcrumbList"))
+  );
+
   const allSchemas = [...schemas];
-  if (path && path !== "/") {
-    const pageName = path.replace("/", "").replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+
+  // If no breadcrumb was passed and this is an inner page, generate a fallback breadcrumb
+  if (!hasBreadcrumbs && path && path !== "/" && path !== "") {
+    const cleanSegment = path.replace(/^\//, "").split("/")[0];
+    const pageName = cleanSegment.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
     allSchemas.push({
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
@@ -39,25 +72,41 @@ export default function SEOComponent({ title, description, path, keywords, schem
 
   return (
     <Helmet>
-      {/* Primary SEO Metadata */}
+      {/* Primary HTML Meta Tags */}
       <title>{title}</title>
+      <meta name="title" content={title} />
       <meta name="description" content={description} />
       <meta name="keywords" content={keywords || defaultKeywords} />
+      <meta name="author" content={author} />
+      <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
       <link rel="canonical" href={canonicalUrl} />
-      
+
       {/* Open Graph / Facebook Previews */}
-      <meta property="og:type" content="website" />
+      <meta property="og:type" content={type} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:url" content={canonicalUrl} />
-      <meta property="og:image" content={`${baseUrl}/logo.png`} />
-      <meta property="og:site_name" content="Dr. Dheeraj Vishwakarma Spine Care" />
+      <meta property="og:image" content={resolvedImageUrl} />
+      <meta property="og:image:alt" content={title} />
+      <meta property="og:site_name" content="Dr. Dheeraj Vishwakarma - Endoscopic Spine Care" />
+      <meta property="og:locale" content="en_US" />
+
+      {/* Article Specific Open Graph tags */}
+      {type === "article" && publishedTime && (
+        <meta property="article:published_time" content={publishedTime} />
+      )}
+      {type === "article" && (
+        <meta property="article:author" content={author} />
+      )}
 
       {/* Twitter Card Previews */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={`${baseUrl}/logo.png`} />
+      <meta name="twitter:image" content={resolvedImageUrl} />
+      <meta name="twitter:image:alt" content={title} />
+      <meta name="twitter:site" content="@drdheerajvishu" />
+      <meta name="twitter:creator" content="@drdheerajvishu" />
 
       {/* Structured Schema Script Injections */}
       {allSchemas.map((schema, idx) => (

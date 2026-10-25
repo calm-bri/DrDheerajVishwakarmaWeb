@@ -1,12 +1,20 @@
 import { motion } from "motion/react";
 import InternationalPatients from "../components/InternationalPatients";
 import SEOComponent from "../components/SEOComponent";
+import { generateBreadcrumbSchema } from "../utils/schemaGenerator";
 
 interface InternationalPageProps {
   onOpenBooking: () => void;
 }
 
 export default function InternationalPage({ onOpenBooking }: InternationalPageProps) {
+  const internationalSchemas = [
+    generateBreadcrumbSchema([
+      { name: "Home", url: "/" },
+      { name: "International Patients", url: "/international-patients" }
+    ])
+  ];
+
   return (
     <motion.div
       key="international"
@@ -17,9 +25,12 @@ export default function InternationalPage({ onOpenBooking }: InternationalPagePr
       className="pt-6"
     >
       <SEOComponent
-        title="International Patients Spine Desk | Keyhole Spine Care"
-        description="Comprehensive clinical support for global spine surgery patients. Keyhole spinal surgery in India with same-day walk milestones and translation desk."
+        title="International Patients Spine Surgery Desk | Dr. Dheeraj Vishwakarma Jaipur"
+        description="Global medical tourism and endoscopic spine care in India. Fast-track MRI second opinions, medical visa assistance, 5-7 day flyback timeline, and dedicated translation desk."
+        keywords="Spine Surgery India Medical Tourism, International Patient Spine Care, Endoscopic Spine Surgery Abroad, Medical Visa India Spine, Dr Dheeraj Vishwakarma International"
         path="/international-patients"
+        image="/logo.png"
+        schemas={internationalSchemas}
       />
       <InternationalPatients onOpenBooking={onOpenBooking} />
     </motion.div>

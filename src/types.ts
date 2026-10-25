@@ -8,6 +8,10 @@ export interface SpineCondition {
   recoveryTime: string; // e.g., "Same Day Walker" or "10-Day Complete"
   detailedKey: string;
   iconName: string;
+  slug?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  metaKeywords?: string;
 }
 
 export interface DetailedTreatment {
@@ -42,6 +46,9 @@ export interface DetailedTreatment {
     hospitalStay: string;
     recoveryTime: string;
   };
+  metaTitle?: string;
+  metaDescription?: string;
+  metaKeywords?: string;
 }
 
 export interface RecoveryTimelineStep {
@@ -88,6 +95,10 @@ export interface BlogArticle {
   date: string;
   readTime: string;
   author: string;
+  slug?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  metaKeywords?: string;
 }
 
 export interface VideoItem {

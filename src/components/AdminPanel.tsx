@@ -33,7 +33,8 @@ import {
   Globe,
   Eye,
   Download,
-  Film
+  Film,
+  ExternalLink
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { ShowcaseItem } from "./Gallery";
@@ -81,6 +82,12 @@ export default function AdminPanel() {
     deleteVideo,
     resetVideos,
 
+    treatments,
+    addTreatment,
+    updateTreatment,
+    deleteTreatment,
+    resetTreatments,
+
     adminPin,
     setAdminPin
   } = useData();
@@ -106,7 +113,7 @@ export default function AdminPanel() {
   }, []);
 
   // Tabs management
-  type ActiveTab = "appointments" | "showcases" | "videos" | "blogs" | "faqs" | "testimonials" | "conditions" | "settings";
+  type ActiveTab = "appointments" | "treatments" | "showcases" | "videos" | "blogs" | "faqs" | "testimonials" | "conditions" | "settings";
   const [activeTab, setActiveTab] = useState<ActiveTab>("appointments");
 
   // Filter and search states
@@ -116,7 +123,8 @@ export default function AdminPanel() {
   // Create & Edit Modal states
   const [editingItem, setEditingItem] = useState<{ type: string; id: string; data: any } | null>(null);
   const [isOpenForm, setIsOpenForm] = useState(false);
-  const [formType, setFormType] = useState<"appointment" | "showcase" | "blogs" | "faq" | "testimonial" | "condition" | "video">("appointment");
+  const [formType, setFormType] = useState<"appointment" | "showcase" | "blogs" | "faq" | "testimonial" | "condition" | "video" | "treatment">("appointment");
+  const [treatmentSubTab, setTreatmentSubTab] = useState<"basic" | "seo" | "metrics" | "clinical" | "procedure" | "recovery" | "faqs">("basic");
   const [isUploading, setIsUploading] = useState(false);
 
   // Calendar view states
@@ -159,7 +167,7 @@ export default function AdminPanel() {
   };
 
   // Safe reset configurations
-  const handleSystemReset = (type: "all" | "galleries" | "blogs" | "faqs" | "testimonials" | "conditions") => {
+  const handleSystemReset = (type: "all" | "galleries" | "blogs" | "faqs" | "testimonials" | "conditions" | "treatments") => {
     if (!confirm("Are you sure you want to restore default demo records? Your custom edits will be reverted.")) return;
     
     if (type === "all" || type === "galleries") resetShowcases();
@@ -167,6 +175,7 @@ export default function AdminPanel() {
     if (type === "all" || type === "faqs") resetFAQs();
     if (type === "all" || type === "testimonials") resetTestimonials();
     if (type === "all" || type === "conditions") resetConditions();
+    if (type === "all" || type === "treatments") resetTreatments();
     
     alert("Records refreshed back to premium clinical defaults!");
   };
@@ -209,27 +218,65 @@ export default function AdminPanel() {
   };
 
   // CRUD operation triggers (Modal launcher)
-  const openEditModal = (type: "appointment" | "showcase" | "blogs" | "faq" | "testimonial" | "condition" | "video", id: string, data: any) => {
-    setEditingItem({ type, id, data: { ...data } });
+  const openEditModal = (type: "appointment" | "showcase" | "blogs" | "faq" | "testimonial" | "condition" | "video" | "treatment", id: string, data: any) => {
+    setEditingItem({ type, id, data: JSON.parse(JSON.stringify(data)) });
     setFormType(type);
+    setTreatmentSubTab("basic");
     setIsOpenForm(true);
   };
 
-  const openCreateModal = (type: "appointment" | "showcase" | "blogs" | "faq" | "testimonial" | "condition" | "video", prefillData?: any) => {
+  const openCreateModal = (type: "appointment" | "showcase" | "blogs" | "faq" | "testimonial" | "condition" | "video" | "treatment", prefillData?: any) => {
     const emptyModels = {
       appointment: { fullName: "", email: "", phone: "", selectedTreatment: "fess", symptoms: "", sessionType: "video", isInternational: false, status: "pending", bookingDate: "", bookingTime: "11:30 AM" },
       showcase: { id: `sc-${Date.now()}`, title: "", subtitle: "", description: "", category: "surgical", location: "Jaipur Clinic", date: "May 2026", imageUrl: "", sizeClass: "md:col-span-1 md:row-span-1", badge: "New Case", featuredInHero: false },
-      blogs: { id: `blog-${Date.now()}`, title: "", summary: "", content: "", category: "Clinical Guide", date: "May 2026", readTime: "6 min read", author: "Dr. Dheeraj Vishwakarma" },
+      blogs: { id: `blog-${Date.now()}`, slug: "", metaTitle: "", metaDescription: "", metaKeywords: "", title: "", summary: "", content: "", category: "Clinical Guide", date: "May 2026", readTime: "6 min read", author: "Dr. Dheeraj Vishwakarma" },
       faq: { id: `faq-${Date.now()}`, question: "", answer: "", category: "technology" },
       testimonial: { id: `test-${Date.now()}`, name: "", location: "Google Review", condition: "", quote: "", recoverySummary: "", rating: 5 },
-      condition: { id: `cond-${Date.now()}`, name: "", shortDescription: "", fullDescription: "", symptoms: [], treatmentMetric: "99% Precision", recoveryTime: "Walk Same Day", detailedKey: "", iconName: "Zap" },
-      video: { id: `vid-${Date.now()}`, title: "", description: "", poster: "/endoscopic_spine_poster.jpg", videoUrl: "", category: "Monoportal Spine Surgery" }
+      condition: { id: `cond-${Date.now()}`, name: "", shortDescription: "", fullDescription: "", symptoms: [], treatmentMetric: "99% Precision", recoveryTime: "Walk Same Day", detailedKey: "", iconName: "Zap", slug: "", metaTitle: "", metaDescription: "", metaKeywords: "" },
+      video: { id: `vid-${Date.now()}`, title: "", description: "", poster: "/endoscopic_spine_poster.jpg", videoUrl: "", category: "Monoportal Spine Surgery" },
+      treatment: {
+        id: `treatment-${Date.now()}`,
+        slug: "",
+        name: "",
+        badge: "Monoportal Keyhole",
+        category: "Endoscopic Spine Surgery",
+        shortDescription: "",
+        heroImage: "/endoscopic_spine_poster.jpg",
+        heroImageAlt: "",
+        metaTitle: "",
+        metaDescription: "",
+        metaKeywords: "",
+        metrics: {
+          incisionSize: "<8mm (Single Stitch)",
+          anesthesia: "Local / Awake",
+          hospitalStay: "Daycare / <24h",
+          recoveryTime: "Walk Same Day"
+        },
+        overview: [""],
+        causes: [""],
+        benefits: [""],
+        risksAndLimitations: [""],
+        symptoms: [{ title: "", description: "" }],
+        diagnosis: [{ title: "", description: "" }],
+        treatmentOptions: {
+          conservative: [""],
+          whenSurgeryConsidered: [""]
+        },
+        procedureExplanation: {
+          summary: "",
+          steps: [{ stepNumber: 1, title: "", description: "" }]
+        },
+        recoveryTimeline: [{ timeframe: "Day 0", title: "Immediate Ambulation", description: "Walking comfortably within hours" }],
+        faqs: [{ question: "", answer: "" }],
+        relatedSlugs: []
+      }
     };
 
     const mergedData = prefillData ? { ...emptyModels[type], ...prefillData } : emptyModels[type];
 
     setEditingItem({ type, id: "", data: mergedData });
     setFormType(type);
+    setTreatmentSubTab("basic");
     setIsOpenForm(true);
   };
 
@@ -281,6 +328,12 @@ export default function AdminPanel() {
       } else {
         addVideo(data);
       }
+    } else if (type === "treatment") {
+      if (id) {
+        updateTreatment(id, data);
+      } else {
+        addTreatment(data);
+      }
     }
 
     setIsOpenForm(false);
@@ -297,6 +350,7 @@ export default function AdminPanel() {
     if (type === "testimonial") deleteTestimonial(id);
     if (type === "condition") deleteCondition(id);
     if (type === "video") deleteVideo(id);
+    if (type === "treatment") deleteTreatment(id);
   };
 
   // Appointment statistics
@@ -455,10 +509,11 @@ export default function AdminPanel() {
       <div className="flex flex-wrap items-center gap-1.5 p-1 bg-cosmic-card/40 rounded-2xl border border-white/5 mb-8 backdrop-blur-md">
         {[
           { id: "appointments", label: "Appointments Queue", icon: Calendar },
-          { id: "showcases", label: "Photos & Videos Showcase", icon: Layers },
+          { id: "treatments", label: "Treatment Pages (Full)", icon: Layers },
+          { id: "showcases", label: "Photos & Videos Showcase", icon: Sparkles },
           { id: "videos", label: "Homepage Video Showcase", icon: Film },
           { id: "blogs", label: "Publications Manager", icon: FileText },
-          { id: "conditions", label: "Treatments", icon: TrendingUp },
+          { id: "conditions", label: "Homepage Pathology Cards", icon: TrendingUp },
           { id: "testimonials", label: "Testimonials", icon: Star },
           { id: "faqs", label: "FAQ Center", icon: HelpCircle },
           { id: "settings", label: "Security & Factory Resets", icon: KeyRound }
@@ -1050,7 +1105,144 @@ export default function AdminPanel() {
           </div>
         )}
 
-        {/* 3. TREATMENTS TAB */}
+        {/* 2.1 FULL TREATMENT PAGES TAB */}
+        {activeTab === "treatments" && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-black/20 p-5 rounded-2xl border border-white/5">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="font-mono text-[9px] uppercase tracking-widest text-gold-400 font-bold bg-gold-400/10 px-2.5 py-0.5 rounded-full border border-gold-400/20">
+                    Full Content & SEO Control
+                  </span>
+                  <span className="text-stone-500 font-mono text-[10px]">
+                    {treatments.length} Active Procedures
+                  </span>
+                </div>
+                <h3 className="font-display font-medium text-xl text-white">
+                  Monoportal & Keyhole Spine Treatment Pages
+                </h3>
+                <p className="text-stone-400 text-xs mt-0.5 max-w-xl">
+                  Manage clinical metrics, indications, surgical procedure steps, recovery milestones, and clean URL SEO metadata for all treatment pages.
+                </p>
+              </div>
+
+              <button
+                onClick={() => openCreateModal("treatment")}
+                className="flex items-center gap-2 bg-gold-400 hover:bg-gold-300 text-black px-4.5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-[0_4px_15px_rgba(193,161,113,0.25)] cursor-pointer shrink-0"
+              >
+                <Plus className="w-4 h-4" />
+                <span>New Treatment Page</span>
+              </button>
+            </div>
+
+            {/* List of Treatments */}
+            <div className="grid grid-cols-1 gap-4">
+              {treatments.map((t) => (
+                <div
+                  key={t.id || t.slug}
+                  className="bg-black/30 hover:bg-black/40 transition-colors p-5 sm:p-6 rounded-2xl border border-white/5 text-left flex flex-col lg:flex-row lg:items-center justify-between gap-6"
+                >
+                  <div className="space-y-3 flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="bg-gold-400/15 border border-gold-400/30 text-gold-300 px-2.5 py-0.5 rounded text-[10px] font-mono uppercase font-bold tracking-wider">
+                        {t.badge || "Procedure"}
+                      </span>
+                      <span className="bg-white/5 border border-white/10 px-2.5 py-0.5 rounded text-[10px] text-stone-300 font-mono">
+                        {t.category}
+                      </span>
+                      <span className="bg-sky-500/10 border border-sky-500/20 text-sky-300 px-2.5 py-0.5 rounded text-[10px] font-mono font-bold">
+                        URL: /{t.slug}
+                      </span>
+                      <span className="text-stone-600 font-mono text-[10px]">ID: {t.id}</span>
+                    </div>
+
+                    <div>
+                      <h4 className="font-display font-semibold text-lg text-white tracking-tight flex items-center gap-2">
+                        {t.name}
+                      </h4>
+                      <p className="text-xs text-stone-400 line-clamp-2 mt-1 leading-relaxed">
+                        {t.shortDescription}
+                      </p>
+                    </div>
+
+                    {/* Quick Metric Pills */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+                      <div className="bg-white/5 border border-white/5 p-2 rounded-lg">
+                        <span className="text-[9px] font-mono text-stone-500 block uppercase">Incision</span>
+                        <span className="text-xs font-mono font-bold text-stone-200">{t.metrics?.incisionSize || "<8mm"}</span>
+                      </div>
+                      <div className="bg-white/5 border border-white/5 p-2 rounded-lg">
+                        <span className="text-[9px] font-mono text-stone-500 block uppercase">Anesthesia</span>
+                        <span className="text-xs font-mono font-bold text-stone-200">{t.metrics?.anesthesia || "Local"}</span>
+                      </div>
+                      <div className="bg-white/5 border border-white/5 p-2 rounded-lg">
+                        <span className="text-[9px] font-mono text-stone-500 block uppercase">Hospital Stay</span>
+                        <span className="text-xs font-mono font-bold text-stone-200">{t.metrics?.hospitalStay || "Daycare"}</span>
+                      </div>
+                      <div className="bg-white/5 border border-white/5 p-2 rounded-lg">
+                        <span className="text-[9px] font-mono text-stone-500 block uppercase">Recovery</span>
+                        <span className="text-xs font-mono font-bold text-emerald-400">{t.metrics?.recoveryTime || "Same Day"}</span>
+                      </div>
+                    </div>
+
+                    {/* Badges for Content Sections & SEO */}
+                    <div className="flex flex-wrap items-center gap-2 pt-1 text-[10px] font-mono">
+                      <span className={`px-2 py-0.5 rounded border ${t.metaTitle ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-300" : "bg-amber-500/10 border-amber-500/20 text-amber-300"}`}>
+                        {t.metaTitle ? "✓ SEO Title" : "⚠ Default Title"}
+                      </span>
+                      <span className={`px-2 py-0.5 rounded border ${t.metaDescription ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-300" : "bg-amber-500/10 border-amber-500/20 text-amber-300"}`}>
+                        {t.metaDescription ? "✓ Meta Desc" : "⚠ Default Desc"}
+                      </span>
+                      <span className="bg-white/5 border border-white/5 px-2 py-0.5 rounded text-stone-400">
+                        {t.symptoms?.length || 0} Symptoms
+                      </span>
+                      <span className="bg-white/5 border border-white/5 px-2 py-0.5 rounded text-stone-400">
+                        {t.procedureExplanation?.steps?.length || 0} Surgical Steps
+                      </span>
+                      <span className="bg-white/5 border border-white/5 px-2 py-0.5 rounded text-stone-400">
+                        {t.recoveryTimeline?.length || 0} Milestones
+                      </span>
+                      <span className="bg-white/5 border border-white/5 px-2 py-0.5 rounded text-stone-400">
+                        {t.faqs?.length || 0} FAQs
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Actions Column */}
+                  <div className="flex lg:flex-col gap-2 justify-end shrink-0 pt-4 lg:pt-0 border-t lg:border-t-0 border-white/5">
+                    <button
+                      onClick={() => openEditModal("treatment", t.id, t)}
+                      className="flex-1 lg:flex-none flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-gold-400 hover:bg-gold-300 text-black text-xs font-bold transition-all cursor-pointer shadow-[0_2px_10px_rgba(193,161,113,0.2)]"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" />
+                      <span>Edit Full Page</span>
+                    </button>
+                    
+                    <a
+                      href={`/${t.slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 lg:flex-none flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-stone-300 hover:text-white text-xs font-mono font-bold transition-all cursor-pointer"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5 text-sky-400" />
+                      <span>View Live</span>
+                    </a>
+
+                    <button
+                      onClick={() => deleteItem("treatment", t.id)}
+                      className="p-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500 border border-rose-500/20 text-rose-400 hover:text-white transition-all cursor-pointer flex items-center justify-center"
+                      title="Delete Treatment Page"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 3. HOMEPAGE PATHOLOGY CARDS TAB */}
         {activeTab === "conditions" && (
           <div className="space-y-6">
             <div className="flex justify-between items-center">
@@ -1357,10 +1549,16 @@ export default function AdminPanel() {
                   Reset Photo Gallery
                 </button>
                 <button
+                  onClick={() => handleSystemReset("treatments")}
+                  className="bg-gold-400/10 hover:bg-gold-400 text-gold-300 hover:text-black border border-gold-400/30 px-4 py-2 rounded-full text-xs font-bold font-mono cursor-pointer transition-all"
+                >
+                  Reset Treatment Pages
+                </button>
+                <button
                   onClick={() => handleSystemReset("conditions")}
                   className="bg-white/5 hover:bg-white/10 text-stone-300 border border-white/10 px-4 py-2 rounded-full text-xs font-bold font-mono cursor-pointer"
                 >
-                  Reset Treatments
+                  Reset Pathology Cards
                 </button>
                 <button
                   onClick={() => handleSystemReset("testimonials")}
@@ -1383,7 +1581,7 @@ export default function AdminPanel() {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="relative w-full max-w-2xl bg-cosmic-card border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.85)] p-6 sm:p-8 text-left overflow-y-auto max-h-[92vh]"
+              className={`relative w-full ${formType === "treatment" ? "max-w-4xl" : "max-w-2xl"} bg-cosmic-card border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.85)] p-6 sm:p-8 text-left overflow-y-auto max-h-[92vh]`}
             >
               <button
                 onClick={() => {
@@ -1933,6 +2131,95 @@ export default function AdminPanel() {
                         className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white focus:outline-none"
                       />
                     </div>
+
+                    {/* Treatment SEO & Metadata Fields */}
+                    <div className="col-span-2 p-4 rounded-xl bg-gold-400/5 border border-gold-400/20 space-y-3 mt-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Globe className="w-4 h-4 text-gold-400" />
+                          <span className="font-mono text-xs text-gold-300 uppercase font-bold tracking-wider">
+                            Treatment SEO & Search Engine Optimization
+                          </span>
+                        </div>
+                        <span className="text-[10px] font-mono text-stone-400">Google Rich Results Ready</span>
+                      </div>
+
+                      {/* Google Rich Result Card Snippet Preview */}
+                      <div className="p-3.5 bg-black/70 rounded-xl border border-white/10 space-y-1">
+                        <span className="text-[9px] font-mono text-stone-500 uppercase font-bold block">Google Rich Result Snippet Preview</span>
+                        <div className="text-sky-400 text-sm font-semibold truncate hover:underline cursor-pointer">
+                          {editingItem.data.metaTitle || `${editingItem.data.name || "Treatment"} | Dr. Dheeraj Vishwakarma`}
+                        </div>
+                        <div className="text-emerald-400 text-[11px] font-mono truncate">
+                          https://www.endoscopicspinecare.com/{editingItem.data.slug || editingItem.data.detailedKey || "treatment-slug"}
+                        </div>
+                        <div className="text-stone-300 text-xs line-clamp-2 leading-relaxed">
+                          {editingItem.data.metaDescription || editingItem.data.shortDescription || "Advanced endoscopic spine surgery procedure by Dr. Dheeraj Vishwakarma in Jaipur, India."}
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="space-y-1 sm:col-span-2">
+                          <label className="text-stone-400 font-bold text-[11px]">Clean URL Slug *</label>
+                          <div className="flex items-center bg-black/40 border border-white/10 rounded-xl px-3 py-2 focus-within:border-gold-400">
+                            <span className="text-stone-500 font-mono text-xs shrink-0 mr-1 font-bold">/</span>
+                            <input
+                              type="text"
+                              placeholder="e.g. slip-disc-treatment"
+                              value={editingItem.data.slug || editingItem.data.detailedKey || ""}
+                              onChange={(e) => {
+                                const val = e.target.value.toLowerCase().replace(/^\/+/, '').replace(/\s+/g, '-');
+                                setEditingItem({ ...editingItem, data: { ...editingItem.data, slug: val, detailedKey: val } });
+                              }}
+                              className="w-full bg-transparent text-white font-mono text-xs focus:outline-none"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="space-y-1 sm:col-span-2">
+                          <div className="flex justify-between items-center">
+                            <label className="text-stone-400 font-bold text-[11px]">Meta Title</label>
+                            <span className="text-[10px] font-mono text-stone-500">
+                              {(editingItem.data.metaTitle || "").length} / 60 chars
+                            </span>
+                          </div>
+                          <input
+                            type="text"
+                            placeholder="Custom SEO Title for Google (leave blank for default)"
+                            value={editingItem.data.metaTitle || ""}
+                            onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, metaTitle: e.target.value } })}
+                            className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-gold-400"
+                          />
+                        </div>
+
+                        <div className="space-y-1 col-span-2">
+                          <div className="flex justify-between items-center">
+                            <label className="text-stone-400 font-bold text-[11px]">Meta Description</label>
+                            <span className="text-[10px] font-mono text-stone-500">
+                              {(editingItem.data.metaDescription || "").length} / 160 chars
+                            </span>
+                          </div>
+                          <textarea
+                            rows={2}
+                            placeholder="Custom search snippet description (150-160 characters recommended)"
+                            value={editingItem.data.metaDescription || ""}
+                            onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, metaDescription: e.target.value } })}
+                            className="w-full bg-black/40 border border-white/10 rounded-xl p-2.5 text-white text-xs focus:outline-none focus:border-gold-400"
+                          />
+                        </div>
+
+                        <div className="space-y-1 col-span-2">
+                          <label className="text-stone-400 font-bold text-[11px]">Meta Keywords (comma separated)</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Spine Treatment, Slip Disc Treatment, Monoportal Endoscopic Spine"
+                            value={editingItem.data.metaKeywords || ""}
+                            onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, metaKeywords: e.target.value } })}
+                            className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-gold-400"
+                          />
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 )}
 
@@ -2134,6 +2421,62 @@ export default function AdminPanel() {
                         className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white focus:outline-none"
                       />
                     </div>
+
+                    {/* Blog SEO & Metadata Fields */}
+                    <div className="col-span-2 p-4 rounded-xl bg-gold-400/5 border border-gold-400/20 space-y-3 mt-2">
+                      <div className="flex items-center gap-2">
+                        <Globe className="w-4 h-4 text-gold-400" />
+                        <span className="font-mono text-[10px] text-gold-300 uppercase font-bold tracking-wider">
+                          Blog SEO & Search Engine Optimization
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="space-y-1">
+                          <label className="text-stone-400 font-bold text-[11px]">URL Slug</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. cauda-equina-study"
+                            value={editingItem.data.slug || ""}
+                            onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') } })}
+                            className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-xs focus:outline-none focus:border-gold-400"
+                          />
+                        </div>
+
+                        <div className="space-y-1">
+                          <label className="text-stone-400 font-bold text-[11px]">Meta Title</label>
+                          <input
+                            type="text"
+                            placeholder="Custom SEO Title for Google"
+                            value={editingItem.data.metaTitle || ""}
+                            onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, metaTitle: e.target.value } })}
+                            className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-gold-400"
+                          />
+                        </div>
+
+                        <div className="space-y-1 col-span-2">
+                          <label className="text-stone-400 font-bold text-[11px]">Meta Description</label>
+                          <textarea
+                            rows={2}
+                            placeholder="Custom search snippet description (150-160 characters recommended)"
+                            value={editingItem.data.metaDescription || ""}
+                            onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, metaDescription: e.target.value } })}
+                            className="w-full bg-black/40 border border-white/10 rounded-xl p-2.5 text-white text-xs focus:outline-none focus:border-gold-400"
+                          />
+                        </div>
+
+                        <div className="space-y-1 col-span-2">
+                          <label className="text-stone-400 font-bold text-[11px]">Meta Keywords (comma separated)</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Spine Research, Cauda Equina, Endoscopic Discectomy"
+                            value={editingItem.data.metaKeywords || ""}
+                            onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, metaKeywords: e.target.value } })}
+                            className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-gold-400"
+                          />
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 )}
 
@@ -2279,6 +2622,957 @@ export default function AdminPanel() {
                         />
                       </div>
                     </div>
+                  </div>
+                )}
+
+                {/* 8. Comprehensive Treatment Editing Fields */}
+                {formType === "treatment" && (
+                  <div className="space-y-5 text-left">
+                    {/* Sub-tab navigation */}
+                    <div className="flex flex-wrap gap-1.5 p-1 bg-black/40 rounded-xl border border-white/5">
+                      {[
+                        { id: "basic", label: "1. Basic Info & SEO" },
+                        { id: "seo", label: "2. Treatment SEO & Meta" },
+                        { id: "metrics", label: "3. Metrics & Options" },
+                        { id: "clinical", label: "4. Overview & Causes" },
+                        { id: "symptoms", label: "5. Symptoms & Diagnosis" },
+                        { id: "procedure", label: "6. Procedure Steps" },
+                        { id: "recovery", label: "7. Recovery & FAQs" }
+                      ].map((st) => (
+                        <button
+                          key={st.id}
+                          type="button"
+                          onClick={() => setTreatmentSubTab(st.id as any)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold cursor-pointer transition-all ${
+                            treatmentSubTab === st.id
+                              ? "bg-gold-400 text-black shadow-md"
+                              : "text-stone-400 hover:text-white hover:bg-white/5"
+                          }`}
+                        >
+                          {st.label}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* SUB-TAB 1: Basic Info & SEO */}
+                    {treatmentSubTab === "basic" && (
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                          <div className="space-y-1 sm:col-span-2">
+                            <label className="text-stone-400 font-bold text-xs">Treatment Name *</label>
+                            <input
+                              type="text"
+                              required
+                              value={editingItem.data.name || ""}
+                              onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, name: e.target.value } })}
+                              className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-gold-400 text-xs"
+                              placeholder="e.g. Monoportal Endoscopic Spine Surgery (FESS)"
+                            />
+                          </div>
+
+                          <div className="space-y-1">
+                            <label className="text-stone-400 font-bold text-xs">Treatment Key / ID *</label>
+                            <input
+                              type="text"
+                              required
+                              disabled={Boolean(editingItem.id)}
+                              value={editingItem.data.id || ""}
+                              onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, id: e.target.value } })}
+                              className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white font-mono text-xs focus:outline-none focus:border-gold-400 disabled:opacity-60"
+                              placeholder="e.g. fess"
+                            />
+                            <span className="text-[10px] text-stone-500 font-mono">Used internally for triage booking & API</span>
+                          </div>
+
+                          <div className="space-y-1">
+                            <label className="text-stone-400 font-bold text-xs">Category *</label>
+                            <input
+                              type="text"
+                              required
+                              value={editingItem.data.category || ""}
+                              onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, category: e.target.value } })}
+                              className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white text-xs focus:outline-none focus:border-gold-400"
+                              placeholder="e.g. Endoscopic Spine Surgery"
+                            />
+                          </div>
+
+                          <div className="space-y-1 sm:col-span-2">
+                            <label className="text-stone-400 font-bold text-xs">Badge Tag</label>
+                            <input
+                              type="text"
+                              value={editingItem.data.badge || ""}
+                              onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, badge: e.target.value } })}
+                              className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white text-xs focus:outline-none focus:border-gold-400"
+                              placeholder="e.g. Monoportal Keyhole or Gold Standard"
+                            />
+                          </div>
+
+                          <div className="space-y-1 sm:col-span-2">
+                            <label className="text-stone-400 font-bold text-xs">Short Description *</label>
+                            <textarea
+                              rows={2}
+                              required
+                              value={editingItem.data.shortDescription || ""}
+                              onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, shortDescription: e.target.value } })}
+                              className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white text-xs focus:outline-none focus:border-gold-400"
+                              placeholder="Concise summary of this treatment displayed on treatment cards..."
+                            />
+                          </div>
+
+                          <div className="space-y-1">
+                            <label className="text-stone-400 font-bold text-xs">Hero Image URL</label>
+                            <input
+                              type="text"
+                              value={editingItem.data.heroImage || ""}
+                              onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, heroImage: e.target.value } })}
+                              className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white text-xs focus:outline-none focus:border-gold-400"
+                              placeholder="/endoscopic_spine_poster.jpg"
+                            />
+                          </div>
+
+                          <div className="space-y-1">
+                            <label className="text-stone-400 font-bold text-xs">Hero Image Alt Text</label>
+                            <input
+                              type="text"
+                              value={editingItem.data.heroImageAlt || ""}
+                              onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, heroImageAlt: e.target.value } })}
+                              className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white text-xs focus:outline-none focus:border-gold-400"
+                              placeholder="Image descriptive alt text"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Treatment SEO & Search Engine Optimization Card (Directly embedded in Tab 1) */}
+                        <div className="p-4 rounded-xl bg-gold-400/5 border border-gold-400/25 space-y-4 mt-2">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Globe className="w-4 h-4 text-gold-400" />
+                              <span className="font-mono text-xs text-gold-300 uppercase font-bold tracking-wider">
+                                Treatment SEO & Search Engine Optimization
+                              </span>
+                            </div>
+                            <span className="text-[10px] font-mono text-stone-400">Google Rich Results Ready</span>
+                          </div>
+
+                          {/* Google Rich Result Card Snippet Preview */}
+                          <div className="p-3.5 bg-black/70 rounded-xl border border-white/10 space-y-1">
+                            <span className="text-[9px] font-mono text-stone-500 uppercase font-bold block">Google Rich Result Snippet Preview</span>
+                            <div className="text-sky-400 text-sm font-semibold truncate hover:underline cursor-pointer">
+                              {editingItem.data.metaTitle || `${editingItem.data.name || "Treatment"} | Dr. Dheeraj Vishwakarma`}
+                            </div>
+                            <div className="text-emerald-400 text-[11px] font-mono truncate">
+                              https://www.endoscopicspinecare.com/{editingItem.data.slug || "treatment-slug"}
+                            </div>
+                            <div className="text-stone-300 text-xs line-clamp-2 leading-relaxed">
+                              {editingItem.data.metaDescription || editingItem.data.shortDescription || "Advanced endoscopic spine surgery procedure by Dr. Dheeraj Vishwakarma in Jaipur, India."}
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+                            <div className="space-y-1 sm:col-span-2">
+                              <label className="text-stone-400 font-bold text-xs">Clean URL Slug * (e.g. endoscopic-spine-surgery)</label>
+                              <div className="flex items-center bg-black/40 border border-white/10 rounded-xl px-3 py-2 focus-within:border-gold-400">
+                                <span className="text-stone-500 font-mono text-xs shrink-0 mr-1 font-bold">/</span>
+                                <input
+                                  type="text"
+                                  required
+                                  value={editingItem.data.slug || ""}
+                                  onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, slug: e.target.value.toLowerCase().replace(/^\/+/, '').replace(/\s+/g, '-') } })}
+                                  className="w-full bg-transparent text-white font-mono text-xs focus:outline-none"
+                                  placeholder="endoscopic-spine-surgery"
+                                />
+                              </div>
+                              <span className="text-[10px] text-stone-500 font-mono block">
+                                Full Live URL: <span className="text-gold-400">https://www.endoscopicspinecare.com/{editingItem.data.slug || "slug"}</span>
+                              </span>
+                            </div>
+
+                            <div className="space-y-1 sm:col-span-2">
+                              <div className="flex justify-between items-center">
+                                <label className="text-stone-400 font-bold text-xs">Meta Title</label>
+                                <span className="text-[10px] font-mono text-stone-500">
+                                  {(editingItem.data.metaTitle || "").length} / 60 chars
+                                </span>
+                              </div>
+                              <input
+                                type="text"
+                                value={editingItem.data.metaTitle || ""}
+                                onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, metaTitle: e.target.value } })}
+                                className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-gold-400"
+                                placeholder="Custom SEO Title for Google (leave blank for automatic title)"
+                              />
+                            </div>
+
+                            <div className="space-y-1 sm:col-span-2">
+                              <div className="flex justify-between items-center">
+                                <label className="text-stone-400 font-bold text-xs">Meta Description</label>
+                                <span className="text-[10px] font-mono text-stone-500">
+                                  {(editingItem.data.metaDescription || "").length} / 160 chars
+                                </span>
+                              </div>
+                              <textarea
+                                rows={3}
+                                value={editingItem.data.metaDescription || ""}
+                                onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, metaDescription: e.target.value } })}
+                                className="w-full bg-black/40 border border-white/10 rounded-xl p-2.5 text-white text-xs focus:outline-none focus:border-gold-400 leading-relaxed"
+                                placeholder="Custom Google search snippet (leave blank for automatic snippet)"
+                              />
+                            </div>
+
+                            <div className="space-y-1 sm:col-span-2">
+                              <label className="text-stone-400 font-bold text-xs">Meta Keywords (comma separated)</label>
+                              <input
+                                type="text"
+                                value={editingItem.data.metaKeywords || ""}
+                                onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, metaKeywords: e.target.value } })}
+                                className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-gold-400"
+                                placeholder="e.g. Endoscopic Spine Surgery, Slip Disc Treatment Jaipur, Keyhole Spine Surgery"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* SUB-TAB 2: Treatment SEO & Search Engine Optimization */}
+                    {treatmentSubTab === "seo" && (
+                      <div className="space-y-4">
+                        <div className="p-4 rounded-xl bg-gold-400/5 border border-gold-400/25 space-y-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Globe className="w-4 h-4 text-gold-400" />
+                              <span className="font-mono text-xs text-gold-300 uppercase font-bold tracking-wider">
+                                Treatment SEO & Search Engine Optimization
+                              </span>
+                            </div>
+                            <span className="text-[10px] font-mono text-stone-400">Google Rich Results Ready</span>
+                          </div>
+
+                          {/* Google Rich Result Card Snippet Preview */}
+                          <div className="p-3.5 bg-black/70 rounded-xl border border-white/10 space-y-1">
+                            <span className="text-[9px] font-mono text-stone-500 uppercase font-bold block">Google Rich Result Snippet Preview</span>
+                            <div className="text-sky-400 text-sm font-semibold truncate hover:underline cursor-pointer">
+                              {editingItem.data.metaTitle || `${editingItem.data.name || "Treatment"} | Dr. Dheeraj Vishwakarma`}
+                            </div>
+                            <div className="text-emerald-400 text-[11px] font-mono truncate">
+                              https://www.endoscopicspinecare.com/{editingItem.data.slug || "treatment-slug"}
+                            </div>
+                            <div className="text-stone-300 text-xs line-clamp-2 leading-relaxed">
+                              {editingItem.data.metaDescription || editingItem.data.shortDescription || "Advanced endoscopic spine surgery procedure by Dr. Dheeraj Vishwakarma in Jaipur, India."}
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+                            <div className="space-y-1 sm:col-span-2">
+                              <label className="text-stone-400 font-bold text-xs">Clean URL Slug * (e.g. endoscopic-spine-surgery)</label>
+                              <div className="flex items-center bg-black/40 border border-white/10 rounded-xl px-3 py-2 focus-within:border-gold-400">
+                                <span className="text-stone-500 font-mono text-xs shrink-0 mr-1 font-bold">/</span>
+                                <input
+                                  type="text"
+                                  required
+                                  value={editingItem.data.slug || ""}
+                                  onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, slug: e.target.value.toLowerCase().replace(/^\/+/, '').replace(/\s+/g, '-') } })}
+                                  className="w-full bg-transparent text-white font-mono text-xs focus:outline-none"
+                                  placeholder="endoscopic-spine-surgery"
+                                />
+                              </div>
+                              <span className="text-[10px] text-stone-500 font-mono block">
+                                Full Live URL: <span className="text-gold-400">https://www.endoscopicspinecare.com/{editingItem.data.slug || "slug"}</span>
+                              </span>
+                            </div>
+
+                            <div className="space-y-1 sm:col-span-2">
+                              <div className="flex justify-between items-center">
+                                <label className="text-stone-400 font-bold text-xs">Meta Title</label>
+                                <span className="text-[10px] font-mono text-stone-500">
+                                  {(editingItem.data.metaTitle || "").length} / 60 chars
+                                </span>
+                              </div>
+                              <input
+                                type="text"
+                                value={editingItem.data.metaTitle || ""}
+                                onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, metaTitle: e.target.value } })}
+                                className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-gold-400"
+                                placeholder="Custom SEO Title for Google (leave blank for automatic title)"
+                              />
+                            </div>
+
+                            <div className="space-y-1 sm:col-span-2">
+                              <div className="flex justify-between items-center">
+                                <label className="text-stone-400 font-bold text-xs">Meta Description</label>
+                                <span className="text-[10px] font-mono text-stone-500">
+                                  {(editingItem.data.metaDescription || "").length} / 160 chars
+                                </span>
+                              </div>
+                              <textarea
+                                rows={3}
+                                value={editingItem.data.metaDescription || ""}
+                                onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, metaDescription: e.target.value } })}
+                                className="w-full bg-black/40 border border-white/10 rounded-xl p-2.5 text-white text-xs focus:outline-none focus:border-gold-400 leading-relaxed"
+                                placeholder="Custom Google search snippet (leave blank for automatic snippet)"
+                              />
+                            </div>
+
+                            <div className="space-y-1 sm:col-span-2">
+                              <label className="text-stone-400 font-bold text-xs">Meta Keywords (comma separated)</label>
+                              <input
+                                type="text"
+                                value={editingItem.data.metaKeywords || ""}
+                                onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, metaKeywords: e.target.value } })}
+                                className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-gold-400"
+                                placeholder="e.g. Endoscopic Spine Surgery, Slip Disc Treatment Jaipur, Keyhole Spine Surgery"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* SUB-TAB 3: Metrics & Options */}
+                    {treatmentSubTab === "metrics" && (
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                          <div className="space-y-1">
+                            <label className="text-stone-400 font-bold text-xs">Incision Size Metric *</label>
+                            <input
+                              type="text"
+                              required
+                              value={editingItem.data.metrics?.incisionSize || ""}
+                              onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, metrics: { ...(editingItem.data.metrics || {}), incisionSize: e.target.value } } })}
+                              className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white text-xs focus:outline-none focus:border-gold-400"
+                              placeholder="<8mm (Single Stitch)"
+                            />
+                          </div>
+
+                          <div className="space-y-1">
+                            <label className="text-stone-400 font-bold text-xs">Anesthesia Protocol *</label>
+                            <input
+                              type="text"
+                              required
+                              value={editingItem.data.metrics?.anesthesia || ""}
+                              onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, metrics: { ...(editingItem.data.metrics || {}), anesthesia: e.target.value } } })}
+                              className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white text-xs focus:outline-none focus:border-gold-400"
+                              placeholder="Local / Conscious Awake"
+                            />
+                          </div>
+
+                          <div className="space-y-1">
+                            <label className="text-stone-400 font-bold text-xs">Hospital Stay *</label>
+                            <input
+                              type="text"
+                              required
+                              value={editingItem.data.metrics?.hospitalStay || ""}
+                              onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, metrics: { ...(editingItem.data.metrics || {}), hospitalStay: e.target.value } } })}
+                              className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white text-xs focus:outline-none focus:border-gold-400"
+                              placeholder="Daycare / <24 Hours"
+                            />
+                          </div>
+
+                          <div className="space-y-1">
+                            <label className="text-stone-400 font-bold text-xs">Recovery Time *</label>
+                            <input
+                              type="text"
+                              required
+                              value={editingItem.data.metrics?.recoveryTime || ""}
+                              onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, metrics: { ...(editingItem.data.metrics || {}), recoveryTime: e.target.value } } })}
+                              className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white text-xs focus:outline-none focus:border-gold-400"
+                              placeholder="Walk Same Day"
+                            />
+                          </div>
+
+                          <div className="space-y-1 sm:col-span-2">
+                            <label className="text-stone-400 font-bold text-xs">Related Treatment Slugs (comma separated)</label>
+                            <input
+                              type="text"
+                              value={editingItem.data.relatedSlugs ? editingItem.data.relatedSlugs.join(", ") : ""}
+                              onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, relatedSlugs: e.target.value.split(",").map((s: string) => s.trim()).filter(Boolean) } })}
+                              className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white font-mono text-xs focus:outline-none focus:border-gold-400"
+                              placeholder="e.g. endoscopic-discectomy, sciatica-treatment"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Conservative Treatment Options List */}
+                        <div className="p-4 rounded-xl bg-black/30 border border-white/5 space-y-2.5">
+                          <div className="flex justify-between items-center">
+                            <label className="text-stone-300 font-bold text-xs">Conservative Treatment Options</label>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const list = [...(editingItem.data.treatmentOptions?.conservative || []), ""];
+                                setEditingItem({ ...editingItem, data: { ...editingItem.data, treatmentOptions: { ...(editingItem.data.treatmentOptions || {}), conservative: list } } });
+                              }}
+                              className="text-[10px] text-gold-400 hover:text-gold-300 font-mono font-bold flex items-center gap-1 cursor-pointer"
+                            >
+                              <Plus className="w-3 h-3" /> Add Option
+                            </button>
+                          </div>
+                          {(editingItem.data.treatmentOptions?.conservative || []).map((opt: string, i: number) => (
+                            <div key={i} className="flex gap-2 items-center">
+                              <input
+                                type="text"
+                                value={opt}
+                                onChange={(e) => {
+                                  const list = [...(editingItem.data.treatmentOptions?.conservative || [])];
+                                  list[i] = e.target.value;
+                                  setEditingItem({ ...editingItem, data: { ...editingItem.data, treatmentOptions: { ...(editingItem.data.treatmentOptions || {}), conservative: list } } });
+                                }}
+                                className="flex-1 bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-gold-400"
+                                placeholder={`Conservative option ${i + 1}`}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const list = (editingItem.data.treatmentOptions?.conservative || []).filter((_: any, idx: number) => idx !== i);
+                                  setEditingItem({ ...editingItem, data: { ...editingItem.data, treatmentOptions: { ...(editingItem.data.treatmentOptions || {}), conservative: list } } });
+                                }}
+                                className="p-2 text-rose-400 hover:bg-rose-500/10 rounded-lg cursor-pointer"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* When Surgery Considered */}
+                        <div className="p-4 rounded-xl bg-black/30 border border-white/5 space-y-2.5">
+                          <div className="flex justify-between items-center">
+                            <label className="text-stone-300 font-bold text-xs">When Surgery is Considered</label>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const list = [...(editingItem.data.treatmentOptions?.whenSurgeryConsidered || []), ""];
+                                setEditingItem({ ...editingItem, data: { ...editingItem.data, treatmentOptions: { ...(editingItem.data.treatmentOptions || {}), whenSurgeryConsidered: list } } });
+                              }}
+                              className="text-[10px] text-gold-400 hover:text-gold-300 font-mono font-bold flex items-center gap-1 cursor-pointer"
+                            >
+                              <Plus className="w-3 h-3" /> Add Criteria
+                            </button>
+                          </div>
+                          {(editingItem.data.treatmentOptions?.whenSurgeryConsidered || []).map((crit: string, i: number) => (
+                            <div key={i} className="flex gap-2 items-center">
+                              <input
+                                type="text"
+                                value={crit}
+                                onChange={(e) => {
+                                  const list = [...(editingItem.data.treatmentOptions?.whenSurgeryConsidered || [])];
+                                  list[i] = e.target.value;
+                                  setEditingItem({ ...editingItem, data: { ...editingItem.data, treatmentOptions: { ...(editingItem.data.treatmentOptions || {}), whenSurgeryConsidered: list } } });
+                                }}
+                                className="flex-1 bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-gold-400"
+                                placeholder={`Surgical criteria ${i + 1}`}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const list = (editingItem.data.treatmentOptions?.whenSurgeryConsidered || []).filter((_: any, idx: number) => idx !== i);
+                                  setEditingItem({ ...editingItem, data: { ...editingItem.data, treatmentOptions: { ...(editingItem.data.treatmentOptions || {}), whenSurgeryConsidered: list } } });
+                                }}
+                                className="p-2 text-rose-400 hover:bg-rose-500/10 rounded-lg cursor-pointer"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* SUB-TAB 3: Overview & Causes */}
+                    {treatmentSubTab === "clinical" && (
+                      <div className="space-y-4">
+                        {/* Overview bullet points */}
+                        <div className="p-4 rounded-xl bg-black/30 border border-white/5 space-y-2.5">
+                          <div className="flex justify-between items-center">
+                            <label className="text-stone-300 font-bold text-xs">Overview Paragraphs / Points</label>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const list = [...(editingItem.data.overview || []), ""];
+                                setEditingItem({ ...editingItem, data: { ...editingItem.data, overview: list } });
+                              }}
+                              className="text-[10px] text-gold-400 hover:text-gold-300 font-mono font-bold flex items-center gap-1 cursor-pointer"
+                            >
+                              <Plus className="w-3 h-3" /> Add Point
+                            </button>
+                          </div>
+                          {(editingItem.data.overview || []).map((pt: string, i: number) => (
+                            <div key={i} className="flex gap-2 items-start">
+                              <textarea
+                                rows={2}
+                                value={pt}
+                                onChange={(e) => {
+                                  const list = [...(editingItem.data.overview || [])];
+                                  list[i] = e.target.value;
+                                  setEditingItem({ ...editingItem, data: { ...editingItem.data, overview: list } });
+                                }}
+                                className="flex-1 bg-black/40 border border-white/10 rounded-lg p-2.5 text-white text-xs focus:outline-none focus:border-gold-400"
+                                placeholder={`Overview point ${i + 1}`}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const list = (editingItem.data.overview || []).filter((_: any, idx: number) => idx !== i);
+                                  setEditingItem({ ...editingItem, data: { ...editingItem.data, overview: list } });
+                                }}
+                                className="p-2 text-rose-400 hover:bg-rose-500/10 rounded-lg cursor-pointer mt-1"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Causes */}
+                        <div className="p-4 rounded-xl bg-black/30 border border-white/5 space-y-2.5">
+                          <div className="flex justify-between items-center">
+                            <label className="text-stone-300 font-bold text-xs">Causes & Etiology</label>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const list = [...(editingItem.data.causes || []), ""];
+                                setEditingItem({ ...editingItem, data: { ...editingItem.data, causes: list } });
+                              }}
+                              className="text-[10px] text-gold-400 hover:text-gold-300 font-mono font-bold flex items-center gap-1 cursor-pointer"
+                            >
+                              <Plus className="w-3 h-3" /> Add Cause
+                            </button>
+                          </div>
+                          {(editingItem.data.causes || []).map((cause: string, i: number) => (
+                            <div key={i} className="flex gap-2 items-center">
+                              <input
+                                type="text"
+                                value={cause}
+                                onChange={(e) => {
+                                  const list = [...(editingItem.data.causes || [])];
+                                  list[i] = e.target.value;
+                                  setEditingItem({ ...editingItem, data: { ...editingItem.data, causes: list } });
+                                }}
+                                className="flex-1 bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-gold-400"
+                                placeholder={`Cause / Risk factor ${i + 1}`}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const list = (editingItem.data.causes || []).filter((_: any, idx: number) => idx !== i);
+                                  setEditingItem({ ...editingItem, data: { ...editingItem.data, causes: list } });
+                                }}
+                                className="p-2 text-rose-400 hover:bg-rose-500/10 rounded-lg cursor-pointer"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Benefits */}
+                        <div className="p-4 rounded-xl bg-black/30 border border-white/5 space-y-2.5">
+                          <div className="flex justify-between items-center">
+                            <label className="text-stone-300 font-bold text-xs">Key Surgical Benefits</label>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const list = [...(editingItem.data.benefits || []), ""];
+                                setEditingItem({ ...editingItem, data: { ...editingItem.data, benefits: list } });
+                              }}
+                              className="text-[10px] text-gold-400 hover:text-gold-300 font-mono font-bold flex items-center gap-1 cursor-pointer"
+                            >
+                              <Plus className="w-3 h-3" /> Add Benefit
+                            </button>
+                          </div>
+                          {(editingItem.data.benefits || []).map((ben: string, i: number) => (
+                            <div key={i} className="flex gap-2 items-center">
+                              <input
+                                type="text"
+                                value={ben}
+                                onChange={(e) => {
+                                  const list = [...(editingItem.data.benefits || [])];
+                                  list[i] = e.target.value;
+                                  setEditingItem({ ...editingItem, data: { ...editingItem.data, benefits: list } });
+                                }}
+                                className="flex-1 bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-gold-400"
+                                placeholder={`Benefit ${i + 1}`}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const list = (editingItem.data.benefits || []).filter((_: any, idx: number) => idx !== i);
+                                  setEditingItem({ ...editingItem, data: { ...editingItem.data, benefits: list } });
+                                }}
+                                className="p-2 text-rose-400 hover:bg-rose-500/10 rounded-lg cursor-pointer"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Risks & Limitations */}
+                        <div className="p-4 rounded-xl bg-black/30 border border-white/5 space-y-2.5">
+                          <div className="flex justify-between items-center">
+                            <label className="text-stone-300 font-bold text-xs">Risks & Indications Limitations</label>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const list = [...(editingItem.data.risksAndLimitations || []), ""];
+                                setEditingItem({ ...editingItem, data: { ...editingItem.data, risksAndLimitations: list } });
+                              }}
+                              className="text-[10px] text-gold-400 hover:text-gold-300 font-mono font-bold flex items-center gap-1 cursor-pointer"
+                            >
+                              <Plus className="w-3 h-3" /> Add Risk
+                            </button>
+                          </div>
+                          {(editingItem.data.risksAndLimitations || []).map((risk: string, i: number) => (
+                            <div key={i} className="flex gap-2 items-center">
+                              <input
+                                type="text"
+                                value={risk}
+                                onChange={(e) => {
+                                  const list = [...(editingItem.data.risksAndLimitations || [])];
+                                  list[i] = e.target.value;
+                                  setEditingItem({ ...editingItem, data: { ...editingItem.data, risksAndLimitations: list } });
+                                }}
+                                className="flex-1 bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-gold-400"
+                                placeholder={`Risk / limitation ${i + 1}`}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const list = (editingItem.data.risksAndLimitations || []).filter((_: any, idx: number) => idx !== i);
+                                  setEditingItem({ ...editingItem, data: { ...editingItem.data, risksAndLimitations: list } });
+                                }}
+                                className="p-2 text-rose-400 hover:bg-rose-500/10 rounded-lg cursor-pointer"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* SUB-TAB 4: Symptoms & Diagnosis */}
+                    {treatmentSubTab === "symptoms" && (
+                      <div className="space-y-4">
+                        {/* Symptoms array of { title, description } */}
+                        <div className="p-4 rounded-xl bg-black/30 border border-white/5 space-y-3">
+                          <div className="flex justify-between items-center">
+                            <label className="text-stone-300 font-bold text-xs">Symptoms & Clinical Presentations</label>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const list = [...(editingItem.data.symptoms || []), { title: "", description: "" }];
+                                setEditingItem({ ...editingItem, data: { ...editingItem.data, symptoms: list } });
+                              }}
+                              className="text-[10px] text-gold-400 hover:text-gold-300 font-mono font-bold flex items-center gap-1 cursor-pointer"
+                            >
+                              <Plus className="w-3 h-3" /> Add Symptom
+                            </button>
+                          </div>
+                          {(editingItem.data.symptoms || []).map((sym: { title: string; description: string }, i: number) => (
+                            <div key={i} className="p-3 bg-black/40 border border-white/5 rounded-xl space-y-2 relative">
+                              <div className="flex justify-between items-center">
+                                <span className="font-mono text-[10px] text-gold-400 uppercase font-bold">Symptom #{i + 1}</span>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const list = (editingItem.data.symptoms || []).filter((_: any, idx: number) => idx !== i);
+                                    setEditingItem({ ...editingItem, data: { ...editingItem.data, symptoms: list } });
+                                  }}
+                                  className="text-rose-400 hover:text-rose-300 p-1 cursor-pointer"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                              <input
+                                type="text"
+                                value={sym.title || ""}
+                                onChange={(e) => {
+                                  const list = [...(editingItem.data.symptoms || [])];
+                                  list[i] = { ...list[i], title: e.target.value };
+                                  setEditingItem({ ...editingItem, data: { ...editingItem.data, symptoms: list } });
+                                }}
+                                className="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-1.5 text-white text-xs focus:outline-none focus:border-gold-400 font-bold"
+                                placeholder="Symptom Title (e.g. Radiating Leg Pain / Sciatica)"
+                              />
+                              <textarea
+                                rows={2}
+                                value={sym.description || ""}
+                                onChange={(e) => {
+                                  const list = [...(editingItem.data.symptoms || [])];
+                                  list[i] = { ...list[i], description: e.target.value };
+                                  setEditingItem({ ...editingItem, data: { ...editingItem.data, symptoms: list } });
+                                }}
+                                className="w-full bg-black/30 border border-white/10 rounded-lg p-2.5 text-white text-xs focus:outline-none focus:border-gold-400"
+                                placeholder="Detailed medical description of how this symptom manifests..."
+                              />
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Diagnosis array of { title, description } */}
+                        <div className="p-4 rounded-xl bg-black/30 border border-white/5 space-y-3">
+                          <div className="flex justify-between items-center">
+                            <label className="text-stone-300 font-bold text-xs">Diagnostic Protocols</label>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const list = [...(editingItem.data.diagnosis || []), { title: "", description: "" }];
+                                setEditingItem({ ...editingItem, data: { ...editingItem.data, diagnosis: list } });
+                              }}
+                              className="text-[10px] text-gold-400 hover:text-gold-300 font-mono font-bold flex items-center gap-1 cursor-pointer"
+                            >
+                              <Plus className="w-3 h-3" /> Add Diagnostic Tool
+                            </button>
+                          </div>
+                          {(editingItem.data.diagnosis || []).map((diag: { title: string; description: string }, i: number) => (
+                            <div key={i} className="p-3 bg-black/40 border border-white/5 rounded-xl space-y-2 relative">
+                              <div className="flex justify-between items-center">
+                                <span className="font-mono text-[10px] text-sky-400 uppercase font-bold">Diagnostic Modality #{i + 1}</span>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const list = (editingItem.data.diagnosis || []).filter((_: any, idx: number) => idx !== i);
+                                    setEditingItem({ ...editingItem, data: { ...editingItem.data, diagnosis: list } });
+                                  }}
+                                  className="text-rose-400 hover:text-rose-300 p-1 cursor-pointer"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                              <input
+                                type="text"
+                                value={diag.title || ""}
+                                onChange={(e) => {
+                                  const list = [...(editingItem.data.diagnosis || [])];
+                                  list[i] = { ...list[i], title: e.target.value };
+                                  setEditingItem({ ...editingItem, data: { ...editingItem.data, diagnosis: list } });
+                                }}
+                                className="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-1.5 text-white text-xs focus:outline-none focus:border-gold-400 font-bold"
+                                placeholder="Diagnostic Modality Title (e.g. High-Resolution Lumbar MRI)"
+                              />
+                              <textarea
+                                rows={2}
+                                value={diag.description || ""}
+                                onChange={(e) => {
+                                  const list = [...(editingItem.data.diagnosis || [])];
+                                  list[i] = { ...list[i], description: e.target.value };
+                                  setEditingItem({ ...editingItem, data: { ...editingItem.data, diagnosis: list } });
+                                }}
+                                className="w-full bg-black/30 border border-white/10 rounded-lg p-2.5 text-white text-xs focus:outline-none focus:border-gold-400"
+                                placeholder="Clinical rationale, findings, and evaluation criteria..."
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* SUB-TAB 5: Procedure Steps */}
+                    {treatmentSubTab === "procedure" && (
+                      <div className="space-y-4">
+                        <div className="space-y-1">
+                          <label className="text-stone-400 font-bold text-xs">Procedure Narrative Summary *</label>
+                          <textarea
+                            rows={3}
+                            value={editingItem.data.procedureExplanation?.summary || ""}
+                            onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, procedureExplanation: { ...(editingItem.data.procedureExplanation || {}), summary: e.target.value } } })}
+                            className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white text-xs focus:outline-none focus:border-gold-400"
+                            placeholder="Executive clinical overview of how this single-stitch procedure is carried out..."
+                          />
+                        </div>
+
+                        {/* Steps Array */}
+                        <div className="p-4 rounded-xl bg-black/30 border border-white/5 space-y-3">
+                          <div className="flex justify-between items-center">
+                            <label className="text-stone-300 font-bold text-xs">Surgical Procedure Steps</label>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const currentSteps = editingItem.data.procedureExplanation?.steps || [];
+                                const list = [...currentSteps, { stepNumber: currentSteps.length + 1, title: "", description: "" }];
+                                setEditingItem({ ...editingItem, data: { ...editingItem.data, procedureExplanation: { ...(editingItem.data.procedureExplanation || {}), steps: list } } });
+                              }}
+                              className="text-[10px] text-gold-400 hover:text-gold-300 font-mono font-bold flex items-center gap-1 cursor-pointer"
+                            >
+                              <Plus className="w-3 h-3" /> Add Step
+                            </button>
+                          </div>
+                          {(editingItem.data.procedureExplanation?.steps || []).map((step: { stepNumber: number; title: string; description: string }, i: number) => (
+                            <div key={i} className="p-3.5 bg-black/40 border border-white/5 rounded-xl space-y-2 relative">
+                              <div className="flex justify-between items-center">
+                                <span className="font-mono text-[10px] text-gold-400 uppercase font-bold">
+                                  Step {step.stepNumber || i + 1}
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const list = (editingItem.data.procedureExplanation?.steps || []).filter((_: any, idx: number) => idx !== i)
+                                      .map((s: any, idx: number) => ({ ...s, stepNumber: idx + 1 }));
+                                    setEditingItem({ ...editingItem, data: { ...editingItem.data, procedureExplanation: { ...(editingItem.data.procedureExplanation || {}), steps: list } } });
+                                  }}
+                                  className="text-rose-400 hover:text-rose-300 p-1 cursor-pointer"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                              <input
+                                type="text"
+                                value={step.title || ""}
+                                onChange={(e) => {
+                                  const list = [...(editingItem.data.procedureExplanation?.steps || [])];
+                                  list[i] = { ...list[i], title: e.target.value };
+                                  setEditingItem({ ...editingItem, data: { ...editingItem.data, procedureExplanation: { ...(editingItem.data.procedureExplanation || {}), steps: list } } });
+                                }}
+                                className="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-1.5 text-white text-xs focus:outline-none focus:border-gold-400 font-bold"
+                                placeholder="Step Title (e.g. Microscopic Keyhole Port Insertion)"
+                              />
+                              <textarea
+                                rows={2}
+                                value={step.description || ""}
+                                onChange={(e) => {
+                                  const list = [...(editingItem.data.procedureExplanation?.steps || [])];
+                                  list[i] = { ...list[i], description: e.target.value };
+                                  setEditingItem({ ...editingItem, data: { ...editingItem.data, procedureExplanation: { ...(editingItem.data.procedureExplanation || {}), steps: list } } });
+                                }}
+                                className="w-full bg-black/30 border border-white/10 rounded-lg p-2.5 text-white text-xs focus:outline-none focus:border-gold-400"
+                                placeholder="Description of surgical action, camera vision, micro-instruments used..."
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* SUB-TAB 6: Recovery & FAQs */}
+                    {treatmentSubTab === "recovery" && (
+                      <div className="space-y-4">
+                        {/* Recovery Timeline */}
+                        <div className="p-4 rounded-xl bg-black/30 border border-white/5 space-y-3">
+                          <div className="flex justify-between items-center">
+                            <label className="text-stone-300 font-bold text-xs">Recovery Milestones Timeline</label>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const list = [...(editingItem.data.recoveryTimeline || []), { timeframe: "", title: "", description: "" }];
+                                setEditingItem({ ...editingItem, data: { ...editingItem.data, recoveryTimeline: list } });
+                              }}
+                              className="text-[10px] text-gold-400 hover:text-gold-300 font-mono font-bold flex items-center gap-1 cursor-pointer"
+                            >
+                              <Plus className="w-3 h-3" /> Add Milestone
+                            </button>
+                          </div>
+                          {(editingItem.data.recoveryTimeline || []).map((milestone: { timeframe: string; title: string; description: string }, i: number) => (
+                            <div key={i} className="p-3 bg-black/40 border border-white/5 rounded-xl space-y-2 relative">
+                              <div className="flex justify-between items-center">
+                                <span className="font-mono text-[10px] text-emerald-400 uppercase font-bold">Milestone #{i + 1}</span>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const list = (editingItem.data.recoveryTimeline || []).filter((_: any, idx: number) => idx !== i);
+                                    setEditingItem({ ...editingItem, data: { ...editingItem.data, recoveryTimeline: list } });
+                                  }}
+                                  className="text-rose-400 hover:text-rose-300 p-1 cursor-pointer"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                <input
+                                  type="text"
+                                  value={milestone.timeframe || ""}
+                                  onChange={(e) => {
+                                    const list = [...(editingItem.data.recoveryTimeline || [])];
+                                    list[i] = { ...list[i], timeframe: e.target.value };
+                                    setEditingItem({ ...editingItem, data: { ...editingItem.data, recoveryTimeline: list } });
+                                  }}
+                                  className="bg-black/30 border border-white/10 rounded-lg px-3 py-1.5 text-white font-mono text-xs focus:outline-none focus:border-gold-400"
+                                  placeholder="Timeframe (e.g. Day 0, Week 2)"
+                                />
+                                <input
+                                  type="text"
+                                  value={milestone.title || ""}
+                                  onChange={(e) => {
+                                    const list = [...(editingItem.data.recoveryTimeline || [])];
+                                    list[i] = { ...list[i], title: e.target.value };
+                                    setEditingItem({ ...editingItem, data: { ...editingItem.data, recoveryTimeline: list } });
+                                  }}
+                                  className="sm:col-span-2 bg-black/30 border border-white/10 rounded-lg px-3 py-1.5 text-white text-xs focus:outline-none focus:border-gold-400 font-bold"
+                                  placeholder="Milestone Title (e.g. Ambulation & Discharge)"
+                                />
+                              </div>
+                              <textarea
+                                rows={2}
+                                value={milestone.description || ""}
+                                onChange={(e) => {
+                                  const list = [...(editingItem.data.recoveryTimeline || [])];
+                                  list[i] = { ...list[i], description: e.target.value };
+                                  setEditingItem({ ...editingItem, data: { ...editingItem.data, recoveryTimeline: list } });
+                                }}
+                                className="w-full bg-black/30 border border-white/10 rounded-lg p-2.5 text-white text-xs focus:outline-none focus:border-gold-400"
+                                placeholder="What patient experiences and what activities can resume..."
+                              />
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Treatment Specific FAQs */}
+                        <div className="p-4 rounded-xl bg-black/30 border border-white/5 space-y-3">
+                          <div className="flex justify-between items-center">
+                            <label className="text-stone-300 font-bold text-xs">Procedure FAQs (Included in Google Rich Result)</label>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const list = [...(editingItem.data.faqs || []), { question: "", answer: "" }];
+                                setEditingItem({ ...editingItem, data: { ...editingItem.data, faqs: list } });
+                              }}
+                              className="text-[10px] text-gold-400 hover:text-gold-300 font-mono font-bold flex items-center gap-1 cursor-pointer"
+                            >
+                              <Plus className="w-3 h-3" /> Add FAQ
+                            </button>
+                          </div>
+                          {(editingItem.data.faqs || []).map((faq: { question: string; answer: string }, i: number) => (
+                            <div key={i} className="p-3 bg-black/40 border border-white/5 rounded-xl space-y-2 relative">
+                              <div className="flex justify-between items-center">
+                                <span className="font-mono text-[10px] text-amber-400 uppercase font-bold">FAQ #{i + 1}</span>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const list = (editingItem.data.faqs || []).filter((_: any, idx: number) => idx !== i);
+                                    setEditingItem({ ...editingItem, data: { ...editingItem.data, faqs: list } });
+                                  }}
+                                  className="text-rose-400 hover:text-rose-300 p-1 cursor-pointer"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                              <input
+                                type="text"
+                                value={faq.question || ""}
+                                onChange={(e) => {
+                                  const list = [...(editingItem.data.faqs || [])];
+                                  list[i] = { ...list[i], question: e.target.value };
+                                  setEditingItem({ ...editingItem, data: { ...editingItem.data, faqs: list } });
+                                }}
+                                className="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-1.5 text-white text-xs focus:outline-none focus:border-gold-400 font-bold"
+                                placeholder="Patient Question"
+                              />
+                              <textarea
+                                rows={2}
+                                value={faq.answer || ""}
+                                onChange={(e) => {
+                                  const list = [...(editingItem.data.faqs || [])];
+                                  list[i] = { ...list[i], answer: e.target.value };
+                                  setEditingItem({ ...editingItem, data: { ...editingItem.data, faqs: list } });
+                                }}
+                                className="w-full bg-black/30 border border-white/10 rounded-lg p-2.5 text-white text-xs focus:outline-none focus:border-gold-400"
+                                placeholder="Clinical Answer from Dr. Dheeraj Vishwakarma..."
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 

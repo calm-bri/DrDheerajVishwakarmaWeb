@@ -165,7 +165,7 @@ export default function Conditions({ onOpenBooking }: ConditionsProps) {
                   {/* Core CTAs footer row */}
                   <div className="p-5 sm:p-6 pt-0 border-t border-white/5 flex items-center justify-between gap-3 mt-2 text-[10px] font-mono tracking-wider uppercase">
                     <Link
-                      to={`/treatments/${treatmentSlug}`}
+                      to={`/${treatmentSlug}`}
                       className="font-bold text-gold-400 hover:text-white flex items-center gap-1 group/btn transition-colors cursor-pointer"
                     >
                       <span>Learn More</span>

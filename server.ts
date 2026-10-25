@@ -719,6 +719,7 @@ registerCrudRoutes('testimonials', INITIAL_TESTIMONIALS);
 registerCrudRoutes('conditions', INITIAL_CONDITIONS);
 registerCrudRoutes('faqs', INITIAL_FAQS);
 registerCrudRoutes('blogs', INITIAL_BLOGS);
+registerCrudRoutes('treatments', getLocalData('treatments', []));
 // Custom Supabase handler for Videos endpoint (fetches directly from Supabase 'Video' bucket and DB)
 app.get('/api/videos', async (req, res) => {
   try {

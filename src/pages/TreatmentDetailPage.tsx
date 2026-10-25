@@ -16,7 +16,8 @@ import {
   FileText
 } from "lucide-react";
 import SEOComponent from "../components/SEOComponent";
-import { getTreatmentBySlug, detailedTreatments } from "../treatmentsData";
+import { useData } from "../context/DataContext";
+import { generateTreatmentSchemas, BASE_URL } from "../utils/schemaGenerator";
 import { socialLinks } from "../data";
 
 interface TreatmentDetailPageProps {
@@ -25,67 +26,16 @@ interface TreatmentDetailPageProps {
 
 export default function TreatmentDetailPage({ onOpenBooking }: TreatmentDetailPageProps) {
   const { slug } = useParams<{ slug: string }>();
+  const { getTreatmentBySlug, treatments } = useData();
   const treatment = slug ? getTreatmentBySlug(slug) : undefined;
 
   if (!treatment) {
     return <Navigate to="/treatments" replace />;
   }
 
-  const pageSchemas = [
-    {
-      "@context": "https://schema.org",
-      "@type": "MedicalWebPage",
-      "name": `${treatment.name} - Endoscopic Spine Care`,
-      "description": treatment.shortDescription,
-      "url": `https://www.endoscopicspinecare.com/treatments/${treatment.slug}`,
-      "image": `https://www.endoscopicspinecare.com${treatment.heroImage}`,
-      "author": {
-        "@type": "Physician",
-        "name": "Dr. Dheeraj Vishwakarma",
-        "medicalSpecialty": "Endoscopic Spine Surgery, Neurosurgery",
-        "telephone": ["+91-89998-98129", "+91-96721-44129"],
-        "url": "https://www.endoscopicspinecare.com"
-      }
-    },
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Home",
-          "item": "https://www.endoscopicspinecare.com/"
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "Treatments",
-          "item": "https://www.endoscopicspinecare.com/treatments"
-        },
-        {
-          "@type": "ListItem",
-          "position": 3,
-          "name": treatment.name,
-          "item": `https://www.endoscopicspinecare.com/treatments/${treatment.slug}`
-        }
-      ]
-    },
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": treatment.faqs.map((faq) => ({
-        "@type": "Question",
-        "name": faq.question,
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": faq.answer
-        }
-      }))
-    }
-  ];
+  const pageSchemas = generateTreatmentSchemas(treatment);
 
-  const relatedTreatments = detailedTreatments.filter((t) =>
+  const relatedTreatments = treatments.filter((t) =>
     treatment.relatedSlugs.includes(t.slug)
   );
 
@@ -99,9 +49,11 @@ export default function TreatmentDetailPage({ onOpenBooking }: TreatmentDetailPa
       className="text-white text-left max-w-7xl mx-auto px-4 sm:px-6 pt-4 pb-20 space-y-16"
     >
       <SEOComponent
-        title={`${treatment.name} | Dr. Dheeraj Vishwakarma Jaipur`}
-        description={treatment.shortDescription}
-        path={`/treatments/${treatment.slug}`}
+        title={treatment.metaTitle || `${treatment.name} | Dr. Dheeraj Vishwakarma Jaipur`}
+        description={treatment.metaDescription || treatment.shortDescription}
+        keywords={treatment.metaKeywords}
+        image={treatment.heroImage}
+        path={`/${treatment.slug}`}
         schemas={pageSchemas}
       />
 
@@ -488,7 +440,7 @@ export default function TreatmentDetailPage({ onOpenBooking }: TreatmentDetailPa
                 {relatedTreatments.map((rel) => (
                   <Link
                     key={rel.slug}
-                    to={`/treatments/${rel.slug}`}
+                    to={`/${rel.slug}`}
                     className="p-5 rounded-2xl bg-navy-900/60 hover:bg-navy-850 border border-white/5 hover:border-gold-400/40 transition-all group flex flex-col justify-between"
                   >
                     <div className="space-y-2">

@@ -4,6 +4,8 @@ import { Calendar, BookOpen, Clock, Search } from "lucide-react";
 import SEOComponent from "../components/SEOComponent";
 import { useData } from "../context/DataContext";
 
+import { generateBreadcrumbSchema } from "../utils/schemaGenerator";
+
 export default function BlogsPage() {
   const { blogs } = useData();
   const [searchQuery, setSearchQuery] = useState("");
@@ -16,22 +18,28 @@ export default function BlogsPage() {
     return matchesSearch && matchesCategory;
   });
 
-  const blogSchemas = blogs.map((art) => ({
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    "headline": art.title,
-    "description": art.summary,
-    "author": {
-      "@type": "Person",
-      "name": art.author
-    },
-    "publisher": {
-      "@type": "Person",
-      "name": "Dr. Dheeraj Vishwakarma"
-    },
-    "datePublished": art.id === "pediatric-cauda-equina-study" ? "2025-07-15" : "2026-03-15",
-    "mainEntityOfPage": `https://www.endoscopicspinecare.com/blogs#${art.id}`
-  }));
+  const blogSchemas = [
+    generateBreadcrumbSchema([
+      { name: "Home", url: "/" },
+      { name: "Clinical Publications & Articles", url: "/blogs" }
+    ]),
+    ...blogs.map((art) => ({
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": art.metaTitle || art.title,
+      "description": art.metaDescription || art.summary,
+      "author": {
+        "@type": "Person",
+        "name": art.author
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "Dr. Dheeraj Vishwakarma"
+      },
+      "datePublished": art.id === "pediatric-cauda-equina-study" ? "2025-07-15" : "2026-03-15",
+      "mainEntityOfPage": `https://www.endoscopicspinecare.com/blogs#${art.slug || art.id}`
+    }))
+  ];
 
   return (
     <motion.div
@@ -43,9 +51,11 @@ export default function BlogsPage() {
       className="pt-6 pb-20 px-4 xs:px-6 sm:px-8 max-w-6xl mx-auto text-white text-left"
     >
       <SEOComponent
-        title="Medical Publications & Spine Surgery Research Articles"
+        title="Medical Publications & Spine Surgery Research Articles | Dr. Dheeraj Vishwakarma"
         description="Read academic book chapters, case logs, and clinical research papers on Full Monoportal Endoscopic Spine Surgery (FESS) by Dr. Dheeraj Vishwakarma."
+        keywords="Spine Surgery Research, Endoscopic Spine Publications, Cauda Equina Study, Monoportal Spine Research, Dr Dheeraj Vishwakarma Papers, Spine Neurosurgeon Blogs"
         path="/blogs"
+        image="/logo.png"
         schemas={blogSchemas}
       />
 

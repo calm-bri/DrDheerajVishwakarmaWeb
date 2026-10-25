@@ -17,13 +17,13 @@ export default function Footer() {
   ];
 
   const specialtyLinks = [
-    { label: "Full Monoportal Endoscopic Spine Surgery (FESS)", to: "/treatments/endoscopic-spine-surgery" },
-    { label: "Endoscopic Discectomy", to: "/treatments/endoscopic-discectomy" },
-    { label: "Slip Disc Treatment", to: "/treatments/slip-disc-treatment" },
-    { label: "Sciatica & Nerve Decompression", to: "/treatments/sciatica-treatment" },
-    { label: "Spinal Canal Stenosis Treatment", to: "/treatments/spinal-stenosis" },
-    { label: "Cervical Disc Treatment", to: "/treatments/cervical-disc-treatment" },
-    { label: "Minimally Invasive Spine Surgery (MISS)", to: "/treatments/minimally-invasive-spine-surgery" }
+    { label: "Full Monoportal Endoscopic Spine Surgery (FESS)", to: "/endoscopic-spine-surgery" },
+    { label: "Endoscopic Discectomy", to: "/endoscopic-discectomy" },
+    { label: "Slip Disc Treatment", to: "/slip-disc-treatment" },
+    { label: "Sciatica & Nerve Decompression", to: "/sciatica-treatment" },
+    { label: "Spinal Canal Stenosis Treatment", to: "/spinal-stenosis" },
+    { label: "Cervical Disc Treatment", to: "/cervical-disc-treatment" },
+    { label: "Minimally Invasive Spine Surgery (MISS)", to: "/minimally-invasive-spine-surgery" }
   ];
 
   return (
