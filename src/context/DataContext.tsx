@@ -85,10 +85,10 @@ interface DataContextType {
   treatments: DetailedTreatment[];
   isTreatmentsLoading: boolean;
   getTreatmentBySlug: (slug: string) => DetailedTreatment | undefined;
-  addTreatment: (treatment: DetailedTreatment) => void;
-  updateTreatment: (id: string, updated: Partial<DetailedTreatment>) => void;
-  deleteTreatment: (id: string) => void;
-  resetTreatments: () => void;
+  addTreatment: (treatment: DetailedTreatment) => Promise<void>;
+  updateTreatment: (id: string, updated: Partial<DetailedTreatment>) => Promise<void>;
+  deleteTreatment: (id: string) => Promise<void>;
+  resetTreatments: () => Promise<void>;
 
   // Administrative Auth
   adminPin: string;
@@ -96,6 +96,42 @@ interface DataContextType {
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
+
+const mergeTreatmentRecords = (
+  serverRecords: DetailedTreatment[],
+  baseline: DetailedTreatment[] = detailedTreatments
+): DetailedTreatment[] => {
+  const baselineById = new Map(baseline.map((record) => [record.id, record]));
+  const serverRecordsById = new Map(serverRecords.map((record) => [record.id, record]));
+  const baselineIds = new Set(baseline.map((record) => record.id));
+
+  return [
+    ...baseline.map((record) => ({
+      ...record,
+      ...Object.fromEntries(
+        Object.entries(serverRecordsById.get(record.id) || {}).filter(([, value]) =>
+          value !== null && value !== undefined
+        )
+      )
+    })),
+    ...serverRecords.filter((record) =>
+      !baselineIds.has(record.id) &&
+      Array.isArray(record.overview) &&
+      Boolean(record.metrics)
+    )
+  ];
+};
+
+const readTreatmentResponse = async (response: Response): Promise<DetailedTreatment> => {
+  const payload = await response.json().catch(() => null);
+  if (!response.ok) {
+    const message = payload && typeof payload.error === "string"
+      ? payload.error
+      : `Treatment API request failed with status ${response.status}.`;
+    throw new Error(message);
+  }
+  return payload;
+};
 
 const PRELOADED_APPOINTMENTS: Appointment[] = [
   {
@@ -162,7 +198,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try {
         const parsed = JSON.parse(sessionToken);
         if (Date.now() - parsed.timestamp < 1000 * 60 * 60 * 4) { // 4 hour session
-          return localStorage.getItem("dr_dheeraj_admin_pin") || "admin123";
+          return localStorage.getItem("dr_dheeraj_admin_pin") || "";
         }
       } catch (e) {}
     }
@@ -289,9 +325,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
         if (treatsRes.ok) {
           const resJson = await treatsRes.json();
-          if (Array.isArray(resJson) && resJson.length > 0) setTreatments(resJson);
-          // Signal treatments data is authoritative and loaded
-          setIsTreatmentsLoading(false);
+          if (Array.isArray(resJson)) {
+            setTreatments(mergeTreatmentRecords(resJson));
+          } else {
+            console.error("Treatment API returned an invalid collection response.");
+          }
+        } else {
+          console.error(`Treatment API request failed with status ${treatsRes.status}.`);
         }
         if (vidsRes.ok) {
           const resJson = await vidsRes.json();
@@ -814,38 +854,55 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // Treatment operations
-  const addTreatment = (treatment: DetailedTreatment) => {
-    setTreatments(prev => [...prev, treatment]);
-    fetch('/api/treatments', {
+  const addTreatment = async (treatment: DetailedTreatment) => {
+    const response = await fetch('/api/treatments', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-admin-pin': adminPin },
       body: JSON.stringify(treatment)
-    }).catch(err => console.error('Error creating treatment on server:', err));
+    });
+    const savedTreatment = await readTreatmentResponse(response);
+    setTreatments(prev => mergeTreatmentRecords([...prev, savedTreatment], prev));
   };
 
-  const updateTreatment = (id: string, updated: Partial<DetailedTreatment>) => {
-    setTreatments(prev => prev.map(t => t.id === id ? { ...t, ...updated } : t));
-    fetch(`/api/treatments/${id}`, {
+  const updateTreatment = async (id: string, updated: Partial<DetailedTreatment>) => {
+    const response = await fetch(`/api/treatments/${encodeURIComponent(id)}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'x-admin-pin': adminPin },
       body: JSON.stringify(updated)
-    }).catch(err => console.error(`Error updating treatment ${id} on server:`, err));
+    });
+    const savedTreatment = await readTreatmentResponse(response);
+    setTreatments(prev => mergeTreatmentRecords(
+      [...prev.filter(treatment => treatment.id !== id), savedTreatment],
+      prev
+    ));
   };
 
-  const deleteTreatment = (id: string) => {
-    setTreatments(prev => prev.filter(t => t.id !== id));
-    fetch(`/api/treatments/${id}`, {
+  const deleteTreatment = async (id: string) => {
+    const response = await fetch(`/api/treatments/${encodeURIComponent(id)}`, {
       method: 'DELETE',
       headers: { 'x-admin-pin': adminPin }
-    }).catch(err => console.error(`Error deleting treatment ${id} on server:`, err));
+    });
+    const payload = await response.json().catch(() => null);
+    if (!response.ok) {
+      throw new Error(payload && typeof payload.error === "string"
+        ? payload.error
+        : `Treatment API request failed with status ${response.status}.`);
+    }
+    setTreatments(prev => prev.filter(treatment => treatment.id !== id));
   };
 
-  const resetTreatments = () => {
-    import('../treatmentsData').then(m => setTreatments(m.detailedTreatments)).catch(() => {});
-    fetch('/api/treatments/reset', { method: 'POST', headers: { 'x-admin-pin': adminPin } })
-      .then(res => res.json())
-      .then(data => { if (Array.isArray(data) && data.length > 0) setTreatments(data); })
-      .catch(err => console.error('Error resetting treatments on server:', err));
+  const resetTreatments = async () => {
+    const response = await fetch('/api/treatments/reset', {
+      method: 'POST',
+      headers: { 'x-admin-pin': adminPin }
+    });
+    const payload = await response.json().catch(() => null);
+    if (!response.ok) {
+      throw new Error(payload && typeof payload.error === "string"
+        ? payload.error
+        : `Treatment API request failed with status ${response.status}.`);
+    }
+    if (Array.isArray(payload)) setTreatments(mergeTreatmentRecords(payload));
   };
 
   return (

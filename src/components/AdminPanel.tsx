@@ -86,8 +86,6 @@ export default function AdminPanel() {
     addTreatment,
     updateTreatment,
     deleteTreatment,
-    resetTreatments,
-
     adminPin,
     setAdminPin
   } = useData();
@@ -168,15 +166,17 @@ export default function AdminPanel() {
 
   // Safe reset configurations
   const handleSystemReset = (type: "all" | "galleries" | "blogs" | "faqs" | "testimonials" | "conditions" | "treatments") => {
+    if (type === "all" || type === "treatments") {
+      alert("Treatment resets are disabled to protect persisted treatment content. Edit or delete treatments individually.");
+      return;
+    }
     if (!confirm("Are you sure you want to restore default demo records? Your custom edits will be reverted.")) return;
     
-    if (type === "all" || type === "galleries") resetShowcases();
-    if (type === "all" || type === "blogs") resetBlogs();
-    if (type === "all" || type === "faqs") resetFAQs();
-    if (type === "all" || type === "testimonials") resetTestimonials();
-    if (type === "all" || type === "conditions") resetConditions();
-    if (type === "all" || type === "treatments") resetTreatments();
-    
+    if (type === "galleries") resetShowcases();
+    if (type === "blogs") resetBlogs();
+    if (type === "faqs") resetFAQs();
+    if (type === "testimonials") resetTestimonials();
+    if (type === "conditions") resetConditions();
     alert("Records refreshed back to premium clinical defaults!");
   };
 
@@ -280,7 +280,7 @@ export default function AdminPanel() {
     setIsOpenForm(true);
   };
 
-  const handleSaveForm = (e: React.FormEvent) => {
+  const handleSaveForm = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingItem) return;
 
@@ -329,10 +329,15 @@ export default function AdminPanel() {
         addVideo(data);
       }
     } else if (type === "treatment") {
-      if (id) {
-        updateTreatment(id, data);
-      } else {
-        addTreatment(data);
+      try {
+        if (id) {
+          await updateTreatment(id, data);
+        } else {
+          await addTreatment(data);
+        }
+      } catch (error) {
+        alert(error instanceof Error ? error.message : "The treatment could not be saved.");
+        return;
       }
     }
 
@@ -340,7 +345,7 @@ export default function AdminPanel() {
     setEditingItem(null);
   };
 
-  const deleteItem = (type: string, id: string) => {
+  const deleteItem = async (type: string, id: string) => {
     if (!confirm(`Are you sure you want to permanently delete this ${type} item?`)) return;
 
     if (type === "appointment") deleteAppointment(id);
@@ -350,7 +355,13 @@ export default function AdminPanel() {
     if (type === "testimonial") deleteTestimonial(id);
     if (type === "condition") deleteCondition(id);
     if (type === "video") deleteVideo(id);
-    if (type === "treatment") deleteTreatment(id);
+    if (type === "treatment") {
+      try {
+        await deleteTreatment(id);
+      } catch (error) {
+        alert(error instanceof Error ? error.message : "The treatment could not be deleted.");
+      }
+    }
   };
 
   // Appointment statistics
@@ -381,7 +392,7 @@ export default function AdminPanel() {
               <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-500" />
               <input
                 type="password"
-                placeholder="Enter Access PIN (Try: admin123)"
+                placeholder="Enter your administrator PIN"
                 value={passwordInput}
                 onChange={(e) => setPasswordInput(e.target.value)}
                 className="w-full bg-black/40 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-stone-600 focus:outline-none focus:border-gold-400 focus:ring-1 focus:ring-gold-400/20 transition-all text-center tracking-widest font-mono font-bold"
@@ -1474,7 +1485,7 @@ export default function AdminPanel() {
                 <Lock className="w-5 h-5 text-gold-400" /> Administrative Access Codes Configuration
               </h3>
               <p className="text-xs text-stone-400 leading-relaxed">
-                The administrative PIN is verified securely on the server. To change it permanently for your website, update the <code className="text-gold-400 font-mono">ADMIN_PIN</code> environment variable in your Render dashboard. You can also set a temporary browser session override PIN below.
+                The administrative PIN is verified securely on the server. Configure it using the <code className="text-gold-400 font-mono">ADMIN_PIN</code> environment variable in your Vercel project settings.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

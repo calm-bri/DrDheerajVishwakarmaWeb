@@ -16,7 +16,7 @@ import {
   Filter
 } from "lucide-react";
 import SEOComponent from "../components/SEOComponent";
-import { detailedTreatments } from "../treatmentsData";
+import { useData } from "../context/DataContext";
 import { generateBreadcrumbSchema, generateDoctorSchema, BASE_URL } from "../utils/schemaGenerator";
 
 const FILTER_OPTIONS = [
@@ -32,6 +32,7 @@ interface TreatmentsPageProps {
 }
 
 export default function TreatmentsPage({ onOpenBooking }: TreatmentsPageProps) {
+  const { treatments } = useData();
   const [selectedFilter, setSelectedFilter] = useState<string>("all");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -69,7 +70,7 @@ export default function TreatmentsPage({ onOpenBooking }: TreatmentsPageProps) {
     generateDoctorSchema()
   ];
 
-  const filterTreatment = (item: typeof detailedTreatments[0]) => {
+  const filterTreatment = (item: (typeof treatments)[number]) => {
     if (selectedFilter === "all") return true;
     if (selectedFilter === "endoscopic") return item.slug.includes("endoscopic");
     if (selectedFilter === "disc") return item.slug.includes("disc") || item.slug.includes("sciatica");
@@ -78,7 +79,7 @@ export default function TreatmentsPage({ onOpenBooking }: TreatmentsPageProps) {
     return true;
   };
 
-  const filteredTreatments = detailedTreatments.filter(filterTreatment);
+  const filteredTreatments = treatments.filter(filterTreatment);
   const activeFilterLabel = FILTER_OPTIONS.find(f => f.id === selectedFilter)?.label || "All Treatments";
 
   return (
@@ -202,8 +203,8 @@ export default function TreatmentsPage({ onOpenBooking }: TreatmentsPageProps) {
                 >
                   {FILTER_OPTIONS.map((option) => {
                     const count = option.id === "all"
-                      ? detailedTreatments.length
-                      : detailedTreatments.filter(t => {
+                      ? treatments.length
+                      : treatments.filter(t => {
                           if (option.id === "endoscopic") return t.slug.includes("endoscopic");
                           if (option.id === "disc") return t.slug.includes("disc") || t.slug.includes("sciatica");
                           if (option.id === "stenosis") return t.slug.includes("stenosis");

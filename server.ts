@@ -8,22 +8,33 @@ import { createClient } from '@supabase/supabase-js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environmental variables
-dotenv.config();
+// Load local overrides first; existing process variables still take precedence.
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Supabase Client initialization
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
-const supabase = (supabaseUrl && supabaseKey) ? createClient(supabaseUrl, supabaseKey) : null;
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+let supabaseConfigurationError: string | null = null;
+let supabase: ReturnType<typeof createClient<any>> | null = null;
 
-if (supabase) {
-  console.log("Supabase client initialized successfully.");
+if (!supabaseUrl || !supabaseKey) {
+  supabaseConfigurationError = "SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be configured.";
 } else {
-  console.warn("Supabase configuration missing!");
+  try {
+    const parsedUrl = new URL(supabaseUrl);
+    const isLocalHttp = parsedUrl.protocol === 'http:' &&
+      ['localhost', '127.0.0.1', '::1'].includes(parsedUrl.hostname);
+    if ((!isLocalHttp && parsedUrl.protocol !== 'https:') || !parsedUrl.hostname) {
+      throw new Error("SUPABASE_URL must use HTTPS, except for a local development endpoint.");
+    }
+    supabase = createClient(supabaseUrl, supabaseKey);
+  } catch (error) {
+    supabaseConfigurationError = error instanceof Error ? error.message : "Invalid Supabase configuration.";
+  }
 }
 
 // Custom CORS middleware to avoid external dependencies
@@ -38,9 +49,12 @@ app.use((req, res, next) => {
 });
 
 // Admin Authentication Setup
-const ADMIN_PIN = process.env.ADMIN_PIN || 'admin123';
+const ADMIN_PIN = process.env.ADMIN_PIN;
 
 const verifyAdmin = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  if (!ADMIN_PIN) {
+    return res.status(503).json({ error: 'Admin authentication is not configured on the server.' });
+  }
   const pin = req.headers['x-admin-pin'] || req.query.adminPin;
   if (pin === ADMIN_PIN) {
     next();
@@ -512,38 +526,51 @@ const INITIAL_VIDEOS = [
   }
 ];
 
-// Helper to get local fallback data
-const getLocalData = (resourceName: string, defaults: any[]): any[] => {
-  const dataDir = path.join(__dirname, 'data');
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
-  }
-  const filePath = path.join(dataDir, `${resourceName}.json`);
-  if (!fs.existsSync(filePath)) {
-    fs.writeFileSync(filePath, JSON.stringify(defaults, null, 2));
-    return defaults;
-  }
-  try {
-    const content = fs.readFileSync(filePath, 'utf8');
-    return JSON.parse(content);
-  } catch (err) {
-    console.error(`Error reading local data for ${resourceName}:`, err);
-    return defaults;
-  }
+const sendSupabaseError = (
+  res: express.Response,
+  resourceName: string,
+  operation: string,
+  error: { message: string; code?: string }
+) => {
+  console.error(`Supabase ${operation} failed for ${resourceName}:`, error.message);
+  return res.status(502).json({
+    error: `Supabase ${operation} failed for ${resourceName}.`,
+    details: error.message,
+    code: error.code
+  });
 };
 
-// Helper to save local fallback data
-const saveLocalData = (resourceName: string, data: any[]) => {
-  const dataDir = path.join(__dirname, 'data');
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
-  }
-  const filePath = path.join(dataDir, `${resourceName}.json`);
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+const normalizeTreatmentSlug = (value: unknown): string | null => {
+  if (typeof value !== 'string') return null;
+  const slug = value.trim().replace(/^\/+|\/+$/g, '').toLowerCase().replace(/\s+/g, '-');
+  return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) ? slug : null;
 };
 
-// Generic CRUD endpoints generator with Supabase DB queries and filesystem fallbacks
+const toTreatmentRecord = (row: any) => ({
+  id: row.id,
+  slug: row.slug,
+  name: row.name,
+  shortDescription: row.shortDescription
+});
+
+const ensureUniqueTreatmentSlug = async (slug: string, id?: string) => {
+  if (!supabase) {
+    return {
+      data: null,
+      error: { message: supabaseConfigurationError || 'Supabase is not configured.' }
+    };
+  }
+
+  const query = supabase.from('conditions').select('id').ilike('slug', slug);
+  const result = id
+    ? await query.neq('id', id).maybeSingle()
+    : await query.maybeSingle();
+  return { data: result.data, error: result.error };
+};
+
+// Generic CRUD endpoints backed only by Supabase. Filesystem data is not writable on Vercel.
 const registerCrudRoutes = (resourceName: string, defaults: any[]) => {
+  const tableName = resourceName === 'treatments' ? 'conditions' : resourceName;
   app.get(`/api/${resourceName}`, (req, res, next) => {
     if (resourceName === 'appointments') {
       return verifyAdmin(req, res, next);
@@ -552,15 +579,16 @@ const registerCrudRoutes = (resourceName: string, defaults: any[]) => {
   }, async (req, res) => {
     try {
       if (!supabase) {
-        return res.json(getLocalData(resourceName, defaults));
+        return res.status(503).json({ error: supabaseConfigurationError || 'Supabase is not configured.' });
       }
-      const { data, error } = await supabase.from(resourceName).select('*');
+      const { data, error } = await supabase.from(tableName).select('*');
       if (error) {
-        console.warn(`Supabase select failed for ${resourceName}, using local fallback:`, error.message);
-        const local = getLocalData(resourceName, defaults);
-        return res.json(local);
+        return sendSupabaseError(res, resourceName, 'select', error);
       }
       if (data) {
+        if (resourceName === 'treatments') {
+          return res.json(data.map(toTreatmentRecord));
+        }
         if (resourceName === 'showcases' || resourceName === 'appointments' || resourceName === 'testimonials') {
           data.sort((a: any, b: any) => {
             const timeA = a.created_at ? new Date(a.created_at).getTime() : 0;
@@ -570,10 +598,10 @@ const registerCrudRoutes = (resourceName: string, defaults: any[]) => {
         }
         return res.json(data);
       }
-      res.json([]);
+      return res.json([]);
     } catch (err: any) {
-      console.warn(`Exception in select for ${resourceName}, using local fallback:`, err.message);
-      res.json(getLocalData(resourceName, defaults));
+      console.error(`Exception in select for ${resourceName}:`, err.message);
+      res.status(502).json({ error: `Supabase select failed for ${resourceName}.`, details: err.message });
     }
   });
 
@@ -590,120 +618,140 @@ const registerCrudRoutes = (resourceName: string, defaults: any[]) => {
 
     try {
       if (!supabase) {
-        const local = getLocalData(resourceName, defaults);
-        local.push(newItem);
-        saveLocalData(resourceName, local);
-        return res.status(201).json(newItem);
+        return res.status(503).json({ error: supabaseConfigurationError || 'Supabase is not configured.' });
       }
-      const { error } = await supabase.from(resourceName).insert(newItem);
+      if (resourceName === 'treatments') {
+        const slug = normalizeTreatmentSlug(newItem.slug);
+        if (!slug) {
+          return res.status(400).json({ error: 'Treatment slug is required and must contain only letters, numbers, and hyphens.' });
+        }
+        newItem.slug = slug;
+        const { data: conflict, error: slugError } = await ensureUniqueTreatmentSlug(slug);
+        if (slugError) return sendSupabaseError(res, resourceName, 'slug validation', slugError);
+        if (conflict) return res.status(409).json({ error: 'A treatment with this slug already exists.' });
+      }
+
+      const insertFields = resourceName === 'treatments'
+        ? {
+            id: newItem.id,
+            slug: newItem.slug,
+            name: newItem.name,
+            shortDescription: newItem.shortDescription,
+            fullDescription: Array.isArray(newItem.overview) ? newItem.overview.join('\n\n') : '',
+            symptoms: Array.isArray(newItem.symptoms)
+              ? newItem.symptoms.map((symptom: any) => typeof symptom === 'string' ? symptom : symptom.title)
+              : [],
+            treatmentMetric: newItem.badge || 'Specialized Treatment',
+            recoveryTime: newItem.metrics?.recoveryTime || 'Individualized',
+            detailedKey: newItem.category || newItem.name,
+            iconName: 'Activity'
+          }
+        : newItem;
+      const { data, error } = await supabase.from(tableName).insert(insertFields).select('*').single();
       if (error) {
-        console.warn(`Supabase insert failed for ${resourceName}, using local fallback:`, error.message);
-        const local = getLocalData(resourceName, defaults);
-        local.push(newItem);
-        saveLocalData(resourceName, local);
-        return res.status(201).json(newItem);
+        return sendSupabaseError(res, resourceName, 'insert', error);
       }
-      res.status(201).json(newItem);
+      return res.status(201).json(resourceName === 'treatments' ? toTreatmentRecord(data) : data);
     } catch (err: any) {
-      console.warn(`Exception in insert for ${resourceName}, using local fallback:`, err.message);
-      const local = getLocalData(resourceName, defaults);
-      local.push(newItem);
-      saveLocalData(resourceName, local);
-      res.status(201).json(newItem);
+      console.error(`Exception in insert for ${resourceName}:`, err.message);
+      res.status(502).json({ error: `Supabase insert failed for ${resourceName}.`, details: err.message });
     }
   });
 
   app.put(`/api/${resourceName}/:id`, verifyAdmin, async (req, res) => {
-    const updatedFields = req.body;
+    const updatedFields = { ...req.body };
     try {
       if (!supabase) {
-        const local = getLocalData(resourceName, defaults);
-        const idx = local.findIndex((item: any) => item.id === req.params.id);
-        if (idx !== -1) {
-          local[idx] = { ...local[idx], ...updatedFields };
-          saveLocalData(resourceName, local);
-        }
-        return res.json({ id: req.params.id, ...updatedFields });
+        return res.status(503).json({ error: supabaseConfigurationError || 'Supabase is not configured.' });
       }
-      const { error } = await supabase.from(resourceName).update(updatedFields).eq('id', req.params.id);
+      if (resourceName === 'treatments' && Object.prototype.hasOwnProperty.call(updatedFields, 'slug')) {
+        const slug = normalizeTreatmentSlug(updatedFields.slug);
+        if (!slug) {
+          return res.status(400).json({ error: 'Treatment slug must contain only letters, numbers, and hyphens.' });
+        }
+        updatedFields.slug = slug;
+        const { data: conflict, error: slugError } = await ensureUniqueTreatmentSlug(slug, req.params.id);
+        if (slugError) return sendSupabaseError(res, resourceName, 'slug validation', slugError);
+        if (conflict) return res.status(409).json({ error: 'A treatment with this slug already exists.' });
+      }
+
+      const persistedFields = resourceName === 'treatments'
+        ? Object.fromEntries(
+            Object.entries(updatedFields).filter(([field]) =>
+              ['slug', 'name', 'shortDescription'].includes(field)
+            )
+          )
+        : updatedFields;
+      const { data, error } = await supabase
+        .from(tableName)
+        .update(persistedFields)
+        .eq('id', req.params.id)
+        .select('*')
+        .maybeSingle();
       if (error) {
-        console.warn(`Supabase update failed for ${resourceName}, using local fallback:`, error.message);
-        const local = getLocalData(resourceName, defaults);
-        const idx = local.findIndex((item: any) => item.id === req.params.id);
-        if (idx !== -1) {
-          local[idx] = { ...local[idx], ...updatedFields };
-          saveLocalData(resourceName, local);
-        }
-        return res.json({ id: req.params.id, ...updatedFields });
+        return sendSupabaseError(res, resourceName, 'update', error);
       }
-      res.json({ id: req.params.id, ...updatedFields });
+      if (!data) return res.status(404).json({ error: `${resourceName} record not found.` });
+      if (
+        resourceName === 'treatments' &&
+        updatedFields.slug !== undefined &&
+        (data.id !== req.params.id || data.slug !== updatedFields.slug)
+      ) {
+        return res.status(502).json({ error: 'Supabase did not confirm the requested treatment slug update.' });
+      }
+      return res.json(resourceName === 'treatments' ? toTreatmentRecord(data) : data);
     } catch (err: any) {
-      console.warn(`Exception in update for ${resourceName}, using local fallback:`, err.message);
-      const local = getLocalData(resourceName, defaults);
-      const idx = local.findIndex((item: any) => item.id === req.params.id);
-      if (idx !== -1) {
-        local[idx] = { ...local[idx], ...updatedFields };
-        saveLocalData(resourceName, local);
-      }
-      res.json({ id: req.params.id, ...updatedFields });
+      console.error(`Exception in update for ${resourceName}:`, err.message);
+      res.status(502).json({ error: `Supabase update failed for ${resourceName}.`, details: err.message });
     }
   });
 
   app.delete(`/api/${resourceName}/:id`, verifyAdmin, async (req, res) => {
     try {
       if (!supabase) {
-        const local = getLocalData(resourceName, defaults);
-        const filtered = local.filter((item: any) => item.id !== req.params.id);
-        saveLocalData(resourceName, filtered);
-        return res.json({ success: true, id: req.params.id });
+        return res.status(503).json({ error: supabaseConfigurationError || 'Supabase is not configured.' });
       }
-      const { error } = await supabase.from(resourceName).delete().eq('id', req.params.id);
+      const { data, error } = await supabase.from(tableName).delete().eq('id', req.params.id).select('id').maybeSingle();
       if (error) {
-        console.warn(`Supabase delete failed for ${resourceName}, using local fallback:`, error.message);
-        const local = getLocalData(resourceName, defaults);
-        const filtered = local.filter((item: any) => item.id !== req.params.id);
-        saveLocalData(resourceName, filtered);
-        return res.json({ success: true, id: req.params.id });
+        return sendSupabaseError(res, resourceName, 'delete', error);
       }
-      res.json({ success: true, id: req.params.id });
+      if (!data) return res.status(404).json({ error: `${resourceName} record not found.` });
+      return res.json({ success: true, id: data.id });
     } catch (err: any) {
-      console.warn(`Exception in delete for ${resourceName}, using local fallback:`, err.message);
-      const local = getLocalData(resourceName, defaults);
-      const filtered = local.filter((item: any) => item.id !== req.params.id);
-      saveLocalData(resourceName, filtered);
-      res.json({ success: true, id: req.params.id });
+      console.error(`Exception in delete for ${resourceName}:`, err.message);
+      res.status(502).json({ error: `Supabase delete failed for ${resourceName}.`, details: err.message });
     }
   });
 
   app.post(`/api/${resourceName}/reset`, verifyAdmin, async (req, res) => {
+    if (resourceName === 'treatments') {
+      return res.status(409).json({ error: 'Treatment reset is disabled to protect persisted treatment content.' });
+    }
     try {
       if (!supabase) {
-        saveLocalData(resourceName, defaults);
-        return res.json(defaults);
+        return res.status(503).json({ error: supabaseConfigurationError || 'Supabase is not configured.' });
       }
-      const { error: deleteError } = await supabase.from(resourceName).delete().neq('id', 'placeholder_safety_bypass');
+      const { error: deleteError } = await supabase.from(tableName).delete().neq('id', 'placeholder_safety_bypass');
       if (deleteError) {
-        console.warn(`Supabase clear failed during reset for ${resourceName}, using local fallback:`, deleteError.message);
-        saveLocalData(resourceName, defaults);
-        return res.json(defaults);
+        return sendSupabaseError(res, resourceName, 'reset delete', deleteError);
       }
-      const { error: insertError } = await supabase.from(resourceName).insert(defaults);
+      const { data, error: insertError } = await supabase.from(tableName).insert(defaults).select('*');
       if (insertError) {
-        console.warn(`Supabase seed insertion failed for ${resourceName}, using local fallback:`, insertError.message);
-        saveLocalData(resourceName, defaults);
-        return res.json(defaults);
+        return sendSupabaseError(res, resourceName, 'reset insert', insertError);
       }
-      res.json(defaults);
+      return res.json(data || []);
     } catch (err: any) {
-      console.warn(`Exception in reset for ${resourceName}, using local fallback:`, err.message);
-      saveLocalData(resourceName, defaults);
-      res.json(defaults);
+      console.error(`Exception in reset for ${resourceName}:`, err.message);
+      res.status(502).json({ error: `Supabase reset failed for ${resourceName}.`, details: err.message });
     }
   });
 };
 
 // Admin Verification Endpoint
 app.post('/api/admin/verify', (req, res) => {
+  if (!ADMIN_PIN) {
+    return res.status(503).json({ error: 'Admin authentication is not configured on the server.' });
+  }
   const { pin } = req.body;
   if (pin === ADMIN_PIN) {
     res.json({ success: true });
@@ -719,12 +767,12 @@ registerCrudRoutes('testimonials', INITIAL_TESTIMONIALS);
 registerCrudRoutes('conditions', INITIAL_CONDITIONS);
 registerCrudRoutes('faqs', INITIAL_FAQS);
 registerCrudRoutes('blogs', INITIAL_BLOGS);
-registerCrudRoutes('treatments', getLocalData('treatments', []));
+registerCrudRoutes('treatments', []);
 // Custom Supabase handler for Videos endpoint (fetches directly from Supabase 'Video' bucket and DB)
 app.get('/api/videos', async (req, res) => {
   try {
     if (!supabase) {
-      return res.json(getLocalData('videos', INITIAL_VIDEOS));
+      return res.status(503).json({ error: supabaseConfigurationError || 'Supabase is not configured.' });
     }
 
     const SEO_MAP: Record<string, { title: string; category: string; description: string }> = {
@@ -793,6 +841,9 @@ app.get('/api/videos', async (req, res) => {
         offset: 0,
         sortBy: { column: 'created_at', order: 'desc' }
       });
+      if (fallback.error) {
+        return sendSupabaseError(res, 'video storage', 'list', fallback.error);
+      }
       data = fallback.data;
     }
 
@@ -820,7 +871,11 @@ app.get('/api/videos', async (req, res) => {
     }
 
     // Also fetch DB showcase video items
-    const { data: dbData } = await supabase.from('showcases').select('*').not('videoUrl', 'is', null);
+    const { data: dbData, error: showcaseError } = await supabase
+      .from('showcases')
+      .select('*')
+      .not('videoUrl', 'is', null);
+    if (showcaseError) return sendSupabaseError(res, 'showcases', 'select', showcaseError);
     if (dbData && dbData.length > 0) {
       dbData.forEach((s: any) => {
         if (s.videoUrl && !bucketVideos.some(bv => bv.videoUrl === s.videoUrl || bv.id === s.id)) {
@@ -840,10 +895,10 @@ app.get('/api/videos', async (req, res) => {
       return res.json(bucketVideos);
     }
 
-    return res.json(getLocalData('videos', INITIAL_VIDEOS));
+    return res.json(INITIAL_VIDEOS);
   } catch (err: any) {
     console.error("Exception loading videos from Supabase:", err);
-    res.json(getLocalData('videos', INITIAL_VIDEOS));
+    res.status(502).json({ error: 'Supabase video request failed.', details: err.message });
   }
 });
 
@@ -852,31 +907,15 @@ app.post('/api/videos', verifyAdmin, async (req, res) => {
   if (!newVid.id) newVid.id = `vid-${Date.now()}`;
 
   try {
-    if (supabase) {
-      const showcaseEntry = {
-        id: newVid.id,
-        title: newVid.title,
-        subtitle: newVid.category || 'Monoportal Spine Surgery',
-        description: newVid.description,
-        category: 'surgical',
-        location: 'Jaipur Clinic',
-        date: '2026',
-        imageUrl: newVid.poster || '/endoscopic_spine_poster.jpg',
-        videoUrl: newVid.videoUrl,
-        sizeClass: 'md:col-span-1 md:row-span-1',
-        badge: newVid.category || '4K Spine Video Log',
-        featuredInHero: false
-      };
-      try {
-        await supabase.from('videos').upsert(newVid);
-      } catch {}
+    if (!supabase) {
+      return res.status(503).json({ error: supabaseConfigurationError || 'Supabase is not configured.' });
     }
-    const local = getLocalData('videos', INITIAL_VIDEOS);
-    local.unshift(newVid);
-    saveLocalData('videos', local);
-    res.status(201).json(newVid);
+    const { data, error } = await supabase.from('videos').insert(newVid).select('*').single();
+    if (error) return sendSupabaseError(res, 'videos', 'insert', error);
+    return res.status(201).json(data);
   } catch (err: any) {
-    res.status(201).json(newVid);
+    console.error('Exception creating video:', err.message);
+    res.status(502).json({ error: 'Supabase video insert failed.', details: err.message });
   }
 });
 
@@ -885,48 +924,49 @@ app.put('/api/videos/:id', verifyAdmin, async (req, res) => {
   const id = req.params.id;
 
   try {
-    if (supabase) {
-      const scUpdate: any = {};
-      if (updatedFields.title !== undefined) scUpdate.title = updatedFields.title;
-      if (updatedFields.description !== undefined) scUpdate.description = updatedFields.description;
-      if (updatedFields.videoUrl !== undefined) scUpdate.videoUrl = updatedFields.videoUrl;
-      if (updatedFields.poster !== undefined) scUpdate.imageUrl = updatedFields.poster;
-      if (updatedFields.category !== undefined) {
-        scUpdate.badge = updatedFields.category;
-        scUpdate.subtitle = updatedFields.category;
-      }
-      await supabase.from('showcases').update(scUpdate).eq('id', id);
-      try {
-        await supabase.from('videos').update(updatedFields).eq('id', id);
-      } catch {}
+    if (!supabase) {
+      return res.status(503).json({ error: supabaseConfigurationError || 'Supabase is not configured.' });
     }
-    const local = getLocalData('videos', INITIAL_VIDEOS);
-    const idx = local.findIndex((v: any) => v.id === id);
-    if (idx !== -1) {
-      local[idx] = { ...local[idx], ...updatedFields };
-      saveLocalData('videos', local);
+    const scUpdate: any = {};
+    if (updatedFields.title !== undefined) scUpdate.title = updatedFields.title;
+    if (updatedFields.description !== undefined) scUpdate.description = updatedFields.description;
+    if (updatedFields.videoUrl !== undefined) scUpdate.videoUrl = updatedFields.videoUrl;
+    if (updatedFields.poster !== undefined) scUpdate.imageUrl = updatedFields.poster;
+    if (updatedFields.category !== undefined) {
+      scUpdate.badge = updatedFields.category;
+      scUpdate.subtitle = updatedFields.category;
     }
-    res.json({ id, ...updatedFields });
+    const [showcaseResult, videoResult] = await Promise.all([
+      supabase.from('showcases').update(scUpdate).eq('id', id).select('id').maybeSingle(),
+      supabase.from('videos').update(updatedFields).eq('id', id).select('id').maybeSingle()
+    ]);
+    if (showcaseResult.error) return sendSupabaseError(res, 'showcases', 'update', showcaseResult.error);
+    if (videoResult.error) return sendSupabaseError(res, 'videos', 'update', videoResult.error);
+    if (!showcaseResult.data && !videoResult.data) return res.status(404).json({ error: 'Video record not found.' });
+    return res.json({ id, ...updatedFields });
   } catch (err: any) {
-    res.json({ id, ...updatedFields });
+    console.error(`Exception updating video ${id}:`, err.message);
+    res.status(502).json({ error: 'Supabase video update failed.', details: err.message });
   }
 });
 
 app.delete('/api/videos/:id', verifyAdmin, async (req, res) => {
   const id = req.params.id;
   try {
-    if (supabase) {
-      await supabase.from('showcases').delete().eq('id', id);
-      try {
-        await supabase.from('videos').delete().eq('id', id);
-      } catch {}
+    if (!supabase) {
+      return res.status(503).json({ error: supabaseConfigurationError || 'Supabase is not configured.' });
     }
-    const local = getLocalData('videos', INITIAL_VIDEOS);
-    const filtered = local.filter((v: any) => v.id !== id);
-    saveLocalData('videos', filtered);
-    res.json({ success: true, id });
+    const [showcaseResult, videoResult] = await Promise.all([
+      supabase.from('showcases').delete().eq('id', id).select('id').maybeSingle(),
+      supabase.from('videos').delete().eq('id', id).select('id').maybeSingle()
+    ]);
+    if (showcaseResult.error) return sendSupabaseError(res, 'showcases', 'delete', showcaseResult.error);
+    if (videoResult.error) return sendSupabaseError(res, 'videos', 'delete', videoResult.error);
+    if (!showcaseResult.data && !videoResult.data) return res.status(404).json({ error: 'Video record not found.' });
+    return res.json({ success: true, id });
   } catch (err: any) {
-    res.json({ success: true, id });
+    console.error(`Exception deleting video ${id}:`, err.message);
+    res.status(502).json({ error: 'Supabase video delete failed.', details: err.message });
   }
 });
 
@@ -1017,7 +1057,7 @@ app.post('/api/upload/sign', async (req, res) => {
 app.get('/api/gallery-images', async (req, res) => {
   try {
     if (!supabase) {
-      return res.json([]);
+      return res.status(503).json({ error: supabaseConfigurationError || 'Supabase is not configured.' });
     }
     const { data, error } = await supabase.storage.from('gallery').list('', {
       limit: 100,
@@ -1026,8 +1066,7 @@ app.get('/api/gallery-images', async (req, res) => {
     });
 
     if (error) {
-      console.warn("Failed to fetch gallery bucket list from Supabase:", error.message);
-      return res.json([]);
+      return sendSupabaseError(res, 'gallery storage', 'list', error);
     }
 
     if (data) {
@@ -1045,10 +1084,10 @@ app.get('/api/gallery-images', async (req, res) => {
         }));
       return res.json(images);
     }
-    res.json([]);
+    return res.json([]);
   } catch (err: any) {
     console.error("Exception loading gallery images:", err);
-    res.json([]);
+    res.status(502).json({ error: 'Supabase gallery request failed.', details: err.message });
   }
 });
 
@@ -1079,4 +1118,3 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 export default app;
-
