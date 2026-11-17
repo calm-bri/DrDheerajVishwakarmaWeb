@@ -252,6 +252,8 @@ export default function ParallaxCarousel() {
                     src={item.imageUrl}
                     alt={item.title}
                     draggable={false}
+                    loading="lazy"
+                    decoding="async"
                     className="absolute inset-0 w-full h-full object-contain pointer-events-none"
                     style={{
                       transform: `scale(${1.08 + absPosition * 0.03})`,

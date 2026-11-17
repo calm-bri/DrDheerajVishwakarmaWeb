@@ -47,6 +47,8 @@ export default function IncisionComparison() {
               <img
                 src="/traditional_open_surgery.jpg"
                 alt="Traditional open spine surgery showing massive retractors and muscle splitting"
+                loading="lazy"
+                decoding="async"
                 className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-103 ${
                   !revealSensitive ? "blur-[25px] scale-105 saturate-[0.2] brightness-[0.4]" : "blur-0"
                 }`}
@@ -149,6 +151,8 @@ export default function IncisionComparison() {
               <img
                 src="/keyhole_8mm_incision.jpg"
                 alt="Dr Dheeraj Vishwakarma showing single stitch 8mm incision measured with clinical ruler"
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-103"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />

@@ -1,11 +1,12 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from "react";
 import { 
   SpineCondition, 
   Testimonial, 
   FAQItem,
   BlogArticle,
   VideoItem,
-  DetailedTreatment
+  DetailedTreatment,
+  PageSEO
 } from "../types";
 import { 
   conditionsData, 
@@ -89,6 +90,11 @@ interface DataContextType {
   updateTreatment: (id: string, updated: Partial<DetailedTreatment>) => Promise<void>;
   deleteTreatment: (id: string) => Promise<void>;
   resetTreatments: () => Promise<void>;
+
+  // Centralized Static Page SEO
+  pageSeo: PageSEO[];
+  getPageSEO: (route: string) => PageSEO | undefined;
+  updatePageSEO: (route: string, updated: Partial<PageSEO>) => Promise<boolean>;
 
   // Administrative Auth
   adminPin: string;
@@ -190,7 +196,25 @@ const PRELOADED_APPOINTMENTS: Appointment[] = [
   }
 ];
 
+// Request deduplication cache to prevent duplicate in-flight requests
+const fetchDedupeMap = new Map<string, Promise<Response>>();
+function dedupeFetch(url: string, init?: RequestInit): Promise<Response> {
+  if (init && init.method && init.method !== 'GET') {
+    return fetch(url, init);
+  }
+  const existing = fetchDedupeMap.get(url);
+  if (existing) return existing;
+  const p = fetch(url, init).finally(() => {
+    fetchDedupeMap.delete(url);
+  });
+  fetchDedupeMap.set(url, p);
+  return p;
+}
+
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // Prevent duplicate execution during React StrictMode / remounts
+  const hasLoadedRef = useRef(false);
+
   // Administrative Auth State
   const [adminPin, setAdminPin] = useState<string>(() => {
     const sessionToken = localStorage.getItem("dr_dheeraj_admin_session");
@@ -231,81 +255,82 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [treatments, setTreatments] = useState<DetailedTreatment[]>(detailedTreatments);
   const [isTreatmentsLoading, setIsTreatmentsLoading] = useState(true);
 
+  // Centralized Static Page SEO state
+  const [pageSeo, setPageSeo] = useState<PageSEO[]>([]);
+
   // Lookup function that always searches the live context treatments array
   const contextGetTreatmentBySlug = (slug: string): DetailedTreatment | undefined =>
     lookupTreatmentBySlug(slug, treatments);
 
-  // Fetch initial public data from backend API
+  // Helper to retrieve SEO metadata for a specific route with fast context lookup
+  const getPageSEO = useCallback((route: string): PageSEO | undefined => {
+    return pageSeo.find(p => p.page_route === route);
+  }, [pageSeo]);
+
+  // Update Page SEO in Supabase and sync context state
+  const updatePageSEO = async (route: string, updated: Partial<PageSEO>): Promise<boolean> => {
+    try {
+      const encoded = encodeURIComponent(route);
+      const res = await fetch(`/api/page-seo/${encoded}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-pin': adminPin
+        },
+        body: JSON.stringify(updated)
+      });
+      if (res.ok) {
+        const saved = await res.json();
+        setPageSeo(prev => {
+          const idx = prev.findIndex(p => p.page_route === route);
+          if (idx >= 0) {
+            const next = [...prev];
+            next[idx] = { ...next[idx], ...saved };
+            return next;
+          }
+          return [...prev, saved];
+        });
+        return true;
+      }
+      return false;
+    } catch (err) {
+      console.error('Failed to update page SEO on server:', err);
+      return false;
+    }
+  };
+
+  // Fetch initial public data from backend API with request deduplication & no repeated storage bucket listing
   useEffect(() => {
+    if (hasLoadedRef.current) return;
+    hasLoadedRef.current = true;
 
     const loadPublicData = async () => {
       try {
-        const [scsRes, faqsRes, testsRes, condsRes, blogsRes, galleryRes, vidsRes, treatsRes] = await Promise.all([
-          fetch('/api/showcases'),
-          fetch('/api/faqs'),
-          fetch('/api/testimonials'),
-          fetch('/api/conditions'),
-          fetch('/api/blogs'),
-          fetch('/api/gallery-images'),
-          fetch('/api/videos'),
-          fetch('/api/treatments')
+        const [scsRes, faqsRes, testsRes, condsRes, blogsRes, vidsRes, treatsRes, seoRes] = await Promise.all([
+          dedupeFetch('/api/showcases'),
+          dedupeFetch('/api/faqs'),
+          dedupeFetch('/api/testimonials'),
+          dedupeFetch('/api/conditions'),
+          dedupeFetch('/api/blogs'),
+          dedupeFetch('/api/videos'),
+          dedupeFetch('/api/treatments'),
+          dedupeFetch('/api/page-seo')
         ]);
 
-        let dbData: ShowcaseItem[] = [];
         if (scsRes.ok) {
           const resJson = await scsRes.json();
-          if (Array.isArray(resJson)) {
-            dbData = resJson;
-            setDbShowcaseIds(new Set(dbData.map((s: any) => s.id)));
+          if (Array.isArray(resJson) && resJson.length > 0) {
+            setShowcases(resJson);
+            setDbShowcaseIds(new Set(resJson.map((s: any) => s.id)));
           }
         }
 
-        let storageData: any[] = [];
-        if (galleryRes.ok) {
-          const resJson = await galleryRes.json();
-          if (Array.isArray(resJson)) {
-            storageData = resJson;
+        if (seoRes.ok) {
+          const resJson = await seoRes.json();
+          if (Array.isArray(resJson) && resJson.length > 0) {
+            setPageSeo(resJson);
           }
         }
-
-        // Map storage images to ShowcaseItem objects
-        const mappedStorageItems: ShowcaseItem[] = storageData.map((img: any) => {
-          const nameLower = img.id.toLowerCase();
-          let category: "surgical" | "news" | "workshop" = "surgical";
-          let badge = "Clinical Showcase";
-
-          if (nameLower.includes("news") || nameLower.includes("press") || nameLower.includes("media")) {
-            category = "news";
-            badge = "Press Release";
-          } else if (nameLower.includes("workshop") || nameLower.includes("lecture") || nameLower.includes("hands")) {
-            category = "workshop";
-            badge = "Event Workshop";
-          }
-
-          return {
-            id: img.id,
-            title: img.title || "Surgical Case Milestone",
-            subtitle: img.subtitle || "Monoportal Endoscopic Spine Care Gallery",
-            description: img.description || "Clinical highlight captured during monoportal FESS decompression, medical training workshop lectures, or book presentation milestones.",
-            category,
-            location: "Jaipur Clinic",
-            date: "June 2026",
-            imageUrl: img.imageUrl,
-            sizeClass: "md:col-span-1 md:row-span-1 aspect-square sm:aspect-auto",
-            badge,
-            featuredInHero: false
-          };
-        });
-
-        // Merge them
-        const combined = [...dbData];
-        mappedStorageItems.forEach(supItem => {
-          if (!combined.some(c => c.imageUrl === supItem.imageUrl || c.id === supItem.id)) {
-            combined.push(supItem);
-          }
-        });
-
-        setShowcases(combined);
 
         if (faqsRes.ok) {
           const resJson = await faqsRes.json();
@@ -373,7 +398,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     };
     loadPublicData();
-  }, []);
+  }, [adminPin]);
 
   // Fetch appointments only when adminPin is set / verified
   useEffect(() => {
@@ -955,6 +980,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       updateTreatment,
       deleteTreatment,
       resetTreatments,
+
+      pageSeo,
+      getPageSEO,
+      updatePageSEO,
 
       adminPin,
       setAdminPin

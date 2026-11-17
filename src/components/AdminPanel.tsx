@@ -86,6 +86,8 @@ export default function AdminPanel() {
     addTreatment,
     updateTreatment,
     deleteTreatment,
+    pageSeo,
+    updatePageSEO,
     adminPin,
     setAdminPin
   } = useData();
@@ -94,6 +96,71 @@ export default function AdminPanel() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passwordInput, setPasswordInput] = useState("");
   const [authError, setAuthError] = useState("");
+
+  // Static Page SEO Management State
+  const [selectedPageSeoRoute, setSelectedPageSeoRoute] = useState<string>("/");
+  const [pageSeoTitle, setPageSeoTitle] = useState("");
+  const [pageSeoDesc, setPageSeoDesc] = useState("");
+  const [pageSeoKeywords, setPageSeoKeywords] = useState("");
+  const [pageSeoOgImage, setPageSeoOgImage] = useState("/logo.png");
+  const [pageSeoSaveStatus, setPageSeoSaveStatus] = useState<string>("");
+  const [isSavingPageSeo, setIsSavingPageSeo] = useState(false);
+
+  // Synchronize Page SEO form state when route or data changes
+  useEffect(() => {
+    const matched = pageSeo.find(p => p.page_route === selectedPageSeoRoute);
+    if (matched) {
+      setPageSeoTitle(matched.title || "");
+      setPageSeoDesc(matched.description || "");
+      setPageSeoKeywords(matched.keywords || "");
+      setPageSeoOgImage(matched.og_image || "/logo.png");
+    } else {
+      // Defaults based on route
+      const routeDefaults: Record<string, { title: string; desc: string; keywords: string }> = {
+        "/": {
+          title: "Dr. Dheeraj Vishwakarma | Best Endoscopic Spine Surgeon Jaipur & India",
+          desc: "Dr. Dheeraj Vishwakarma is India's leading neurosurgeon specializing in single-stitch (<8mm) FESS monoportal endoscopic spine surgery with same-day walking recovery.",
+          keywords: "Endoscopic Spine Surgeon, Best Spine Surgeon Jaipur, Monoportal Endoscopic Spine Surgery, Slip Disc Treatment Jaipur, Sciatica Surgery, Minimally Invasive Spine Surgery, Dr Dheeraj Vishwakarma"
+        },
+        "/about": {
+          title: "About Dr. Dheeraj Vishwakarma | Leading Endoscopic Spine Surgeon Jaipur",
+          desc: "Learn about Dr. Dheeraj Vishwakarma, internationally trained endoscopic spine surgeon, pioneer of single-stitch spine surgery, and world-record holder in pediatric endoscopy.",
+          keywords: "Dr Dheeraj Vishwakarma, spine surgeon profile, endoscopic spine specialist biography, medical qualifications, spine doctor Jaipur awards"
+        },
+        "/treatments": {
+          title: "Advanced Endoscopic Spine Surgery Treatments | Dr. Dheeraj Vishwakarma",
+          desc: "Explore cutting-edge endoscopic and minimally invasive spine procedures for slipped discs, sciatica, spinal stenosis, and complex spinal disorders in Jaipur.",
+          keywords: "Endoscopic Spine Treatments, Slip Disc Surgery, Sciatica Treatment, Spinal Stenosis Surgery, Minimally Invasive Spine Surgery, FESS Jaipur"
+        },
+        "/blogs": {
+          title: "Spine Health Articles & Clinical Guides | Dr. Dheeraj Vishwakarma",
+          desc: "Read peer-reviewed clinical publications, case reports, and educational articles on endoscopic spine surgery and modern spinal care.",
+          keywords: "Spine Surgery Articles, Endoscopic Spine Blog, Slip Disc Research, Awake Spine Surgery Insights, Spine Health Guides"
+        },
+        "/gallery": {
+          title: "Endoscopic Spine Surgery Case Gallery & Surgical Videos | Dr. Dheeraj Vishwakarma",
+          desc: "Browse high-definition endoscopic spine surgical cases, patient recovery milestones, and before-after MRI scans from Dr. Dheeraj Vishwakarma's practice.",
+          keywords: "Spine Surgery Gallery, Endoscopic Spine Videos, Slip Disc Surgery Photos, Spine Surgery Case Studies, Monoportal Spine Videos"
+        },
+        "/contact": {
+          title: "Contact Dr. Dheeraj Vishwakarma | Spine Clinic Jaipur & Consultations",
+          desc: "Book an in-person or online video consultation with Dr. Dheeraj Vishwakarma, pioneering endoscopic spine surgeon in Jaipur, Rajasthan.",
+          keywords: "Contact Spine Surgeon, Book Spine Consultation, Spine Clinic Jaipur, Dr Dheeraj Vishwakarma Appointment, Second Opinion Spine"
+        },
+        "/international-patients": {
+          title: "International Patients Desk | Endoscopic Spine Surgery in India",
+          desc: "World-class endoscopic spine surgery in India with dedicated medical travel support, rapid MRI review, and expedited same-day walking recovery.",
+          keywords: "Medical Tourism India Spine, International Spine Surgery India, Endoscopic Spine Surgery Overseas, Slipped Disc Treatment India Cost"
+        }
+      };
+      const def = routeDefaults[selectedPageSeoRoute];
+      if (def) {
+        setPageSeoTitle(def.title);
+        setPageSeoDesc(def.desc);
+        setPageSeoKeywords(def.keywords);
+      }
+    }
+  }, [selectedPageSeoRoute, pageSeo]);
 
   // Check existing session
   useEffect(() => {
@@ -111,7 +178,7 @@ export default function AdminPanel() {
   }, []);
 
   // Tabs management
-  type ActiveTab = "appointments" | "treatments" | "showcases" | "videos" | "blogs" | "faqs" | "testimonials" | "conditions" | "settings";
+  type ActiveTab = "appointments" | "treatments" | "showcases" | "videos" | "blogs" | "faqs" | "testimonials" | "conditions" | "pageseo" | "settings";
   const [activeTab, setActiveTab] = useState<ActiveTab>("appointments");
 
   // Filter and search states
@@ -527,6 +594,7 @@ export default function AdminPanel() {
           { id: "conditions", label: "Homepage Pathology Cards", icon: TrendingUp },
           { id: "testimonials", label: "Testimonials", icon: Star },
           { id: "faqs", label: "FAQ Center", icon: HelpCircle },
+          { id: "pageseo", label: "Page SEO & Meta", icon: Globe },
           { id: "settings", label: "Security & Factory Resets", icon: KeyRound }
         ].map((tab) => {
           const Icon = tab.icon;
@@ -1472,6 +1540,171 @@ export default function AdminPanel() {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* 5.5 STATIC PAGE SEO MANAGEMENT TAB (SUPABASE FREE-TIER OPTIMIZED) */}
+        {activeTab === "pageseo" && (
+          <div className="space-y-6 text-left max-w-4xl mx-auto">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-white/5 pb-4">
+              <div>
+                <h3 className="font-display font-medium text-lg text-white flex items-center gap-2">
+                  <Globe className="w-5 h-5 text-gold-400" /> Static Pages SEO & Meta Manager
+                </h3>
+                <p className="text-xs text-stone-400 mt-1">
+                  Backed by single centralized <code className="text-gold-300 font-mono">page_seo</code> table. Free-tier optimized with HTTP caching & ETags.
+                </p>
+              </div>
+
+              {pageSeoSaveStatus && (
+                <div className="text-xs font-mono px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 animate-pulse">
+                  {pageSeoSaveStatus}
+                </div>
+              )}
+            </div>
+
+            {/* Route selector pills */}
+            <div className="flex flex-wrap gap-2 p-1.5 bg-black/40 rounded-xl border border-white/5">
+              {[
+                { route: "/", label: "Home Page (/)" },
+                { route: "/about", label: "About Page (/about)" },
+                { route: "/treatments", label: "Treatments Listing (/treatments)" },
+                { route: "/blogs", label: "Clinical Publications (/blogs)" },
+                { route: "/gallery", label: "Surgical Gallery (/gallery)" },
+                { route: "/contact", label: "Contact & Appointments (/contact)" },
+                { route: "/international-patients", label: "International Desk (/international-patients)" }
+              ].map(page => (
+                <button
+                  key={page.route}
+                  type="button"
+                  onClick={() => {
+                    setSelectedPageSeoRoute(page.route);
+                    setPageSeoSaveStatus("");
+                  }}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all cursor-pointer ${
+                    selectedPageSeoRoute === page.route
+                      ? "bg-gold-400/20 text-gold-300 border border-gold-400/40 shadow-sm"
+                      : "text-stone-400 hover:text-white hover:bg-white/5 border border-transparent"
+                  }`}
+                >
+                  {page.label}
+                </button>
+              ))}
+            </div>
+
+            {/* SEO Form & Live Google Snippet Preview */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 bg-black/20 p-6 rounded-2xl border border-white/5">
+              <div className="lg:col-span-7 space-y-4">
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center text-xs">
+                    <label className="text-stone-300 font-bold">SEO Title *</label>
+                    <span className={`font-mono text-[10px] ${pageSeoTitle.length >= 50 && pageSeoTitle.length <= 60 ? "text-emerald-400" : "text-stone-500"}`}>
+                      {pageSeoTitle.length}/60 chars
+                    </span>
+                  </div>
+                  <input
+                    type="text"
+                    value={pageSeoTitle}
+                    onChange={(e) => setPageSeoTitle(e.target.value)}
+                    placeholder="Page Title for Google search results"
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-white text-xs focus:outline-none focus:border-gold-400"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center text-xs">
+                    <label className="text-stone-300 font-bold">Meta Description *</label>
+                    <span className={`font-mono text-[10px] ${pageSeoDesc.length >= 140 && pageSeoDesc.length <= 160 ? "text-emerald-400" : "text-stone-500"}`}>
+                      {pageSeoDesc.length}/160 chars
+                    </span>
+                  </div>
+                  <textarea
+                    rows={3}
+                    value={pageSeoDesc}
+                    onChange={(e) => setPageSeoDesc(e.target.value)}
+                    placeholder="Search snippet summary shown on Google SERPs (150-160 characters recommended)"
+                    className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white text-xs focus:outline-none focus:border-gold-400 leading-relaxed"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-stone-300 font-bold text-xs">Meta Keywords (comma-separated)</label>
+                  <input
+                    type="text"
+                    value={pageSeoKeywords}
+                    onChange={(e) => setPageSeoKeywords(e.target.value)}
+                    placeholder="e.g. Endoscopic spine surgery, slipped disc Jaipur, best surgeon"
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-white text-xs focus:outline-none focus:border-gold-400"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-stone-300 font-bold text-xs">Open Graph / Social Preview Image URL</label>
+                  <input
+                    type="text"
+                    value={pageSeoOgImage}
+                    onChange={(e) => setPageSeoOgImage(e.target.value)}
+                    placeholder="e.g. /logo.png or Supabase storage public URL"
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-white text-xs focus:outline-none focus:border-gold-400 font-mono"
+                  />
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    disabled={isSavingPageSeo}
+                    onClick={async () => {
+                      setIsSavingPageSeo(true);
+                      setPageSeoSaveStatus("Saving to Supabase page_seo...");
+                      const success = await updatePageSEO(selectedPageSeoRoute, {
+                        title: pageSeoTitle,
+                        description: pageSeoDesc,
+                        keywords: pageSeoKeywords,
+                        og_image: pageSeoOgImage
+                      });
+                      setIsSavingPageSeo(false);
+                      if (success) {
+                        setPageSeoSaveStatus("✓ Successfully saved! Public cache invalidated.");
+                      } else {
+                        setPageSeoSaveStatus("⚠ Failed to save. Check server connection or admin PIN.");
+                      }
+                    }}
+                    className="flex items-center gap-2 bg-gold-400 hover:bg-gold-500 text-black px-5 py-2.5 rounded-xl font-bold text-xs cursor-pointer disabled:opacity-50 transition-all shadow-md"
+                  >
+                    <Save className="w-4 h-4" />
+                    {isSavingPageSeo ? "Saving..." : `Save SEO for ${selectedPageSeoRoute}`}
+                  </button>
+                </div>
+              </div>
+
+              {/* Live Google Search Snippet Preview */}
+              <div className="lg:col-span-5 space-y-3">
+                <span className="text-[10px] font-mono uppercase text-stone-400 tracking-wider font-semibold block">
+                  Google Search Snippet Preview
+                </span>
+                <div className="bg-[#202124] p-4 rounded-xl border border-white/10 text-left font-sans space-y-1.5 shadow-inner">
+                  <div className="flex items-center gap-1.5 text-[11px] text-[#bdc1c6] font-mono truncate">
+                    <span className="text-xs">🌐</span>
+                    <span>https://www.endoscopicspinecare.com{selectedPageSeoRoute === "/" ? "" : selectedPageSeoRoute}</span>
+                  </div>
+                  <h4 className="text-[#8ab4f8] hover:underline text-sm font-medium leading-snug cursor-pointer line-clamp-2">
+                    {pageSeoTitle || "Dr. Dheeraj Vishwakarma | Endoscopic Spine Care"}
+                  </h4>
+                  <p className="text-[#bdc1c6] text-xs leading-relaxed line-clamp-3">
+                    {pageSeoDesc || "Dr. Dheeraj Vishwakarma is India's leading neurosurgeon specializing in single-stitch (<8mm) FESS monoportal endoscopic spine surgery."}
+                  </p>
+                </div>
+
+                <div className="p-3 rounded-xl bg-gold-400/5 border border-gold-400/10 text-[11px] text-stone-400 space-y-1 leading-relaxed">
+                  <div className="flex items-center gap-1.5 text-gold-300 font-bold font-mono">
+                    <Sparkles className="w-3.5 h-3.5" /> Supabase Free Plan Protection
+                  </div>
+                  <p>
+                    All public visitors receive cached JSON with 304 Not Modified verification. Database reads only happen once per TTL cycle.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -2643,7 +2876,7 @@ export default function AdminPanel() {
                     <div className="flex flex-wrap gap-1.5 p-1 bg-black/40 rounded-xl border border-white/5">
                       {[
                         { id: "basic", label: "1. Basic Info & SEO" },
-                        { id: "seo", label: "2. Treatment SEO & Meta" },
+                        { id: "seo", label: "2. Slug & SEO" },
                         { id: "metrics", label: "3. Metrics & Options" },
                         { id: "clinical", label: "4. Overview & Causes" },
                         { id: "symptoms", label: "5. Symptoms & Diagnosis" },

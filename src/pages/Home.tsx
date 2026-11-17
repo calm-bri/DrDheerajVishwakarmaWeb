@@ -11,6 +11,7 @@ import Testimonials from "../components/Testimonials";
 import AwardsSection from "../components/AwardsSection";
 import FAQ from "../components/FAQ";
 import SEOComponent from "../components/SEOComponent";
+import { useData } from "../context/DataContext";
 import { videoData } from "../data";
 import { VideoItem } from "../types";
 
@@ -26,6 +27,8 @@ interface HomeProps {
 
 export default function Home({ onOpenBooking }: HomeProps) {
   const navigate = useNavigate();
+  const { getPageSEO } = useData();
+  const pageSeo = getPageSEO("/");
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [activeVideo, setActiveVideo] = useState<VideoItem>(videoData[0]);
 
@@ -67,11 +70,11 @@ export default function Home({ onOpenBooking }: HomeProps) {
       transition={{ duration: 0.35, ease: "easeInOut" }}
     >
       <SEOComponent
-        title="Dr. Dheeraj Vishwakarma | Best Endoscopic Spine Surgeon Jaipur & India"
-        description="Dr. Dheeraj Vishwakarma is India's leading neurosurgeon specializing in single-stitch (<8mm) FESS monoportal endoscopic spine surgery with same-day walking recovery."
-        keywords="Endoscopic Spine Surgeon, Best Spine Surgeon Jaipur, Monoportal Endoscopic Spine Surgery, Slip Disc Treatment Jaipur, Sciatica Surgery, Minimally Invasive Spine Surgery, Dr Dheeraj Vishwakarma"
+        title={pageSeo?.meta_title || pageSeo?.title || "Dr. Dheeraj Vishwakarma | Best Endoscopic Spine Surgeon Jaipur & India"}
+        description={pageSeo?.meta_description || pageSeo?.description || "Dr. Dheeraj Vishwakarma is India's leading neurosurgeon specializing in single-stitch (<8mm) FESS monoportal endoscopic spine surgery with same-day walking recovery."}
+        keywords={pageSeo?.meta_keywords || pageSeo?.keywords || "Endoscopic Spine Surgeon, Best Spine Surgeon Jaipur, Monoportal Endoscopic Spine Surgery, Slip Disc Treatment Jaipur, Sciatica Surgery, Minimally Invasive Spine Surgery, Dr Dheeraj Vishwakarma"}
         path="/"
-        image="/logo.png"
+        image={pageSeo?.og_image || "/logo.png"}
         schemas={homeSchemas}
       />
 

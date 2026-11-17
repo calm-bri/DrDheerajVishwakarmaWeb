@@ -24,7 +24,8 @@ interface ContactPageProps {
 }
 
 export default function ContactPage({ onOpenBooking }: ContactPageProps) {
-  const { addAppointment } = useData();
+  const { addAppointment, getPageSEO } = useData();
+  const pageSeo = getPageSEO("/contact");
 
   // Form State
   const [fullName, setFullName] = useState("");
@@ -89,11 +90,11 @@ export default function ContactPage({ onOpenBooking }: ContactPageProps) {
       className="text-white text-left max-w-7xl mx-auto px-4 sm:px-6 pt-4 pb-20 space-y-12"
     >
       <SEOComponent
-        title="Contact Dr. Dheeraj Vishwakarma | Spine Clinic Jaipur & Appointments"
-        description="Schedule a consultation with Dr. Dheeraj Vishwakarma at Mansarovar or Bhakrota clinic in Jaipur, or book an online MRI review. Call +91 89998 98129."
-        keywords="Spine Clinic Jaipur, Book Spine Consultation, Dr Dheeraj Vishwakarma Contact, Mansarovar Spine Clinic, Bhakrota Spine Clinic, Second Opinion Spine MRI"
+        title={pageSeo?.meta_title || pageSeo?.title || "Contact Dr. Dheeraj Vishwakarma | Spine Clinic Jaipur & Appointments"}
+        description={pageSeo?.meta_description || pageSeo?.description || "Schedule a consultation with Dr. Dheeraj Vishwakarma at Mansarovar or Bhakrota clinic in Jaipur, or book an online MRI review. Call +91 89998 98129."}
+        keywords={pageSeo?.meta_keywords || pageSeo?.keywords || "Spine Clinic Jaipur, Book Spine Consultation, Dr Dheeraj Vishwakarma Contact, Mansarovar Spine Clinic, Bhakrota Spine Clinic, Second Opinion Spine MRI"}
         path="/contact"
-        image="/logo.png"
+        image={pageSeo?.og_image || "/logo.png"}
         schemas={contactSchemas}
       />
 

@@ -1,9 +1,12 @@
 import { motion } from "motion/react";
 import Gallery from "../components/Gallery";
 import SEOComponent from "../components/SEOComponent";
+import { useData } from "../context/DataContext";
 import { generateBreadcrumbSchema } from "../utils/schemaGenerator";
 
 export default function GalleryPage() {
+  const { getPageSEO } = useData();
+  const pageSeo = getPageSEO("/gallery");
   const gallerySchemas = [
     generateBreadcrumbSchema([
       { name: "Home", url: "/" },
@@ -21,11 +24,11 @@ export default function GalleryPage() {
       className="pt-6"
     >
       <SEOComponent
-        title="Endoscopic Spine Surgery Case Gallery & Surgical Videos | Dr. Dheeraj Vishwakarma"
-        description="Browse high-definition endoscopic spine surgical cases, patient recovery milestones, and before-after MRI scans from Dr. Dheeraj Vishwakarma's practice."
-        keywords="Spine Surgery Gallery, Endoscopic Spine Videos, Slip Disc Surgery Photos, Spine Surgery Case Studies, Monoportal Spine Videos"
+        title={pageSeo?.meta_title || pageSeo?.title || "Endoscopic Spine Surgery Case Gallery & Surgical Videos | Dr. Dheeraj Vishwakarma"}
+        description={pageSeo?.meta_description || pageSeo?.description || "Browse high-definition endoscopic spine surgical cases, patient recovery milestones, and before-after MRI scans from Dr. Dheeraj Vishwakarma's practice."}
+        keywords={pageSeo?.meta_keywords || pageSeo?.keywords || "Spine Surgery Gallery, Endoscopic Spine Videos, Slip Disc Surgery Photos, Spine Surgery Case Studies, Monoportal Spine Videos"}
         path="/gallery"
-        image="/logo.png"
+        image={pageSeo?.og_image || "/logo.png"}
         schemas={gallerySchemas}
       />
       <Gallery />

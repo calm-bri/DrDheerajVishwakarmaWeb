@@ -177,6 +177,8 @@ export default function TreatmentDetailPage({ onOpenBooking }: TreatmentDetailPa
               <img
                 src="/doctor_white_coat.png"
                 alt="Dr. Dheeraj Vishwakarma"
+                loading="lazy"
+                decoding="async"
                 className="w-12 h-12 rounded-full object-cover border border-gold-400/40"
               />
               <div>

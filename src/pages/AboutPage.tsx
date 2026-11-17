@@ -4,6 +4,7 @@ import AboutMe from "../components/AboutMe";
 import AwardsSection from "../components/AwardsSection";
 import Testimonials from "../components/Testimonials";
 import SEOComponent from "../components/SEOComponent";
+import { useData } from "../context/DataContext";
 
 import { generateDoctorSchema, generateBreadcrumbSchema } from "../utils/schemaGenerator";
 
@@ -12,6 +13,8 @@ interface AboutPageProps {
 }
 
 export default function AboutPage({ onOpenBooking }: AboutPageProps) {
+  const { getPageSEO } = useData();
+  const pageSeo = getPageSEO("/about");
   const aboutSchemas = [
     generateDoctorSchema(),
     generateBreadcrumbSchema([
@@ -30,11 +33,11 @@ export default function AboutPage({ onOpenBooking }: AboutPageProps) {
       className="pt-4 space-y-12 pb-16"
     >
       <SEOComponent
-        title="About Dr. Dheeraj Vishwakarma | Pioneering Endoscopic Spine Surgeon Jaipur"
-        description="Learn about Dr. Dheeraj Vishwakarma - Fellow in Endoscopic Spine Surgery (AIN Hospital, South Korea), pioneer of Monoportal Endoscopic Spine Surgery in Rajasthan."
-        keywords="Dr Dheeraj Vishwakarma, Endoscopic Spine Surgeon Jaipur, Spine Specialist India, GIPMER Alumni, AIN Hospital Korea, Spine Neurosurgeon"
+        title={pageSeo?.meta_title || pageSeo?.title || "About Dr. Dheeraj Vishwakarma | Pioneering Endoscopic Spine Surgeon Jaipur"}
+        description={pageSeo?.meta_description || pageSeo?.description || "Learn about Dr. Dheeraj Vishwakarma - Fellow in Endoscopic Spine Surgery (AIN Hospital, South Korea), pioneer of Monoportal Endoscopic Spine Surgery in Rajasthan."}
+        keywords={pageSeo?.meta_keywords || pageSeo?.keywords || "Dr Dheeraj Vishwakarma, Endoscopic Spine Surgeon Jaipur, Spine Specialist India, GIPMER Alumni, AIN Hospital Korea, Spine Neurosurgeon"}
         path="/about"
-        image="/logo.png"
+        image={pageSeo?.og_image || "/logo.png"}
         schemas={aboutSchemas}
       />
       <AboutMe />

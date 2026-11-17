@@ -109,3 +109,16 @@ export interface VideoItem {
   videoUrl: string;
   category: string;
 }
+
+export interface PageSEO {
+  page_route: string;
+  title: string;
+  description: string;
+  keywords?: string;
+  meta_title?: string;
+  meta_description?: string;
+  meta_keywords?: string;
+  og_image?: string;
+  canonical_url?: string;
+  updated_at?: string;
+}

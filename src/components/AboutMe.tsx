@@ -61,6 +61,7 @@ export default function AboutMe() {
             alt="Dr. Dheeraj Vishwakarma"
             className="w-full h-full object-cover object-top rounded-2xl"
             loading="lazy"
+            decoding="async"
             referrerPolicy="no-referrer"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-transparent animate-fade-in" />
@@ -79,6 +80,7 @@ export default function AboutMe() {
             alt="Dr. Dheeraj Vishwakarma in Scrubs"
             className="w-full h-full object-cover object-top rounded-2xl"
             loading="lazy"
+            decoding="async"
             referrerPolicy="no-referrer"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-transparent animate-fade-in" />

@@ -32,7 +32,8 @@ interface TreatmentsPageProps {
 }
 
 export default function TreatmentsPage({ onOpenBooking }: TreatmentsPageProps) {
-  const { treatments } = useData();
+  const { treatments, getPageSEO } = useData();
+  const pageSeo = getPageSEO("/treatments");
   const [selectedFilter, setSelectedFilter] = useState<string>("all");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -92,10 +93,11 @@ export default function TreatmentsPage({ onOpenBooking }: TreatmentsPageProps) {
       className="text-white text-left max-w-7xl mx-auto px-4 sm:px-6 pt-4 pb-20 space-y-16"
     >
       <SEOComponent
-        title="Spine Treatments Directory | Endoscopic Spine Surgery Jaipur"
-        description="Explore advanced keyhole spine treatments under Dr. Dheeraj Vishwakarma: FESS monoportal endoscopy, discectomy, sciatica release, slip disc care, and stenosis decompression."
-        keywords="spine treatments Jaipur, endoscopic spine surgery India, FESS treatment, slip disc treatment Jaipur, sciatica treatment India, spinal stenosis decompression, minimally invasive spine surgery, Dr. Dheeraj Vishwakarma treatments"
+        title={pageSeo?.meta_title || pageSeo?.title || "Spine Treatments Directory | Endoscopic Spine Surgery Jaipur"}
+        description={pageSeo?.meta_description || pageSeo?.description || "Explore advanced keyhole spine treatments under Dr. Dheeraj Vishwakarma: FESS monoportal endoscopy, discectomy, sciatica release, slip disc care, and stenosis decompression."}
+        keywords={pageSeo?.meta_keywords || pageSeo?.keywords || "spine treatments Jaipur, endoscopic spine surgery India, FESS treatment, slip disc treatment Jaipur, sciatica treatment India, spinal stenosis decompression, minimally invasive spine surgery, Dr. Dheeraj Vishwakarma treatments"}
         path="/treatments"
+        image={pageSeo?.og_image || "/logo.png"}
         schemas={pageSchemas}
       />
 

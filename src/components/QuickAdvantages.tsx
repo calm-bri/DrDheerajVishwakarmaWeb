@@ -195,6 +195,8 @@ export default function QuickAdvantages() {
                   <img
                     src={item.src}
                     alt={item.title}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-contain rounded-full"
                   />
                 </div>

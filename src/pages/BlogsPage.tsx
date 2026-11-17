@@ -7,7 +7,8 @@ import { useData } from "../context/DataContext";
 import { generateBreadcrumbSchema } from "../utils/schemaGenerator";
 
 export default function BlogsPage() {
-  const { blogs } = useData();
+  const { blogs, getPageSEO } = useData();
+  const pageSeo = getPageSEO("/blogs");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
@@ -51,11 +52,11 @@ export default function BlogsPage() {
       className="pt-6 pb-20 px-4 xs:px-6 sm:px-8 max-w-6xl mx-auto text-white text-left"
     >
       <SEOComponent
-        title="Medical Publications & Spine Surgery Research Articles | Dr. Dheeraj Vishwakarma"
-        description="Read academic book chapters, case logs, and clinical research papers on Full Monoportal Endoscopic Spine Surgery (FESS) by Dr. Dheeraj Vishwakarma."
-        keywords="Spine Surgery Research, Endoscopic Spine Publications, Cauda Equina Study, Monoportal Spine Research, Dr Dheeraj Vishwakarma Papers, Spine Neurosurgeon Blogs"
+        title={pageSeo?.meta_title || pageSeo?.title || "Medical Publications & Spine Surgery Research Articles | Dr. Dheeraj Vishwakarma"}
+        description={pageSeo?.meta_description || pageSeo?.description || "Read academic book chapters, case logs, and clinical research papers on Full Monoportal Endoscopic Spine Surgery (FESS) by Dr. Dheeraj Vishwakarma."}
+        keywords={pageSeo?.meta_keywords || pageSeo?.keywords || "Spine Surgery Research, Endoscopic Spine Publications, Cauda Equina Study, Monoportal Spine Research, Dr Dheeraj Vishwakarma Papers, Spine Neurosurgeon Blogs"}
         path="/blogs"
-        image="/logo.png"
+        image={pageSeo?.og_image || "/logo.png"}
         schemas={blogSchemas}
       />
 
