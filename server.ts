@@ -758,8 +758,12 @@ const registerCrudRoutes = (resourceName: string, defaults: any[]) => {
     }
     next();
   }, async (req, res) => {
+    const shouldCache = resourceName !== 'treatments';
+
     // Appointments must never be cached publicly
     if (resourceName === 'appointments') {
+      res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    } else if (!shouldCache) {
       res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate');
     } else {
       const cacheKey = `${resourceName}:all`;
@@ -795,7 +799,7 @@ const registerCrudRoutes = (resourceName: string, defaults: any[]) => {
         });
       }
 
-      if (resourceName !== 'appointments') {
+      if (shouldCache && resourceName !== 'appointments') {
         const entry = setCached(`${resourceName}:all`, resultData, 300_000);
         return sendCachedResponse(req, res, resultData, entry.etag, 60, 300);
       }
