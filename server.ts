@@ -566,7 +566,15 @@ const INITIAL_VIDEOS = [
 ];
 
 // Helper to get local fallback data
+const inMemoryLocalData = new Map<string, any[]>();
+const isVercel = process.env.VERCEL === '1';
+
 const getLocalData = (resourceName: string, defaults: any[]): any[] => {
+  if (isVercel) {
+    const stored = inMemoryLocalData.get(resourceName);
+    return JSON.parse(JSON.stringify(stored ?? defaults));
+  }
+
   const dataDir = path.join(__dirname, 'data');
   if (!fs.existsSync(dataDir)) {
     fs.mkdirSync(dataDir, { recursive: true });
@@ -727,6 +735,11 @@ const DEFAULT_PAGE_SEO = [
 
 // Helper to save local fallback data
 const saveLocalData = (resourceName: string, data: any[]) => {
+  if (isVercel) {
+    inMemoryLocalData.set(resourceName, data);
+    return;
+  }
+
   const dataDir = path.join(__dirname, 'data');
   if (!fs.existsSync(dataDir)) {
     fs.mkdirSync(dataDir, { recursive: true });
