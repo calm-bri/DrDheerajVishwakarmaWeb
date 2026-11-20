@@ -1488,6 +1488,35 @@ if (fs.existsSync(DIST_DIR)) {
   app.get('*', (req, res) => {
     res.sendFile(path.join(DIST_DIR, 'index.html'));
   });
+} else {
+  app.get('/', (req, res) => {
+    res.send(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8" />
+          <title>Dr. Dheeraj Vishwakarma - API Server</title>
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background-color: #f8fafc; color: #1e293b; }
+            .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); max-width: 500px; text-align: center; border: 1px solid #e2e8f0; }
+            h1 { font-size: 22px; margin-bottom: 8px; color: #0f172a; }
+            p { color: #64748b; font-size: 15px; margin-bottom: 24px; line-height: 1.5; }
+            .btn { display: inline-block; background-color: #0284c7; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: background-color 0.2s; }
+            .btn:hover { background-color: #0369a1; }
+            .badge { display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 9999px; font-size: 12px; font-weight: 600; margin-bottom: 16px; }
+          </style>
+        </head>
+        <body>
+          <div class="card">
+            <span class="badge">Backend API Active</span>
+            <h1>Express API Server Running (Port ${PORT})</h1>
+            <p>You have accessed the backend API service directly. The website interface runs on the Vite frontend development server.</p>
+            <a class="btn" href="http://localhost:3000">Open Website (http://localhost:3000)</a>
+          </div>
+        </body>
+      </html>
+    `);
+  });
 }
 
 if (process.env.NODE_ENV !== 'production') {
